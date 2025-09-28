@@ -1,0 +1,9 @@
+{
+    "workbench.colorCustomizations": {
+        "[Visual Studio Dark]": {
+            "tab.inactiveBackground":"#4d4232"
+        }
+    },
+    "editor.fontFamily": "'Ubuntu Mono', monospace",
+    "editor.fontSize": 16,
+}

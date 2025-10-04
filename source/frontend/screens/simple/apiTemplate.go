@@ -46,6 +46,14 @@ func NewInitData() (initData *_startup_.ScreenInitData) {
 	return
 }
 
+func Presets() (presets map[string]any) {
+	presets = make(map[string]any)
+	for k, v := range _startup_.Presets {
+		presets[k] = v
+	}
+	return
+}
+
 var screenCount uint = 0
 func nextScreenCount() (count uint) {
 	count = screenCount

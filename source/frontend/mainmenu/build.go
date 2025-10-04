@@ -19,13 +19,27 @@ func CreateFramework(
 		}
 	}()
 
-	// gui/mainmenu/mainmenu.go
-	data := mainMenuTemplateData{
-		ImportPrefix: importPrefix,
+	{
+		// gui/mainmenu/init.go
+		data := initTemplateData{
+			ImportPrefix: importPrefix,
+		}
+		oPath := filepath.Join(folderPaths.FrontendMainMenu, initFileName)
+		if err = utils.ProcessTemplate(initFileName, oPath, initTemplate, data); err != nil {
+			return
+		}
 	}
-	oPath := filepath.Join(folderPaths.FrontendMainMenu, mainMenuFileName)
-	if err = utils.ProcessTemplate(mainMenuFileName, oPath, mainMenuTemplate, data); err != nil {
-		return
+
+	{
+		// gui/mainmenu/mainmenu.go
+		data := mainMenuTemplateData{
+			ImportPrefix: importPrefix,
+		}
+		oPath := filepath.Join(folderPaths.FrontendMainMenu, mainMenuFileName)
+		if err = utils.ProcessTemplate(mainMenuFileName, oPath, mainMenuTemplate, data); err != nil {
+			return
+		}
 	}
+
 	return
 }

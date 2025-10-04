@@ -43,6 +43,11 @@ func Start(ctx context.Context, ctxCancelFunc context.CancelFunc, app fyne.App, 
 	}
 {{- end }}
 
+	// Set the screen presets map.
+{{ range $screenName := .ScreenNames }}
+	_screenmap_.PresetsMap["{{ $screenName }}"] = _{{ $screenName }}_.Presets()
+{{- end }}
+
 	// Initialize main menu.
 	// The developer must ensure that all panel groups should get initialized from main menu.
 	_mainmenu_.Init(ctx, ctxCancelFunc, app, window)

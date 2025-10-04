@@ -20,6 +20,13 @@ const (
 	StartupTemplate = `{{ $DOT := . -}}
 package startup
 
+/* KICKFYNE TODO:
+	Cusomize each panel's init data struct.
+	Customize func DefaultScreenInitData().
+	Add any required custom ScreenInitData() funcs for displaying different content.
+	Cusomize the map PresetScreenInitData.
+*/
+
 {{- if ne (len .RemotePanelNames) 0 }}
 import(
 {{ range $panelName := .RemotePanelNames }}
@@ -57,6 +64,11 @@ func NewScreenInitData(anyInitData ...any) (screenInitData *ScreenInitData) {
 		}
 	}
 	return
+}
+
+// The names are used in FyneApp.toml
+var Presets = map[string]*ScreenInitData {
+	"Default" : DefaultScreenInitData(),
 }
 
 // DefaultScreenInitData() constructs the default default ScreenInitData.

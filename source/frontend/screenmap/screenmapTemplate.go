@@ -79,5 +79,6 @@ type API struct {
 }
 
 var Map = make(map[string]*API)
+var PresetsMap = make(map[string]map[string]any)
 `
 )

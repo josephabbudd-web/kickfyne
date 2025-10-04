@@ -21,14 +21,4 @@ Build = 1
 # Icon = Resource "Icon.png"
 # Release if true this binary was build in release mode
 Release = false
-
-# Custom is now Development. But it's still app.Metadata().Custom.
-[Development]
-# MainMenu is a space separated sorted list of screen package names that you want in the main menu.
-# The first screen package name is the opening screen.
-#   The screen package names are
-#     the screen package names in frontend/screen/,
-#     the keys of the map screenmap.Map in frontend/screenmap/screenmap.go.
-# Names in MainMenu that are not found are ignored and logged.
-MainMenu = "HelloWorld"
 `

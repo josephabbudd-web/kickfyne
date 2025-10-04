@@ -36,8 +36,8 @@ func Handler(args []string, importPrefix string, folderPaths *_utils_.FolderPath
 			if err = handleFrameworkRestart(folderPaths, args, importPrefix); err != nil {
 				return
 			}
-			fyneAppTOMLFilePath := _utils_.FyneAppTOMLFilePath(folderPaths)
-			fmt.Printf("KICKFYNE TODO: Check MenuItems in %s.\n", _utils_.Clickable(fyneAppTOMLFilePath))
+			// fyneAppTOMLFilePath := _utils_.FyneAppTOMLFilePath(folderPaths)
+			// fmt.Printf("KICKFYNE TODO: Check MenuItems in %s.\n", _utils_.Clickable(fyneAppTOMLFilePath))
 		case verbHelp:
 			fmt.Println(Usage())
 			return

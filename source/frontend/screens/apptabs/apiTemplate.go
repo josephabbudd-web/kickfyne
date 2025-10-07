@@ -38,21 +38,21 @@ import (
 	_tabs_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/tabs"
 
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
-	_startup_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/startup"
+	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
 
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 	_ids_ "{{ .ImportPrefix }}/deps/container/{{ .PackageName }}"
 )
 
-type InitData  _startup_.ScreenInitData
-func NewInitData() (initData *_startup_.ScreenInitData) {
-	initData = _startup_.NewScreenInitData()
+type InitData  _presets_.ScreenInitData
+func NewInitData() (initData *_presets_.ScreenInitData) {
+	initData = _presets_.NewScreenInitData()
 	return
 }
 
 func Presets() (presets map[string]any) {
 	presets = make(map[string]any)
-	for k, v := range _startup_.Presets {
+	for k, v := range _presets_.Presets {
 		presets[k] = v
 	}
 	return
@@ -86,10 +86,10 @@ func NewWindowContentConsumer(
 	}()
 
 	if startupData == nil {
-		startupData = _startup_.DefaultScreenInitData()
+		startupData = _presets_.DefaultScreenInitData()
 	}
 	switch startupData := startupData.(type) {
-	case *_startup_.ScreenInitData:
+	case *_presets_.ScreenInitData:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:Window:%d", nextScreenCount())
 		// Consumer.
@@ -104,7 +104,7 @@ func NewWindowContentConsumer(
 		// Get the screen's initializer.
 		err = setInitialTabItems(packageScreen, startupData)
 	default:
-		err = errors.New("startupData is not a *_startup_.ScreenInitData")
+		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -132,10 +132,10 @@ func NewAppTabsTabItemContentConsumer(
 	}()
 
 	if startupData == nil {
-		startupData = _startup_.DefaultScreenInitData()
+		startupData = _presets_.DefaultScreenInitData()
 	}
 	switch startupData := startupData.(type) {
-	case *_startup_.ScreenInitData:
+	case *_presets_.ScreenInitData:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:TabItem:%d", nextScreenCount())
 		// Consumer.
@@ -150,7 +150,7 @@ func NewAppTabsTabItemContentConsumer(
 		// Get the screen's initializer.
 		err = setInitialTabItems(packageScreen, startupData)
 	default:
-		err = errors.New("startupData is not a *_startup_.ScreenInitData")
+		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -178,10 +178,10 @@ func NewDocTabsTabItemContentConsumer(
 	}()
 
 	if startupData == nil {
-		startupData = _startup_.DefaultScreenInitData()
+		startupData = _presets_.DefaultScreenInitData()
 	}
 	switch startupData := startupData.(type) {
-	case *_startup_.ScreenInitData:
+	case *_presets_.ScreenInitData:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:TabItem:%d", nextScreenCount())
 		// Consumer.
@@ -196,7 +196,7 @@ func NewDocTabsTabItemContentConsumer(
 		// Get the screen's initializer.
 		err = setInitialTabItems(packageScreen, startupData)
 	default:
-		err = errors.New("startupData is not a *_startup_.ScreenInitData")
+		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -224,10 +224,10 @@ func NewAccordionItemContentConsumer(
 	}()
 
 	if startupData == nil {
-		startupData = _startup_.DefaultScreenInitData()
+		startupData = _presets_.DefaultScreenInitData()
 	}
 	switch startupData := startupData.(type) {
-	case *_startup_.ScreenInitData:
+	case *_presets_.ScreenInitData:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:AccordionItem:%d", nextScreenCount())
 		// Consumer.
@@ -242,7 +242,7 @@ func NewAccordionItemContentConsumer(
 		// Get the screen's initializer.
 		err = setInitialTabItems(packageScreen, startupData)
 	default:
-		err = errors.New("startupData is not a *_startup_.ScreenInitData")
+		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -269,7 +269,7 @@ func buildLayout(
 	return
 }
 
-func setInitialTabItems(screen *_misc_.Miscellaneous, startupData *_startup_.ScreenInitData) (err error) {
+func setInitialTabItems(screen *_misc_.Miscellaneous, startupData *_presets_.ScreenInitData) (err error) {
 {{ range $panel := .AllPanels }}
  {{ if $panel.IsLocal }}
 	if err = _tabs_.Open{{ $panel.Name }}Tab(screen, startupData.{{ $panel.Name }}Panel.TabItemIcon, startupData.{{ $panel.Name }}Panel.TabItemLabel, startupData.{{ $panel.Name }}Panel); err != nil {

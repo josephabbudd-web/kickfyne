@@ -26,15 +26,15 @@ import (
 {{ end }}
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_panels_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels"
-	_startup_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/startup"
+	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 	_ids_ "{{ .ImportPrefix }}/deps/container/{{ .PackageName }}"
 {{- range $i, $panelName := .RemotePanelNames }}
  {{- if eq $i 0 }}
 
-	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/startup"
+	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
  {{- else }}
-	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/startup"
+	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
  {{- end }}
 {{- end }}
 )
@@ -43,7 +43,7 @@ import (
 
 // Open{{ $panelName }}AccordionItem constructs a {{ $panelName }}AccordionItem.
 // The {{ $panelName }}AccordionItem uses the local {{ $panelName }} panel for content.
-func Open{{ $panelName }}AccordionItem(screen *_misc_.Miscellaneous, accordionItemTitle string, {{ call $DOT.Funcs.DeCap $panelName }}PanelInitData *_startup_.{{ $panelName }}PanelInitData) (err error) {
+func Open{{ $panelName }}AccordionItem(screen *_misc_.Miscellaneous, accordionItemTitle string, {{ call $DOT.Funcs.DeCap $panelName }}PanelInitData *_presets_.{{ $panelName }}PanelInitData) (err error) {
 	accordionItem := widget.NewAccordionItem(accordionItemTitle, widget.NewLabel("This is the {{ $panelName }} panel."))
 	accordionItemContentConsumer := _types_.NewAccordionItemContentConsumer(screen.Layout.Accordion(), accordionItem)
 	// accordionItemContentConsumer := _types_.NewAccordionItemContentConsumer(screen.Layout.AccordionConsumer(), screen.Layout.Accordion(), accordionItem, spawned)

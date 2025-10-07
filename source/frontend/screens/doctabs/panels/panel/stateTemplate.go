@@ -19,17 +19,9 @@ import (
 	"fyne.io/fyne/v2"
 
 	_thread_ "{{ .ImportPrefix }}/deps/thread"
-	_startup_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/startup"
+	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 )
-
-type Getters struct {
-	ID          func() string
-	TabLabel    func() string
-	TabIcon     func() fyne.Resource
-	Heading     func() string
-	Description func() string
-}
 
 // State is the state for the {{ .PanelName }} panel.
 // Panel and Tab have the state id.
@@ -55,7 +47,7 @@ func NewState(
 }
 
 // LoadStartupData is called by the panel's constructor.
-func (state *State) LoadStartupData(startupData *_startup_.{{ .PanelName }}PanelInitData) {
+func (state *State) LoadStartupData(startupData *_presets_.{{ .PanelName }}PanelInitData) {
 	state.Set(
 		state.SetTabIcon(startupData.TabItemIcon),
 		state.SetTabLabel(startupData.TabItemLabel),
@@ -80,28 +72,17 @@ func (state *State) Set(setters ..._types_.StateSetter) {
 	isMainThread := _thread_.IsMainThread()
 	var refreshCanvasObject bool
 	for _, setter := range setters {
-		refreshCanvasObject = refreshCanvasObject || setter(isMainThread)
+		if setter(isMainThread) {
+			refreshCanvasObject = true
+		}
 	}
 	if refreshCanvasObject {
 		state.content.producer.Refresh(isMainThread)
 	}
 }
 
-// Get returns each getter.
-// It is part of the frontend/types/Stater implementation.
-func (state *State) Get() (getters any) {
-	getters = Getters{
-		ID:          state.getID,
-		TabLabel:    state.getTabLabel,
-		TabIcon:     state.getTabIcon,
-		Heading:     state.getHeading,
-		Description: state.getDescription,
-	}
-	return
-}
-
-// The Panel and Tab use this for an ID.
-func (state *State) getID() (id string) {
+// ID is this panel's id and the tab item's id.
+func (state *State) ID() (id string) {
 	id = state.id
 	return
 }
@@ -124,11 +105,6 @@ func (state *State) SetTabLabel(label string) (setter _types_.StateSetter) {
 	return
 }
 
-func (state *State) getTabLabel() (label string) {
-	label = state.tabLabel
-	return
-}
-
 // Tab icon.
 func (state *State) SetTabIcon(icon fyne.Resource) (setter _types_.StateSetter) {
 	state.tabIcon = icon
@@ -144,11 +120,6 @@ func (state *State) SetTabIcon(icon fyne.Resource) (setter _types_.StateSetter) 
 		}
 		return
 	}
-	return
-}
-
-func (state *State) getTabIcon() (icon fyne.Resource) {
-	icon = state.tabIcon
 	return
 }
 
@@ -172,11 +143,6 @@ func (state *State) SetHeading(heading string) (setter _types_.StateSetter) {
 	return
 }
 
-func (state *State) getHeading() (heading string) {
-	heading = state.content.heading.Text
-	return
-}
-
 // Description is a widget with variable state.
 
 // SetDescription returns a _types_.Setter that sets the content's description widget's text.
@@ -194,11 +160,6 @@ func (state *State) SetDescription(description string) (setter _types_.StateSett
 		refreshCanvasObject = true
 		return
 	}
-	return
-}
-
-func (state *State) getDescription() (description string) {
-	description = state.content.description.Text
 	return
 }
 `

@@ -8,7 +8,7 @@ type Panel struct {
 	Name    string
 	IsLocal bool
 }
-type StartupTemplateData struct {
+type PresetsTemplateData struct {
 	ImportPrefix     string
 	AllPanels        []Panel
 	LocalPanelNames  []string
@@ -17,7 +17,7 @@ type StartupTemplateData struct {
 }
 
 const (
-	StartupTemplate = `{{ $DOT := . -}}
+	PresetsTemplate = `{{ $DOT := . -}}
 package startup
 
 /* KICKFYNE TODO:
@@ -33,9 +33,9 @@ import(
 {{ range $i, $panelName := .RemotePanelNames }}
  {{- if eq $i 0 }}
 
- 	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/startup"
+ 	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
  {{- else }}
- 	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/startup"
+ 	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
  {{- end }}
 {{- end }}
 )
@@ -70,7 +70,7 @@ func NewScreenInitData(anyInitData ...any) (screenInitData *ScreenInitData) {
 	return
 }
 
-// The names are used in FyneApp.toml
+// See func Presets() (presets map[string]any) in this package's api.go.
 var Presets = map[string]*ScreenInitData {
 	"Default" : DefaultScreenInitData(),
 }

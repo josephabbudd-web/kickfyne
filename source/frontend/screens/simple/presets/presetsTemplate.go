@@ -4,14 +4,14 @@ import (
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-type StartupTemplateData struct {
+type PresetsTemplateData struct {
 	ImportPrefix    string
 	LocalPanelNames []string
 	Funcs           _utils_.Funcs
 }
 
 const (
-	StartupTemplate = `{{ $DOT := . -}}
+	PresetsTemplate = `{{ $DOT := . -}}
 package startup
 
 /* KICKFYNE TODO:
@@ -44,7 +44,7 @@ func NewScreenInitData(anyInitData ...any) (screenInitData *ScreenInitData) {
 	return
 }
 
-// The names are used in FyneApp.toml
+// See func Presets() (presets map[string]any) in this package's api.go.
 var Presets = map[string]*ScreenInitData {
 	"Default" : DefaultScreenInitData(),
 }

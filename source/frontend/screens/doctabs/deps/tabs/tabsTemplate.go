@@ -28,21 +28,21 @@ import (
 {{ end }}
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_panels_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels"
-	_startup_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/startup"
+	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 	_ids_ "{{ .ImportPrefix }}/deps/container/{{ .PackageName }}"
 
 {{- range $i, $panelName := .RemotePanelNames }}
  {{- if eq $i 0 }}
 
-	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/startup"
+	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
  {{- else }}
-	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/startup"
+	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
  {{- end }}
 {{- end }}
 )
 
-func SetInitialTabItems(screen *_misc_.Miscellaneous, screenInitData *_startup_.ScreenInitData) (err error) {
+func SetInitialTabItems(screen *_misc_.Miscellaneous, screenInitData *_presets_.ScreenInitData) (err error) {
 {{- range $panelName := .LocalPanelNames}}
 	if err = Open{{ $panelName }}Tab(screen, screenInitData.{{ $panelName }}Panel.TabItemIcon, screenInitData.{{ $panelName }}Panel.TabItemLabel, screenInitData.{{ $panelName }}Panel); err != nil {
 		return
@@ -61,7 +61,7 @@ func SetInitialTabItems(screen *_misc_.Miscellaneous, screenInitData *_startup_.
 
 // Open{{ $panelName }}Tab constructs a {{ $panelName }}TabItem.
 // The {{ $panelName }}Tab uses the local {{ $panelName }} panel for content.
-func Open{{ $panelName }}Tab(screen *_misc_.Miscellaneous, tabIcon fyne.Resource, tabLabel string, startupData *_startup_.{{ $panelName }}PanelInitData) (err error) {
+func Open{{ $panelName }}Tab(screen *_misc_.Miscellaneous, tabIcon fyne.Resource, tabLabel string, startupData *_presets_.{{ $panelName }}PanelInitData) (err error) {
 	tabItem := container.NewTabItemWithIcon(tabLabel, tabIcon, widget.NewLabel("This is the {{ $panelName }} panel."))
 	tabItemContentConsumer := _types_.NewDocTabsTabItemContentConsumer(screen.Layout.Tabbar(), tabItem)
 	// tabItemContentConsumer := _types_.NewDocTabsTabItemContentConsumer(screen.Layout.TabbarConsumer(), screen.Layout.Tabbar(), tabItem, spawned)

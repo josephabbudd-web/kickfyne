@@ -8,7 +8,7 @@ type Panel struct {
 	Name    string
 	IsLocal bool
 }
-type StartupTemplateData struct {
+type PresetsTemplateData struct {
 	ImportPrefix     string
 	AllPanels        []Panel
 	LocalPanelNames  []string
@@ -17,28 +17,23 @@ type StartupTemplateData struct {
 }
 
 const (
-	StartupTemplate = `{{ $DOT := . -}}
+	PresetsTemplate = `{{ $DOT := . -}}
 package startup
 
 /* KICKFYNE TODO:
 	Cusomize each panel's init data struct.
 	Customize func DefaultScreenInitData().
 	Add any required custom ScreenInitData() funcs for displaying different content.
-	Cusomize func PresetScreenInitDataByName(name string).
+	Cusomize the map PresetScreenInitData.
 */
 
+{{- if ne (len .RemotePanelNames) 0 }}
 import(
-	"fyne.io/fyne/v2"
-	// "fyne.io/fyne/v2/theme"
-{{ range $i, $panelName := .RemotePanelNames }}
- {{- if eq $i 0 }}
-
- 	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/startup"
- {{- else }}
- 	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/startup"
- {{- end }}
-{{- end }}
+{{ range $panelName := .RemotePanelNames }}
+	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
+{{ end }}
 )
+{{- end }}
 
 type ScreenInitData struct {
 {{- range $i, $panelName := .LocalPanelNames }}
@@ -49,6 +44,7 @@ type ScreenInitData struct {
 {{- end }}
 }
 
+// NewScreenInitData constructs a new ScreenInitData.
 // Param anyInitData should be nil if there are not initData for panels or screens.
 func NewScreenInitData(anyInitData ...any) (screenInitData *ScreenInitData) {
 	screenInitData = &ScreenInitData{}
@@ -70,7 +66,7 @@ func NewScreenInitData(anyInitData ...any) (screenInitData *ScreenInitData) {
 	return
 }
 
-// The names are used in FyneApp.toml
+// See func Presets() (presets map[string]any) in this package's api.go.
 var Presets = map[string]*ScreenInitData {
 	"Default" : DefaultScreenInitData(),
 }
@@ -78,18 +74,16 @@ var Presets = map[string]*ScreenInitData {
 // DefaultScreenInitData() constructs the default default ScreenInitData.
 func DefaultScreenInitData() (screenInitData *ScreenInitData) {
 	screenInitData = NewScreenInitData(
-{{- range $i, $panel := .AllPanels }}
+{{- range $panel := .AllPanels }}
  {{- if $panel.IsLocal }}
 		New{{ $panel.Name }}PanelInitData(
-			nil, // theme.Icon(theme.IconNameContentAdd) 
-			"{{ $panel.Name }}", // tabItemLabel string
+			"{{ $panel.Name }}", // accordionItemTitle string
 			"This is the {{ $panel.Name }} panel heading.", // heading string
 			"This is the {{ $panel.Name }} panel description.", // description string
 		),
  {{- else }}
 		New{{ $panel.Name }}ScreenInitData(
-			nil, // theme.Icon(theme.IconNameContentAdd) 
-			"{{ $panel.Name }}", // tabItemLabel string
+			"{{ $panel.Name }}", // accordionItemTitle string
 			_{{ call $DOT.Funcs.LowerCase $panel.Name }}startup_.DefaultScreenInitData(),
 		),
  {{- end }}
@@ -102,16 +96,14 @@ func DefaultScreenInitData() (screenInitData *ScreenInitData) {
 
 type {{ $panelName }}PanelInitData struct {
 	// Local {{ $panelName }}Panel startup data.
-	TabItemIcon fyne.Resource
-	TabItemLabel string
+	AccordionItemTitle string
 	Heading string
 	Description string
 }
 
-func New{{ $panelName }}PanelInitData(tabItemIcon fyne.Resource, tabItemLabel string, heading string, description string) (new{{ $panelName }}PanelInitData *{{ $panelName }}PanelInitData) {
+func New{{ $panelName }}PanelInitData(accordionItemTitle string, heading string, description string) (new{{ $panelName }}PanelInitData *{{ $panelName }}PanelInitData) {
 	new{{ $panelName }}PanelInitData = &{{ $panelName }}PanelInitData{
-		TabItemIcon: tabItemIcon,
-		TabItemLabel: tabItemLabel,
+		AccordionItemTitle: accordionItemTitle,
 		Heading: heading,
 		Description: description,
 	}
@@ -123,15 +115,13 @@ func New{{ $panelName }}PanelInitData(tabItemIcon fyne.Resource, tabItemLabel st
 
 type {{ $panelName }}ScreenInitData struct {
  	// Remote {{ $panelName }} screen startup data.
-	TabItemIcon fyne.Resource
-	TabItemLabel string
+	AccordionItemTitle string
 	ScreenInitData *_{{ call $DOT.Funcs.LowerCase $panelName }}startup_.ScreenInitData
 }
 
-func New{{ $panelName }}ScreenInitData(tabItemIcon fyne.Resource, tabItemLabel string, {{ call $DOT.Funcs.LowerCase $panelName }}ScreenInitData *_{{ call $DOT.Funcs.LowerCase $panelName }}startup_.ScreenInitData) (new{{ $panelName }}ScreenInitData *{{ $panelName }}ScreenInitData) {
+func New{{ $panelName }}ScreenInitData(accordionItemTitle string, {{ call $DOT.Funcs.LowerCase $panelName }}ScreenInitData *_{{ call $DOT.Funcs.LowerCase $panelName }}startup_.ScreenInitData) (new{{ $panelName }}ScreenInitData *{{ $panelName }}ScreenInitData) {
 	new{{ $panelName }}ScreenInitData = &{{ $panelName }}ScreenInitData{
-		TabItemIcon: tabItemIcon,
-		TabItemLabel: tabItemLabel,
+		AccordionItemTitle: accordionItemTitle,
 		ScreenInitData: {{ call $DOT.Funcs.LowerCase $panelName }}ScreenInitData,
 	}
 	return

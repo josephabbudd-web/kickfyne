@@ -12,7 +12,6 @@ import (
 type StateSetter func(isMainThread bool) (refreshCanvasObject bool)
 
 type Stater interface {
-	Get() (state any)
 	Set(setters ...StateSetter)
 	Refresh(isMainThread bool)
 }

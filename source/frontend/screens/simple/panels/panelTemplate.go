@@ -23,7 +23,7 @@ import (
 
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_content_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels/{{ .PanelName }}Panel"
-	_startup_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/startup"
+	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 )
 
@@ -39,7 +39,7 @@ type {{ .PanelName }}Panel struct {
 
 // New{{ .PanelName }}Panel initializes this panel.
 // Returns the panel and the error.
-func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, startupData *_startup_.{{ .PanelName }}PanelInitData) (panel *{{ .PanelName }}Panel, err error) {
+func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, startupData *_presets_.{{ .PanelName }}PanelInitData) (panel *{{ .PanelName }}Panel, err error) {
 
 	defer func() {
 		if err != nil {
@@ -63,8 +63,7 @@ func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, startupData *_startu
 
 // ID returns this panel's id. Same as this panel's id.
 func (panel *{{ .PanelName }}Panel) ID() (id string) {
-	getters := panel.state.Get().(_content_.Getters)
-	id = getters.ID()
+	id = panel.state.ID()
 	return
 }
 

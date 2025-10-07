@@ -23,7 +23,7 @@ const (
 	FolderNameScreens        = "screens"
 	folderNameScreenMap      = "screenmap"
 	folderNameDeps           = "deps"
-	FolderNameStartup        = "startup"
+	FolderNamePresets        = "presets"
 	FolderNameTabs           = "tabs"
 	folderNameThread         = "thread"
 	folderNameTypes          = "types"
@@ -38,7 +38,6 @@ var (
 	frontendTypes     = filepath.Join(folderNameFrontend, folderNameTypes)
 
 	depsContainer = filepath.Join(folderNameDeps, folderNameContainer)
-	depsMessage   = filepath.Join(folderNameDeps, folderNameMessage)
 	depsMetaData  = filepath.Join(folderNameDeps, "metadata")
 	depsPaths     = filepath.Join(folderNameDeps, "paths")
 	depsThread    = filepath.Join(folderNameDeps, folderNameThread)

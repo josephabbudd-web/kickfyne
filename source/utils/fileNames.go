@@ -20,7 +20,7 @@ const (
 	ComponentsFileName  = "components.go"
 	KeepFileName        = ".gitkeep"
 	IDsFileName         = "ids.go"
-	StartupFileName     = "startup.go"
+	PresetsFileName     = "presets.go"
 
 	ralativeFilePathSuffix = ":1:1"
 )

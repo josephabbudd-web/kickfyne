@@ -11,14 +11,14 @@ This is my personal project and is not in any way a part of any of the [the Fyne
 
 I started this years ago and then stopped while fyne made some critical changes. Now that those are made I'm back to having fun with fyne.
 
-## October 4, 2025
+## October 7, 2025
 
 This is a work in progress. I'm building an application with kickfyne and making changes to kickfyne according to what I learn building the application.
 
-The main menu is more useful. Each unique menuitem in the main menu can open the same screen. That is because each menu item has it's own:
+The main menu is more flexible. Each unique menuitem in the main menu can open the same screen to display different content.
 
-* menu label,
-* preset setting to initialize the screen with.
+Additional changes regarding presets.
+Fixed a bug in panel state func Set.
 
 ## To do
 
@@ -90,7 +90,7 @@ The AppTabs tabbar layout uses tabs that the user can not close.
 The API allows you the developer, to open (add) and close (remove) tabs.
 
 An AppTabs screen lays out an AppTabs tab bar.
-The screen is named ContactsAT and the tabs are Add Edit and Remove.
+The screen is named ContactsAT and the tabs are Add, Edit and Remove.
 
 In the command line
  * The tab named Add will gets it's content from it's own Add panel.
@@ -207,8 +207,18 @@ A panel has it's own folder where there are 2 files.
 1. content.go lays out the content and handles user input.
 1. state.go manages the complexities of a changing state and can set state using a preset.
 
-## Presets are hard coded states.
+## Presets indicate how a screen should initialize itself.
 
-The presets are defined in the screen packages startup/startup.go
-They are required for the main menu as shown above.
-Each panel comes with a **Default** preset that sets the panel's heading and description.
+### Each screen package
+
+ * returns it's presets in func Presets() (presets map[string]any) in api.go.
+ * defines its presets in its presets/presets.go.
+
+### Each screen preset
+
+ * is identified by its name. The name for the default preset is **Default**.
+ * contains presets for each package panel.
+
+ ### AppTab, DocTab and Accordion screen packages
+
+ * also load the preset of each separate screen package that is used for content. In the example above those separate screens are **Edit** and **Remove**.

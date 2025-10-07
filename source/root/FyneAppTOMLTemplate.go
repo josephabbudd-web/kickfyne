@@ -21,4 +21,10 @@ Build = 1
 # Icon = Resource "Icon.png"
 # Release if true this binary was build in release mode
 Release = false
+
+# Development in this toml file = app.Metadata().Custom in golang.
+# All members must be a string.
+# Invalid: MyBool = false
+# Valid:   MyBool = "false"
+[Development]
 `

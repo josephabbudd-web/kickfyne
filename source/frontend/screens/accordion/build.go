@@ -7,7 +7,7 @@ import (
 
 	_panels_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/panels"
 	_panel_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/panels/panel"
-	_startup_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/startup"
+	_presets_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/presets"
 
 	_accordionitems_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/deps/accordionItems"
 	_layout_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/deps/layout"
@@ -35,11 +35,11 @@ func Build(
 	}()
 
 	defaultPanelName := localPanelNames[0]
-	allStartupPanels := make([]_startup_.Panel, len(rawPanelNames))
+	allStartupPanels := make([]_presets_.Panel, len(rawPanelNames))
 	allAPIPanels := make([]apiPanel, len(rawPanelNames))
 	for i, name := range rawPanelNames {
 		if name[:1] == "*" {
-			allStartupPanels[i] = _startup_.Panel{
+			allStartupPanels[i] = _presets_.Panel{
 				Name:    name[1:],
 				IsLocal: false,
 			}
@@ -48,7 +48,7 @@ func Build(
 				IsLocal: false,
 			}
 		} else {
-			allStartupPanels[i] = _startup_.Panel{
+			allStartupPanels[i] = _presets_.Panel{
 				Name:    name,
 				IsLocal: true,
 			}
@@ -85,8 +85,8 @@ func Build(
 		return
 	}
 
-	// frontend/screens/simple/«screen-package-name»/startup
-	packageStartupPath := filepath.Join(packagePath, _utils_.FolderNameStartup)
+	// frontend/screens/simple/«screen-package-name»/presets
+	packageStartupPath := filepath.Join(packagePath, _utils_.FolderNamePresets)
 	if err = os.Mkdir(packageStartupPath, _utils_.DMode); err != nil {
 		return
 	}
@@ -181,16 +181,16 @@ func Build(
 		return
 	}
 
-	// frontend/screens/simple/«screen-package-name»/startup/startup.go
-	fPath = filepath.Join(packageStartupPath, _utils_.StartupFileName)
-	data = &_startup_.StartupTemplateData{
+	// frontend/screens/simple/«screen-package-name»/presets/presets.go
+	fPath = filepath.Join(packageStartupPath, _utils_.PresetsFileName)
+	data = &_presets_.PresetsTemplateData{
 		ImportPrefix:     importPrefix,
 		AllPanels:        allStartupPanels,
 		LocalPanelNames:  localPanelNames,
 		RemotePanelNames: remotePanelNames,
 		Funcs:            funcs,
 	}
-	if err = _utils_.ProcessTemplate(_utils_.StartupFileName, fPath, _startup_.StartupTemplate, data); err != nil {
+	if err = _utils_.ProcessTemplate(_utils_.PresetsFileName, fPath, _presets_.PresetsTemplate, data); err != nil {
 		return
 	}
 

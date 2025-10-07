@@ -30,7 +30,7 @@ import (
 
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_panels_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels"
-	_startup_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/startup"
+	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
 
 	_layout_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/layout"
 	_panelers_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/panelers"
@@ -40,15 +40,15 @@ import (
 	_thread_ "{{ .ImportPrefix }}/deps/thread"
 )
 
-type InitData  _startup_.ScreenInitData
-func NewInitData() (initData *_startup_.ScreenInitData) {
-	initData = _startup_.NewScreenInitData()
+type InitData  _presets_.ScreenInitData
+func NewInitData() (initData *_presets_.ScreenInitData) {
+	initData = _presets_.NewScreenInitData()
 	return
 }
 
 func Presets() (presets map[string]any) {
 	presets = make(map[string]any)
-	for k, v := range _startup_.Presets {
+	for k, v := range _presets_.Presets {
 		presets[k] = v
 	}
 	return
@@ -81,10 +81,10 @@ func NewWindowContentConsumer(
 	}()
 
 	if startupData == nil {
-		startupData = _startup_.DefaultScreenInitData()
+		startupData = _presets_.DefaultScreenInitData()
 	}
 	switch startupData := startupData.(type) {
-	case *_startup_.ScreenInitData:
+	case *_presets_.ScreenInitData:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:Window:%d", nextScreenCount())
 		// Consumer.
@@ -101,7 +101,7 @@ func NewWindowContentConsumer(
 		packageScreen.Panelers.DefaultPanel.Show(isMainThread)
 		packageScreen.Layout.Producer().Refresh(isMainThread)
 	default:
-		err = errors.New("startupData is not a *_startup_.ScreenInitData")
+		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -128,10 +128,10 @@ func NewAppTabsTabItemContentConsumer(
 	}()
 
 	if startupData == nil {
-		startupData = _startup_.DefaultScreenInitData()
+		startupData = _presets_.DefaultScreenInitData()
 	}
 	switch startupData := startupData.(type) {
-	case *_startup_.ScreenInitData:
+	case *_presets_.ScreenInitData:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:AppTabsTabItem:%d", nextScreenCount())
 		// Consumer.
@@ -148,7 +148,7 @@ func NewAppTabsTabItemContentConsumer(
 		packageScreen.Panelers.DefaultPanel.Show(isMainThread)
 		packageScreen.Layout.Producer().Refresh(isMainThread)
 	default:
-		err = errors.New("startupData is not a *_startup_.ScreenInitData")
+		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -175,10 +175,10 @@ func NewDocTabsTabItemContentConsumer(
 	}()
 
 	if startupData == nil {
-		startupData = _startup_.DefaultScreenInitData()
+		startupData = _presets_.DefaultScreenInitData()
 	}
 	switch startupData := startupData.(type) {
-	case *_startup_.ScreenInitData:
+	case *_presets_.ScreenInitData:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:DocTabsTabItem:%d", nextScreenCount())
 		// Consumer.
@@ -195,7 +195,7 @@ func NewDocTabsTabItemContentConsumer(
 		packageScreen.Panelers.DefaultPanel.Show(isMainThread)
 		packageScreen.Layout.Producer().Refresh(isMainThread)
 	default:
-		err = errors.New("startupData is not a *_startup_.ScreenInitData")
+		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -222,10 +222,10 @@ func NewAccordionItemContentConsumer(
 	}()
 
 	if startupData == nil {
-		startupData = _startup_.DefaultScreenInitData()
+		startupData = _presets_.DefaultScreenInitData()
 	}
 	switch startupData := startupData.(type) {
-	case *_startup_.ScreenInitData:
+	case *_presets_.ScreenInitData:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:AccordionItem:%d", nextScreenCount())
 		// Consumer.
@@ -242,7 +242,7 @@ func NewAccordionItemContentConsumer(
 		packageScreen.Panelers.DefaultPanel.Show(isMainThread)
 		packageScreen.Layout.Producer().Refresh(isMainThread)
 	default:
-		err = errors.New("startupData is not a *_startup_.ScreenInitData")
+		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 	return
 }
@@ -252,7 +252,7 @@ func newScreen(
 	app fyne.App, window fyne.Window,
 	consumer _types_.ContentConsumer,
 	id string,
-	startupData *_startup_.ScreenInitData,
+	startupData *_presets_.ScreenInitData,
 ) (screen *_misc_.Miscellaneous, err error) {
 	// Build the content & producer.
 	producer := _producer_.NewContentProducer(consumer)

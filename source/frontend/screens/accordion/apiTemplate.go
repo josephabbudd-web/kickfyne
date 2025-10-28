@@ -9,14 +9,9 @@ type apiPanel struct {
 	IsLocal bool
 }
 type aPITemplateData struct {
-	PackageName      string
-	AllPanels        []apiPanel
-	AllPanelNames    []string
-	LocalPanelNames  []string
-	RemotePanelNames []string
-	DefaultPanelName string
-	ImportPrefix     string
-	Funcs            _utils_.Funcs
+	PackageName  string
+	ImportPrefix string
+	Funcs        _utils_.Funcs
 }
 
 const (
@@ -28,60 +23,25 @@ package {{ call .Funcs.LowerCase .PackageName }}
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 
-	_accordionitems_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/accordionitems"
 	_layout_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/layout"
-	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_producer_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/producer"
-	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
+	_layoutaccordionitems_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/layoutAccordionItems"
+	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
+	_presetting_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presetting"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
-	_ids_ "{{ .ImportPrefix }}/deps/container/{{ .PackageName }}"
 )
-
-type InitData  _presets_.ScreenInitData
-func NewInitData() (initData *_presets_.ScreenInitData) {
-	initData = _presets_.NewScreenInitData()
-	return
-}
-
-func Presets() (presets map[string]any) {
-	presets = make(map[string]any)
-	for k, v := range _presets_.Presets {
-		presets[k] = v
-	}
-	return
-}
 
 var screenCount uint = 0
 func nextScreenCount() (count uint) {
 	count = screenCount
 	screenCount++
 	return
-}
-
-type InitializeScreenData struct {
-{{- range $panelName := .LocalPanelNames }}
-
-	// Initialize data for the {{ $panelName }} tab which uses the {{ $panelName }}Panel for content.
-	{{ $panelName }}TabLabel string
-	{{ $panelName }}TabIcon fyne.Resource
-	{{ $panelName }}Heading string
-	{{ $panelName }}Description string
-{{- end }}
-
-{{- range $panelName := .RemotePanelNames }}
-
-	// Initialize data for the {{ $panelName }} tab which uses the {{ $panelName }} screen for content.
-	// This datum should be the key or id that tells the {{ $panelName }} screen what to load into it's panel's.
-	// Example: IRC Server & Channel.
-	// Example: IRC UserName
-{{- end }}
 }
 
 // NewWindowContentConsumer constructs a new screen and returns a window content consumer of the screen's content.
@@ -91,7 +51,7 @@ func NewWindowContentConsumer(
 	app fyne.App,
 	window fyne.Window,
 	isInMainMenu bool,
-	startupData any,
+	preset any,
 ) (
 	windowContentConsumer *_types_.WindowContentConsumer,
 	screenID string,
@@ -100,15 +60,11 @@ func NewWindowContentConsumer(
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("{{ .PackageName }}.NewWindowContentConsumer: %w", err)
-			_ids_.RemoveAccordion(screenID)
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:Window:%d", nextScreenCount())
 		// Consumer.
@@ -118,12 +74,8 @@ func NewWindowContentConsumer(
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, windowContentConsumer, screenID); err != nil {
 			return
 		}
-		// Update deps.
-		_ids_.AddAccordion(packageScreen.ScreenID)
 		// Get the screen's initializer.
-		err = setInitialAccordionItems(packageScreen, startupData)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
+		err = _layoutaccordionitems_.LayoutAccordionItems(packageScreen, preset)
 	}
 
 	return
@@ -137,7 +89,7 @@ func NewAccordionItemContentConsumer(
 	window fyne.Window,
 	accordion *widget.Accordion,
 	accordionItem *widget.AccordionItem,
-	startupData any,
+	preset any,
 ) (
 	accordionItemContentConsumer *_types_.AccordionItemContentConsumer,
 	screenID string, // id for the caller's accordionItem that this screen is content for.	
@@ -146,15 +98,11 @@ func NewAccordionItemContentConsumer(
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("{{ .PackageName }}.NewAccordionItemContentConsumer: %w", err)
-			_ids_.RemoveAccordion(screenID)
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:AccordionItem:%d", nextScreenCount())
 		// Consumer.
@@ -164,12 +112,8 @@ func NewAccordionItemContentConsumer(
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, accordionItemContentConsumer, screenID); err != nil {
 			return
 		}
-		// Update deps.
-		_ids_.AddAccordion(packageScreen.ScreenID)
 		// Get the screen's initializer.
-		err = setInitialAccordionItems(packageScreen, startupData)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
+		err = _layoutaccordionitems_.LayoutAccordionItems(packageScreen, preset)
 	}
 
 	return
@@ -183,7 +127,7 @@ func NewAppTabsTabItemContentConsumer(
 	window fyne.Window,
 	appTabs *container.AppTabs,
 	tabItem *container.TabItem,
-	startupData any,
+	preset any,
 ) (
 	appTabsTabItemContentConsumer *_types_.AppTabsTabItemContentConsumer,
 	screenID string, // id for the caller's appTabsItem that this screen is content for.	
@@ -192,15 +136,11 @@ func NewAppTabsTabItemContentConsumer(
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("{{ .PackageName }}.NewTabItemContentConsumer: %w", err)
-			_ids_.RemoveAccordion(screenID)
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-		case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:TabItem:%d", nextScreenCount())
 		// Consumer.
@@ -210,12 +150,8 @@ func NewAppTabsTabItemContentConsumer(
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, appTabsTabItemContentConsumer, screenID); err != nil {
 			return
 		}
-		// Update deps.
-		_ids_.AddAccordion(packageScreen.ScreenID)
 		// Get the screen's initializer.
-		err = setInitialAccordionItems(packageScreen, startupData)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
+		err = _layoutaccordionitems_.LayoutAccordionItems(packageScreen, preset)
 	}
 
 	return
@@ -229,7 +165,7 @@ func NewDocTabsTabItemContentConsumer(
 	window fyne.Window,
 	docTabs *container.DocTabs,
 	tabItem *container.TabItem,
-	startupData any,
+	preset any,
 ) (
 	docTabsTabItemContentConsumer *_types_.DocTabsTabItemContentConsumer,
 	screenID string, // id for the caller's docTabsItem that this screen is content for.	
@@ -238,15 +174,11 @@ func NewDocTabsTabItemContentConsumer(
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("{{ .PackageName }}.NewTabItemContentConsumer: %w", err)
-			_ids_.RemoveAccordion(screenID)
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:TabItem:%d", nextScreenCount())
 		// Consumer.
@@ -256,12 +188,8 @@ func NewDocTabsTabItemContentConsumer(
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, docTabsTabItemContentConsumer, screenID); err != nil {
 			return
 		}
-		// Update deps.
-		_ids_.AddAccordion(packageScreen.ScreenID)
 		// Get the screen's initializer.
-		err = setInitialAccordionItems(packageScreen, startupData)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
+		err = _layoutaccordionitems_.LayoutAccordionItems(packageScreen, preset)
 	}
 
 	return
@@ -285,21 +213,6 @@ func buildLayout(
 	if screen, err = _misc_.NewMiscellaneous(ctx, ctxCancel, app, window, layout, screenID); err != nil {
 		return
 	}
-	return
-}
-
-func setInitialAccordionItems(screen *_misc_.Miscellaneous, startupData *_presets_.ScreenInitData) (err error) {
-{{- range $panel := .AllPanels}}
- {{- if $panel.IsLocal }}
-	if err = _accordionitems_.Open{{ $panel.Name }}AccordionItem(screen, startupData.{{ $panel.Name }}Panel.AccordionItemTitle, startupData.{{ $panel.Name }}Panel); err != nil {
-		return
-	}
- {{- else }}
-	if err = _accordionitems_.Open{{ $panel.Name }}AccordionItem(screen, startupData.{{ $panel.Name }}Screen.AccordionItemTitle, startupData.{{ $panel.Name }}Screen.ScreenInitData); err != nil {
-		return
-	}
- {{- end }}
-{{- end }}
 	return
 }
 `

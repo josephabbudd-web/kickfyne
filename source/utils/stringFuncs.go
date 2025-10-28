@@ -98,83 +98,32 @@ func LabelToName(label string) (name string) {
 	return
 }
 
-// validateMessageName returns if the message name is valid.
+// ValidatePascalCase returns if the name is valid.
 // userMessage contains the error message for the user.
 // Param name is the user created name.
-func validateMessageName(name string) (isValid bool, userMessage string) {
-	isValid, userMessage = validateCamelCaseName(name, "message")
-	return
-}
-
-// validateRecordName returns if the record name is valid.
-// userMessage contains the error message for the user.
-// Param name is the user created name.
-func validateRecordName(name string) (isValid bool, userMessage string) {
-	isValid, userMessage = validateCamelCaseName(name, "record")
-	return
-}
-
-// validateScreenPanelName returns if the screen panel name is valid.
-// userMessage contains the error message for the user.
-// Param name is the user created name.
-func validateScreenPanelName(name string) (isValid bool, userMessage string) {
-	isValid, userMessage = validateCamelCaseName(name, "panel")
-	return
-}
-
-// validateScreenTabName returns if the screen tab name is valid.
-// userMessage contains the error message for the user.
-// Param name is the user created name.
-func validateScreenTabName(name string) (isValid bool, userMessage string) {
-	isValid, userMessage = validateCamelCaseName(name, "tab")
-	return
-}
-
-// validateScreenAccordionItemName returns if the screen accordionItem name is valid.
-// userMessage contains the error message for the user.
-// Param name is the user created name.
-func validateScreenAccordionItemName(name string) (isValid bool, userMessage string) {
-	isValid, userMessage = validateCamelCaseName(name, "accordionItem")
-	return
-}
-
-// validateScreenName returns if the screen name is valid.
-// userMessage contains the error message for the user.
-// Param name is the user created name.
-func validateScreenName(name string) (isValid bool, userMessage string) {
-	isValid, userMessage = validateCamelCaseName(name, "screen")
-	return
-}
-
-// validateCamelCaseName returns if the name is valid.
-// userMessage contains the error message for the user.
-// Param name is the user created name.
-// Param nameType is what the name is created for. ("record", "panel")
-func validateCamelCaseName(name, nameType string) (isValid bool, userMessage string) {
+// Param nameType is what the name is created for. ("screen", "panel", "tabItem", "accordionItem")
+func ValidatePascalCase(name, nameType string) (isValid bool, userMessage string) {
 
 	defer func() {
 		if !isValid {
-			userMessage = fmt.Sprintf("The %s name %q must be TitleCase.", nameType, name)
+			userMessage = fmt.Sprintf("The %s name %q must be PascalCase.", nameType, name)
 		}
 	}()
 
-	// First char must be upper case.
+	// First char must be upper case letter.
 	s := name[:1]
-	if s != strings.ToUpper(s) {
-		isValid = false
-		return
-	}
+	isValid = (strings.IndexAny(s, digits) != 0) && (s == strings.ToUpper(s))
 	// Letters only
-	isValid = false
-	for _, c := range name {
-		isValid = strings.ContainsRune(ucAlphabet, c)
-		if !isValid {
-			isValid = strings.ContainsRune(lcAlphabet, c)
-		}
-		if !isValid {
-			return
-		}
-	}
+	// isValid = false
+	// for _, c := range name {
+	// 	isValid = strings.ContainsRune(ucAlphabet, c)
+	// 	if !isValid {
+	// 		isValid = strings.ContainsRune(lcAlphabet, c)
+	// 	}
+	// 	if !isValid {
+	// 		return
+	// 	}
+	// }
 	return
 }
 

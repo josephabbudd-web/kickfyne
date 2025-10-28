@@ -32,7 +32,7 @@ func ValidateAccordionItemNames(
 			cleanAccordionItemName = accordionItemName
 		}
 		// Valid. Not title case.
-		if isValid, failureMessage = validateScreenAccordionItemName(cleanAccordionItemName); !isValid {
+		if isValid, failureMessage = ValidatePascalCase(cleanAccordionItemName, "accordionItem"); !isValid {
 			failureMessages = append(failureMessages, failureMessage)
 		}
 		cleanAccordionItemNames = append(cleanAccordionItemNames, cleanAccordionItemName)

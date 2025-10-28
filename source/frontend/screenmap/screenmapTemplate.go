@@ -27,7 +27,7 @@ type API struct {
 		app fyne.App,
 		w fyne.Window,
 		isInMainMenu bool,
-		screenInitData any,
+		screenPreset any,
 	) (
 		windowContentConsumer *_types_.WindowContentConsumer,
 		screenID string,
@@ -41,7 +41,7 @@ type API struct {
 		w fyne.Window,
 		tabbar *container.AppTabs,
 		tabItem *container.TabItem,
-		screenInitData any,
+		screenPreset any,
 	) (
 		appTabsTabItemContentConsumer *_types_.AppTabsTabItemContentConsumer,
 		screenID string, // id for the caller's appTabsItem that this screen is content for.
@@ -55,7 +55,7 @@ type API struct {
 		w fyne.Window,
 		tabbar *container.DocTabs,
 		tabItem *container.TabItem,
-		screenInitData any,
+		screenPreset any,
 	) (
 		docTabsTabItemContentConsumer *_types_.DocTabsTabItemContentConsumer,
 		screenID string, // id for the caller's docTabsItem that this screen is content for.	
@@ -69,7 +69,7 @@ type API struct {
 		w fyne.Window,
 		accordion *widget.Accordion,
 		accordionItem *widget.AccordionItem,
-		screenInitData any,
+		screenPreset any,
 	) (
 		accordionItemContentConsumer *_types_.AccordionItemContentConsumer,
 		screenID string, // id for the caller's accordionItem that this screen is content for.	

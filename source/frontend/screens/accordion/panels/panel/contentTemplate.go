@@ -4,7 +4,7 @@ import (
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-type ContentTemplateData struct {
+type TemplateData struct {
 	PackageName     string
 	PanelName       string
 	LocalPanelNames []string

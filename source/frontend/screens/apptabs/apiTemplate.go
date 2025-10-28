@@ -1,32 +1,24 @@
-package simple
+package apptabs
 
 import (
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-type aPIPanel struct {
-	Name    string
-	IsLocal bool
-}
-type aPITemplateData struct {
-	PackageName      string
-	AllPanels        []aPIPanel
-	AllPanelNames    []string
-	DefaultPanelName string
-	ImportPrefix     string
-	Funcs            _utils_.Funcs
+type apiTemplateData struct {
+	PackageName  string
+	ImportPrefix string
+	Funcs        _utils_.Funcs
 }
 
 const (
-	// aPIFileName = _utils_.ScreenFileName
-	aPIFileName = _utils_.APIFileName
+	// apiFileName = _utils_.ScreenFileName
+	apiFileName = _utils_.APIFileName
 
-	aPINoBETemplate = `{{ $DOT := . -}}
+	apiNoBETemplate = `{{ $DOT := . -}}
 package {{ call .Funcs.LowerCase .PackageName }}
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"fyne.io/fyne/v2"
@@ -35,28 +27,11 @@ import (
 
 	_layout_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/layout"
 	_producer_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/producer"
-	_tabs_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/tabs"
-
+	_layouttabitems_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/layoutTabItems"
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
-	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
-
+	_presetting_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presetting"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
-	_ids_ "{{ .ImportPrefix }}/deps/container/{{ .PackageName }}"
 )
-
-type InitData  _presets_.ScreenInitData
-func NewInitData() (initData *_presets_.ScreenInitData) {
-	initData = _presets_.NewScreenInitData()
-	return
-}
-
-func Presets() (presets map[string]any) {
-	presets = make(map[string]any)
-	for k, v := range _presets_.Presets {
-		presets[k] = v
-	}
-	return
-}
 
 var screenCount uint = 0
 func nextScreenCount() (count uint) {
@@ -72,7 +47,7 @@ func NewWindowContentConsumer(
 	app fyne.App,
 	window fyne.Window,
 	isInMainMenu bool,
-	startupData any,
+	preset any,
 ) (
 	windowContentConsumer *_types_.WindowContentConsumer,
 	screenID string,
@@ -81,15 +56,11 @@ func NewWindowContentConsumer(
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("{{ .PackageName }}.NewWindowContentConsumer: %w", err)
-			_ids_.RemoveTabbar(screenID)
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:Window:%d", nextScreenCount())
 		// Consumer.
@@ -99,12 +70,8 @@ func NewWindowContentConsumer(
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, windowContentConsumer, screenID); err != nil {
 			return
 		}
-		// Update deps.
-		_ids_.AddTabbar(packageScreen.ScreenID)
 		// Get the screen's initializer.
-		err = setInitialTabItems(packageScreen, startupData)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
+		err = _layouttabitems_.LayoutTabItems(packageScreen, preset)
 	}
 
 	return
@@ -118,7 +85,7 @@ func NewAppTabsTabItemContentConsumer(
 	window fyne.Window,
 	appTabs *container.AppTabs,
 	tabItem *container.TabItem,
-	startupData any,
+	preset any,
 ) (
 	appTabsTabItemContentConsumer *_types_.AppTabsTabItemContentConsumer,
 	screenID string, // id for the caller's appTabsItem that this screen is content for.	
@@ -127,15 +94,11 @@ func NewAppTabsTabItemContentConsumer(
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("{{ .PackageName }}.NewTabItemContentConsumer: %w", err)
-			_ids_.RemoveTabbar(screenID)
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:TabItem:%d", nextScreenCount())
 		// Consumer.
@@ -145,12 +108,8 @@ func NewAppTabsTabItemContentConsumer(
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, appTabsTabItemContentConsumer, screenID); err != nil {
 			return
 		}
-		// Update deps.
-		_ids_.AddTabbar(packageScreen.ScreenID)
 		// Get the screen's initializer.
-		err = setInitialTabItems(packageScreen, startupData)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
+		err = _layouttabitems_.LayoutTabItems(packageScreen, preset)
 	}
 
 	return
@@ -164,7 +123,7 @@ func NewDocTabsTabItemContentConsumer(
 	window fyne.Window,
 	docTabs *container.DocTabs,
 	tabItem *container.TabItem,
-	startupData any,
+	preset any,
 ) (
 	docTabsTabItemContentConsumer *_types_.DocTabsTabItemContentConsumer,
 	screenID string, // id for the caller's docTabsItem that this screen is content for.	
@@ -173,15 +132,11 @@ func NewDocTabsTabItemContentConsumer(
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("{{ .PackageName }}.NewTabItemContentConsumer: %w", err)
-			_ids_.RemoveTabbar(screenID)
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:TabItem:%d", nextScreenCount())
 		// Consumer.
@@ -191,12 +146,8 @@ func NewDocTabsTabItemContentConsumer(
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, docTabsTabItemContentConsumer, screenID); err != nil {
 			return
 		}
-		// Update deps.
-		_ids_.AddTabbar(packageScreen.ScreenID)
 		// Get the screen's initializer.
-		err = setInitialTabItems(packageScreen, startupData)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
+		err = _layouttabitems_.LayoutTabItems(packageScreen, preset)
 	}
 
 	return
@@ -210,7 +161,7 @@ func NewAccordionItemContentConsumer(
 	window fyne.Window,
 	accordion *widget.Accordion,
 	accordionItem *widget.AccordionItem,
-	startupData any,
+	preset any,
 ) (
 	accordionItemContentConsumer *_types_.AccordionItemContentConsumer,
 	screenID string, // id for the caller's accordionItem that this screen is content for.	
@@ -219,15 +170,11 @@ func NewAccordionItemContentConsumer(
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("{{ .PackageName }}.NewAccordionItemContentConsumer: %w", err)
-			_ids_.RemoveTabbar(screenID)
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:AccordionItem:%d", nextScreenCount())
 		// Consumer.
@@ -237,12 +184,8 @@ func NewAccordionItemContentConsumer(
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, accordionItemContentConsumer, screenID); err != nil {
 			return
 		}
-		// Update deps.
-		_ids_.AddTabbar(packageScreen.ScreenID)
 		// Get the screen's initializer.
-		err = setInitialTabItems(packageScreen, startupData)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
+		err = _layouttabitems_.LayoutTabItems(packageScreen, preset)
 	}
 
 	return
@@ -266,21 +209,8 @@ func buildLayout(
 	if screen, err = _misc_.NewMiscellaneous(ctx, ctxCancel, app, window, layout, screenID); err != nil {
 		return
 	}
-	return
-}
-
-func setInitialTabItems(screen *_misc_.Miscellaneous, startupData *_presets_.ScreenInitData) (err error) {
-{{ range $panel := .AllPanels }}
- {{ if $panel.IsLocal }}
-	if err = _tabs_.Open{{ $panel.Name }}Tab(screen, startupData.{{ $panel.Name }}Panel.TabItemIcon, startupData.{{ $panel.Name }}Panel.TabItemLabel, startupData.{{ $panel.Name }}Panel); err != nil {
-		return
-	}
- {{- else }}
-	if err = _tabs_.Open{{ $panel.Name }}Tab(screen, startupData.{{ $panel.Name }}Screen.TabItemIcon, startupData.{{ $panel.Name }}Screen.TabItemLabel, startupData.{{ $panel.Name }}Screen.ScreenInitData); err != nil {
-		return
-	}
- {{- end }}
-{{- end }}
+	// Set the tab open, close, selected, unselected handlers.
+	setTabItemHandlers(layout)
 	return
 }
 `

@@ -1,16 +1,9 @@
 package misc
 
-import (
-	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
-)
-
 type LayoutTemplateData struct {
-	PackageName      string
-	AllPanelNames    []string
-	LocalPanelNames  []string
-	RemotePanelNames []string
-	ImportPrefix     string
-	Funcs            _utils_.Funcs
+	PackageName  string
+	ImportPrefix string
+	UseConfigTab bool
 }
 
 const (
@@ -23,7 +16,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-
 
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 	_thread_ "{{ .ImportPrefix }}/deps/thread"
@@ -38,6 +30,10 @@ type Layout struct {
 	tabItemPaneler         map[*container.TabItem]_types_.Paneler
 	panelIDPaneler         map[string]_types_.Paneler
 	panelIDTabItem         map[string]*container.TabItem
+{{- if .UseConfigTab }}
+	lastTabItem            *container.TabItem
+	configurationTabItem   *container.TabItem
+{{- end }}
 }
 
 // NewLayout constructs this layout.
@@ -60,9 +56,55 @@ func NewLayout(tabbarConsumer _types_.ContentConsumer, tabItemContentProducer _t
 		panelIDTabItem:         make(map[string]*container.TabItem),
 	}
 	tabItemContentProducer.SetCanvasObject(layout.appTabs)
+	layout.SetTabItemHandlers(nil, nil)
 
 	return
 }
+
+// SetTabItemHandlers sets each item handler.
+func (layout *Layout) SetTabItemHandlers(
+	callBackOnSelected func(*container.TabItem),
+	callBackOnUnselected func(*container.TabItem),
+) {
+	// OnSelected.
+	layout.appTabs.OnSelected = callBackOnSelected
+	// OnUnselected.
+	layout.appTabs.OnUnselected = func(tabItem *container.TabItem) {
+{{- if .UseConfigTab }}
+		layout.lastTabItem = tabItem
+{{- end }}
+		if callBackOnUnselected != nil {
+			callBackOnUnselected(tabItem)
+		}
+	}
+
+}
+
+{{- if .UseConfigTab }}
+
+func (layout *Layout) Back() {
+	if layout.lastTabItem != nil {
+		layout.appTabs.Select(layout.lastTabItem)
+		layout.lastTabItem = nil
+		return
+	}
+	for _, tabItem := range layout.appTabs.Items {
+		if tabItem == layout.configurationTabItem {
+			continue
+		}
+		if tabItem.Disabled() {
+			continue
+		}
+		layout.appTabs.Select(tabItem)
+		return
+	}
+}
+
+func (layout *Layout) AddConfigurationTabItemConsumer(paneler _types_.Paneler, tabItem *container.TabItem, consumer *_types_.AppTabsTabItemContentConsumer) {
+	layout.AddPanelerTabItemConsumer(paneler, tabItem, consumer)
+	layout.configurationTabItem = tabItem
+}
+{{- end }}
 
 func (layout *Layout) TabbarConsumer() (tabbarConsumer _types_.ContentConsumer) {
 	tabbarConsumer = layout.tabbarConsumer
@@ -119,6 +161,15 @@ func (layout *Layout) RemoveID(removeID string) {
 		return
 	}
 	tabItem = layout.panelIDTabItem[removeID]
+{{- if .UseConfigTab }}
+	if tabItem == layout.configurationTabItem {
+		// Can't remove the configuration tab.
+		return
+	}
+	if tabItem == layout.lastTabItem {
+		layout.lastTabItem = nil
+	}
+{{- end }}
 	layout.appTabs.Remove(tabItem)
 	paneler.UnBindCleanUP()
 	delete(layout.tabItemPaneler, tabItem)

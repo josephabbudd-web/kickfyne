@@ -12,7 +12,7 @@ import (
 	_misc_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/simple/misc"
 	_panels_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/simple/panels"
 	_panel_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/simple/panels/panel"
-	_presets_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/simple/presets"
+	_presetting_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/simple/presetting"
 
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
@@ -54,9 +54,9 @@ func Build(
 		return
 	}
 
-	// frontend/screens/simple/«screen-package-name»/presets
-	packageStartupPath := filepath.Join(packagePath, _utils_.FolderNamePresets)
-	if err = os.Mkdir(packageStartupPath, _utils_.DMode); err != nil {
+	// frontend/screens/simple/«screen-package-name»/presetting
+	packagePresettingPath := filepath.Join(packagePath, _utils_.FolderNamePresetting)
+	if err = os.Mkdir(packagePresettingPath, _utils_.DMode); err != nil {
 		return
 	}
 
@@ -93,9 +93,11 @@ func Build(
 
 	// frontend/screens/simple/«screen-package-name»/doc.go
 	fPath = filepath.Join(packagePath, docFileName)
+	files := files(packageName, localPanelNames, folderPaths)
 	data = &docTemplateData{
 		PackageName: packageName,
 		PackageDoc:  packageDoc,
+		Files:       files,
 		Funcs:       funcs,
 	}
 	if err = _utils_.ProcessTemplate(docFileName, fPath, docTemplate, data); err != nil {
@@ -127,14 +129,20 @@ func Build(
 		return
 	}
 
-	// frontend/screens/simple/«screen-package-name»/presets/presets.go
-	fPath = filepath.Join(packageStartupPath, _utils_.PresetsFileName)
-	data = &_presets_.PresetsTemplateData{
+	// frontend/screens/simple/«screen-package-name»/presetting folder.
+
+	data = &_presetting_.TemplateData{
+		PackageName:     packageName,
 		ImportPrefix:    importPrefix,
 		LocalPanelNames: localPanelNames,
 		Funcs:           funcs,
 	}
-	if err = _utils_.ProcessTemplate(_utils_.PresetsFileName, fPath, _presets_.PresetsTemplate, data); err != nil {
+	fPath = filepath.Join(packagePresettingPath, _utils_.APIFileName)
+	if err = _utils_.ProcessTemplate(_utils_.APIFileName, fPath, _presetting_.APITemplate, data); err != nil {
+		return
+	}
+	fPath = filepath.Join(packagePresettingPath, _utils_.DefaultPresetFileName)
+	if err = _utils_.ProcessTemplate(_utils_.DefaultPresetFileName, fPath, _presetting_.DefaultPresetTemplate, data); err != nil {
 		return
 	}
 
@@ -156,35 +164,33 @@ func Build(
 			return
 		}
 
-		// Panel sub folder holding content and state.
+		// Panel sub folder holding content.go, state.go and preset.go.
 		// frontend/screens/simple/«screen-package-name»/panels/«panel-name»Panel/
 		panelFolderName := panelName + "Panel"
 		panelFolderPath := filepath.Join(packagePanelsPath, panelFolderName)
 		if err = os.Mkdir(panelFolderPath, _utils_.DMode); err != nil {
 			return
 		}
-		// content.go
-		fileName = _panel_.ContentFileName
-		fPath = filepath.Join(panelFolderPath, fileName)
-		data = &_panel_.ContentTemplateData{
+		data = &_panel_.TemplateData{
 			PackageName:     packageName,
 			PanelName:       panelName,
 			LocalPanelNames: localPanelNames,
 			ImportPrefix:    importPrefix,
 			Funcs:           funcs,
 		}
-		if err = _utils_.ProcessTemplate(fileName, fPath, _panel_.ContentTemplate, data); err != nil {
+		// preset.go
+		fPath = filepath.Join(panelFolderPath, _utils_.PresetFileName)
+		if err = _utils_.ProcessTemplate(_utils_.PresetFileName, fPath, _panel_.PresetTemplate, data); err != nil {
+			return
+		}
+		// content.go
+		fPath = filepath.Join(panelFolderPath, _panel_.ContentFileName)
+		if err = _utils_.ProcessTemplate(_panel_.ContentFileName, fPath, _panel_.ContentTemplate, data); err != nil {
 			return
 		}
 		// state.go
-		fileName = _panel_.StateFileName
-		fPath = filepath.Join(panelFolderPath, fileName)
-		data = &_panel_.StateTemplateData{
-			PackageName:  packageName,
-			PanelName:    panelName,
-			ImportPrefix: importPrefix,
-		}
-		if err = _utils_.ProcessTemplate(fileName, fPath, _panel_.StateTemplate, data); err != nil {
+		fPath = filepath.Join(panelFolderPath, _panel_.StateFileName)
+		if err = _utils_.ProcessTemplate(_panel_.StateFileName, fPath, _panel_.StateTemplate, data); err != nil {
 			return
 		}
 	}

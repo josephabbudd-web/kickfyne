@@ -22,6 +22,7 @@ import (
 
 {{ range $screenName := .ScreenNames }}
 	_{{ $screenName }}_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $screenName }}"
+	_{{ $screenName }}presetting_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $screenName }}/presetting"
 {{- end }}
 )
 
@@ -45,7 +46,10 @@ func Start(ctx context.Context, ctxCancelFunc context.CancelFunc, app fyne.App, 
 
 	// Set the screen presets map.
 {{ range $screenName := .ScreenNames }}
-	_screenmap_.PresetsMap["{{ $screenName }}"] = _{{ $screenName }}_.Presets()
+	_screenmap_.PresetsMap["{{ $screenName }}"] = make(map[string]any)
+	for k, v := range _{{ $screenName }}presetting_.Presets {
+		_screenmap_.PresetsMap["{{ $screenName }}"][k] = v
+	}
 {{- end }}
 
 	// Initialize main menu.

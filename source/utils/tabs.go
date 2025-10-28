@@ -5,6 +5,10 @@ import (
 	"strings"
 )
 
+const (
+	ConfigTabName = "KickFyneConfiguration"
+)
+
 // ValidateTabNames validates each new tab name.
 func ValidateTabNames(
 	tabNames []string,
@@ -23,7 +27,7 @@ func ValidateTabNames(
 
 	var cleanTabNames = make([]string, 0, len(tabNames))
 
-	// Must be TitleCase.
+	// Must be PascalCase.
 	for _, tabName := range tabNames {
 		var cleanTabName string
 		if tabName[:1] == "*" {
@@ -31,11 +35,17 @@ func ValidateTabNames(
 		} else {
 			cleanTabName = tabName
 		}
-		// Valid. Not title case.
-		if isValid, failureMessage = validateScreenTabName(cleanTabName); !isValid {
-			failureMessages = append(failureMessages, failureMessage)
-		}
 		cleanTabNames = append(cleanTabNames, cleanTabName)
+		if cleanTabName == ConfigTabName {
+			isValid = false
+			failureMessages = append(failureMessages, fmt.Sprintf("%q is a framework tab name and must not be used.", cleanTabName))
+			continue
+		}
+		// Valid. Not title case.
+		if isValid, failureMessage = ValidatePascalCase(cleanTabName, "tab"); !isValid {
+			failureMessages = append(failureMessages, failureMessage)
+			continue
+		}
 	}
 	// Each tab name must be unique.
 	last := len(cleanTabNames) - 1

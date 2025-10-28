@@ -1,0 +1,87 @@
+ADDING OR REMOVING SCREEN ITEMS:
+
+Must not be able to remove all screens.
+
+ADDING OR REMOVING A SCREEN:
+source/frontend/build.go
+if frontend/frontend.go exists then back it up to frontend/frontend_go.back
+write new frontend/frontend.go
+
+type FollowUpFunc func() (err error)
+
+type FollowUp struct {
+    successFuncs    FollowUpFunc
+    errorFuncs      FollowUpFunc
+    successMessages []string
+    errorMessage    []string
+}
+
+func New() (followup *FollowUp) {
+    followup = &FollowUp{
+        successFuncs:    make([]FollowUpFunc, 0, 20)
+        errorFuncs:      make([]FollowUpFunc, 0, 20)
+        successMessages: make([]string, 0, 20)
+        errorMessages:   make([]string, 0, 20)
+    }
+    return
+}
+
+func (followup *FollowUp) DoErrorFuncs() (followupErr error) {
+    followupErrs := make([]error, 0, 20)
+    defer func() {
+        if len(followupErrs) > 0 {
+            followupErr = errors.Join(followupErrs)
+        }
+    }()
+
+    for _, errorFunc := range followup.errorFuncs {
+        if err = errorFunc(); err != nil {
+            followupErr = append(followupErr, err)
+        }
+    }
+
+    return
+}
+
+func (followup *FollowUp) DoSuccessFuncs() (followupErr error) {
+    followupErrs := make([]error, 0, 20)
+    defer func() {
+        if len(followupErrs) > 0 {
+            followupErr = errors.Join(followupErrs)
+        }
+    }()
+
+    for _, successFunc := range followup.successFuncs {
+        if err = successFunc(); err != nil {
+            followupErr = append(followupErr, err)
+        }
+    }
+
+    return
+}
+
+func (followup *FollowUp) AddSuccessFunc(successFunc func()) {
+    followup.successFuncs = append(followup.successFuncs, successFunc)
+}
+
+func (followup *FollowUp) AddErrorFunc(errorFunc func()) {
+    followup.errorFuncs = append(followup.errorFuncs, errorFunc)
+}
+
+func (followup *FollowUp) AddSuccessMessage(message string) {
+    followup.successMessages = append(followup.successMessages, message)
+}
+
+func (followup *FollowUp) AddErrorMessage(message string) {
+    followup.errorMessages = append(followup.errorMessages, message)
+}
+
+func (followup *FollowUp) SuccessMessage() (message string) {
+    message = strings.Join(followup.successMessages, "\n")
+    return
+}
+
+func (followup *FollowUp) ErrorMessage() (message string) {
+    message = strings.Join(followup.errorMessages, "\n")
+    return
+}

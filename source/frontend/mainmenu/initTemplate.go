@@ -26,8 +26,8 @@ type validMainMenuItem struct {
 }
 
 var (
-	application        fyne.App
-	window             fyne.Window
+	application         fyne.App
+	window              fyne.Window
 	screenLabelConsumer = make(map[string]_types_.ContentConsumer)
 )
 
@@ -36,18 +36,23 @@ func Init(ctx context.Context, ctxCancelFunc context.CancelFunc, app fyne.App, w
 	// Setup.
 	application = app
 	window = w
-	var defaultScreen *_types_.WindowContentConsumer
 	valids := validateMainMenuItems()
 	menuItems := make([]*fyne.MenuItem, 0, len(valids))
+	var first *_types_.WindowContentConsumer
+	var opener *_types_.WindowContentConsumer
 	for i, valid := range valids {
 		var windowContentConsumer *_types_.WindowContentConsumer
 		var err error
 		api := _screenmap_.Map[valid.screen]
 		if windowContentConsumer, _, err = api.NewWindowContentConsumer(ctx, ctxCancelFunc, app, w, true, valid.preset); err == nil {
-			if i == 0 {
-				defaultScreen = windowContentConsumer
-			}
 			screenLabelConsumer[valid.label] = windowContentConsumer
+			if i == 0 {
+				first = windowContentConsumer
+			}
+			if valid.screen == openingScreen.screen && valid.preset == openingScreen.preset {
+				// This is also the opener.
+				opener = windowContentConsumer
+			}
 			item := fyne.NewMenuItem(
 				valid.label,
 				func() {
@@ -66,7 +71,32 @@ func Init(ctx context.Context, ctxCancelFunc context.CancelFunc, app fyne.App, w
 		func() { window.SetMainMenu(mainmenu) },
 	)
 	// Show the default screen.
-	defaultScreen.Show(true)
+	if opener == nil {
+		if opener = openingScreenWindowContentConsumer(ctx, ctxCancelFunc, app, w); opener == nil {
+			opener = first
+		}
+	}
+	opener.Show(true)
+}
+
+func openingScreenWindowContentConsumer(ctx context.Context, ctxCancelFunc context.CancelFunc, app fyne.App, w fyne.Window) (windowContentConsumer *_types_.WindowContentConsumer) {
+	var api *_screenmap_.API
+	if api = _screenmap_.Map[openingScreen.screen]; api == nil {
+		log.Printf("%q is not a valid openingScreen.screen in frontend/mainmenu/mainmenu.go.", openingScreen.screen)
+		return
+	}
+	var presets map[string]any
+	var preset any
+	presets = _screenmap_.PresetsMap[openingScreen.screen]
+	if preset = presets[openingScreen.preset]; preset == nil {
+		log.Printf("%q is not a valid openingScreen.preset in frontend/mainmenu/mainmenu.go.", openingScreen.preset)
+		return
+	}
+	var err error
+	if windowContentConsumer, _, err = api.NewWindowContentConsumer(ctx, ctxCancelFunc, app, w, true, preset); err != nil {
+		windowContentConsumer = nil
+	}
+	return
 }
 
 func validateMainMenuItems() (valids []validMainMenuItem) {

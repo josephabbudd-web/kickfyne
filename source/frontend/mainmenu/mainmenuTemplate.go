@@ -22,6 +22,13 @@ type mainMenuItem struct {
 	preset string
 }
 
+// openingScreen is the screen that will open the application.
+// If there is an error identifying the opening screen then the first working screen in mainMenuItems will be used.
+var openingScreen = mainMenuItem{
+		screen: "HelloWorld",
+		preset: "Default",
+}
+
 // The first mainMenuItem is also the opening screen.
 // The following items in mainMenuItems are ignored and logged without an error.
 //  - Repeated labels.

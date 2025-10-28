@@ -4,12 +4,6 @@ import (
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-type StateTemplateData struct {
-	PackageName  string
-	PanelName    string
-	ImportPrefix string
-}
-
 const (
 	StateFileName = _utils_.StateFileName
 
@@ -19,7 +13,6 @@ import (
 	"fyne.io/fyne/v2"
 
 	_thread_ "{{ .ImportPrefix }}/deps/thread"
-	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 )
 
@@ -27,7 +20,6 @@ import (
 // Panel and AccordionItem have the state id.
 type State struct {
 	id                 string
-	accordionItemLabel string
 	content            *Content
 }
 
@@ -46,13 +38,13 @@ func NewState(
 }
 
 // LoadStartupData is called by the panel's constructor.
-func (state *State) LoadStartupData(startupData any) {
-	switch startupData := startupData.(type) {
-	case *_presets_.{{ .PanelName }}PanelInitData:
+func (state *State) LoadStartupData(preset any) {
+	switch preset := preset.(type) {
+	case *Preset:
 		state.Set(
-			state.SetAccordionItemTitle(startupData.AccordionItemTitle),
-			state.SetHeading(startupData.Heading),
-			state.SetDescription(startupData.Description),
+			state.SetAccordionItemTitle(preset.AccordionItemTitle),
+			state.SetHeading(preset.Heading),
+			state.SetDescription(preset.Description),
 		)
 	}
 }
@@ -94,14 +86,14 @@ func (state *State) ID() (id string) {
 
 // AccordionItem label.
 func (state *State) SetAccordionItemTitle(label string) (setter _types_.StateSetter) {
-	state.accordionItemLabel = label
 	setter = func(isMainThread bool) (refreshCanvasObject bool) {
+		refreshCanvasObject = false
 		if isMainThread {
-			state.content.producer.SetLabel(state.accordionItemLabel)
+			state.content.producer.SetLabel(label)
 		} else {
 			fyne.Do(
 				func() {
-					state.content.producer.SetLabel(state.accordionItemLabel);
+					state.content.producer.SetLabel(label);
 				},
 			)
 		}
@@ -115,6 +107,7 @@ func (state *State) SetAccordionItemTitle(label string) (setter _types_.StateSet
 // SetHeading returns a _types_.Setter that sets the content's heading widget's text.
 func (state *State) SetHeading(heading string) (setter _types_.StateSetter) {
 	setter = func(isMainThread bool) (refreshCanvasObject bool) {
+		refreshCanvasObject = true
 		if isMainThread {
 			state.content.heading.Text = heading
 		} else {
@@ -124,7 +117,6 @@ func (state *State) SetHeading(heading string) (setter _types_.StateSetter) {
 				},
 			)
 		}
-		refreshCanvasObject = true
 		return
 	}
 	return
@@ -135,6 +127,7 @@ func (state *State) SetHeading(heading string) (setter _types_.StateSetter) {
 // SetDescription returns a _types_.Setter that sets the content's description widget's text.
 func (state *State) SetDescription(description string) (setter _types_.StateSetter) {
 	setter = func(isMainThread bool) (refreshCanvasObject bool) {
+		refreshCanvasObject = true
 		if isMainThread {
 			state.content.description.Text = description
 		} else {
@@ -144,10 +137,36 @@ func (state *State) SetDescription(description string) (setter _types_.StateSett
 				},
 			)
 		}
-		refreshCanvasObject = true
 		return
 	}
 	return
 }
+
+/* An example setter.
+	func SetMyContentMemberAndFyneWidget() (setter _types_.StateSetter) {
+		setWithLock := func() {
+			state.mutex.Lock()
+			defer state.mutex.Unlock()
+
+			// anyBoolMember is not a widget.
+			state.content.anyBoolMember = true
+		}
+		setFyne := func() {
+			// Fyne widgets.
+			state.content.heading.SetText(headingText)
+		}
+		setter = func(isMainThread bool) (refreshCanvasObject bool) {
+			refreshCanvasObject = true // The view is updated so refresh.
+			setWithLock()
+			if isMainThread {
+				setFyne()
+			} else {
+				fyne.DoAndWait(setFyne)
+			}
+			return
+		}
+		return
+	}
+*/
 `
 )

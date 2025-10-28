@@ -28,7 +28,7 @@ func PanelNames(screenPackageFolderPath string) (panelNames []string, err error)
 	return
 }
 
-// ValidateCurrentScreenPanelName validates a new panel name for a screenName.
+// ValidateCurrentScreenPanelName validates that panel names are PascalCase and unique.
 func ValidatePanelNames(
 	panelNames []string,
 ) (isValid bool, failureMessage string) {
@@ -44,10 +44,10 @@ func ValidatePanelNames(
 		}
 	}()
 
-	// Must be TitleCase.
+	// Must be PascalCase.
 	for _, panelName := range panelNames {
 		// Valid. Not title case.
-		if isValid, failureMessage = validateScreenPanelName(panelName); !isValid {
+		if isValid, failureMessage = ValidatePascalCase(panelName, "panel"); !isValid {
 			failureMessages = append(failureMessages, failureMessage)
 		}
 	}

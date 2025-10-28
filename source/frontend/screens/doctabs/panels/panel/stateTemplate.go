@@ -4,12 +4,6 @@ import (
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-type StateTemplateData struct {
-	PackageName  string
-	PanelName    string
-	ImportPrefix string
-}
-
 const (
 	StateFileName = _utils_.StateFileName
 
@@ -19,7 +13,6 @@ import (
 	"fyne.io/fyne/v2"
 
 	_thread_ "{{ .ImportPrefix }}/deps/thread"
-	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 )
 
@@ -47,12 +40,16 @@ func NewState(
 }
 
 // LoadStartupData is called by the panel's constructor.
-func (state *State) LoadStartupData(startupData *_presets_.{{ .PanelName }}PanelInitData) {
+func (state *State) LoadStartupData(preset *Preset) {
+	var icon fyne.Resource
+	if len(preset.TabItemIconName) > 0 {
+		icon = state.content.screen.APP.Settings().Theme().Icon(preset.TabItemIconName)
+	}
 	state.Set(
-		state.SetTabIcon(startupData.TabItemIcon),
-		state.SetTabLabel(startupData.TabItemLabel),
-		state.SetHeading(startupData.Heading),
-		state.SetDescription(startupData.Description),
+		state.SetTabIcon(icon),
+		state.SetTabLabel(preset.TabItemLabel),
+		state.SetHeading(preset.Heading),
+		state.SetDescription(preset.Description),
 	)
 }
 
@@ -162,5 +159,32 @@ func (state *State) SetDescription(description string) (setter _types_.StateSett
 	}
 	return
 }
+
+/* An example setter.
+	func SetMyContentMemberAndFyneWidget() (setter _types_.StateSetter) {
+		setWithLock := func() {
+			state.mutex.Lock()
+			defer state.mutex.Unlock()
+
+			// anyBoolMember is not a widget.
+			state.content.anyBoolMember = true
+		}
+		setFyne := func() {
+			// Fyne widgets.
+			state.content.heading.SetText(headingText)
+		}
+		setter = func(isMainThread bool) (refreshCanvasObject bool) {
+			refreshCanvasObject = true // The view is updated so refresh.
+			setWithLock()
+			if isMainThread {
+				setFyne()
+			} else {
+				fyne.DoAndWait(setFyne)
+			}
+			return
+		}
+		return
+	}
+*/
 `
 )

@@ -21,43 +21,56 @@ package accordionitems
 import (
 	"fyne.io/fyne/v2/widget"
 
+{{- range $i, $panelName := .LocalPanelNames }}
+ {{- if eq $i 0 }}
+
+	_{{ call $DOT.Funcs.LowerCase $panelName }}panel_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $DOT.PackageName }}/panels/{{ $panelName }}Panel"
+ {{- else }}
+	_{{ call $DOT.Funcs.LowerCase $panelName }}panel_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $DOT.PackageName }}/panels/{{ $panelName }}Panel"
+ {{- end }}
+{{- end }}
+
 {{ if ne (len .RemotePanelNames) 0 }}
 	_screenmap_ "{{ .ImportPrefix }}/frontend/screenmap"
 {{ end }}
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_panels_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels"
-	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
+	_presetting_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presetting"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
-	_ids_ "{{ .ImportPrefix }}/deps/container/{{ .PackageName }}"
-{{- range $i, $panelName := .RemotePanelNames }}
- {{- if eq $i 0 }}
-
-	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
- {{- else }}
-	_{{ call $DOT.Funcs.LowerCase $panelName }}startup_ "{{ $DOT.ImportPrefix }}/frontend/screens/{{ $panelName }}/presets"
- {{- end }}
-{{- end }}
 )
+
+func SetInitialAccordionItems(screen *_misc_.Miscellaneous, screenPreset *_presetting_.Preset) (err error) {
+{{- range $panelName := .LocalPanelNames}}
+	if err = Open{{ $panelName }}AccordionItem(screen, screenPreset.{{ $panelName }}Panel); err != nil {
+		return
+	}
+{{- end }}
+
+{{ range $panelName := .RemotePanelNames}}
+	if err = Open{{ $panelName }}AccordionItem(screen, screenPreset.{{ $panelName }}Screen); err != nil {
+		return
+	}
+{{- end }}
+	return
+}
 
 {{- range $panelName := .LocalPanelNames}}
 
 // Open{{ $panelName }}AccordionItem constructs a {{ $panelName }}AccordionItem.
 // The {{ $panelName }}AccordionItem uses the local {{ $panelName }} panel for content.
-func Open{{ $panelName }}AccordionItem(screen *_misc_.Miscellaneous, accordionItemTitle string, {{ call $DOT.Funcs.DeCap $panelName }}PanelInitData *_presets_.{{ $panelName }}PanelInitData) (err error) {
-	accordionItem := widget.NewAccordionItem(accordionItemTitle, widget.NewLabel("This is the {{ $panelName }} panel."))
+func Open{{ $panelName }}AccordionItem(screen *_misc_.Miscellaneous, preset *_{{ call $DOT.Funcs.LowerCase $panelName }}panel_.Preset) (err error) {
+	accordionItem := widget.NewAccordionItem(preset.AccordionItemTitle, widget.NewLabel("This is the {{ $panelName }} panel."))
 	accordionItemContentConsumer := _types_.NewAccordionItemContentConsumer(screen.Layout.Accordion(), accordionItem)
 	// accordionItemContentConsumer := _types_.NewAccordionItemContentConsumer(screen.Layout.AccordionConsumer(), screen.Layout.Accordion(), accordionItem, spawned)
 	// The {{ $panelName }} panel.
 	var panel *_panels_.{{ $panelName }}Panel
-	if panel, err = _panels_.New{{ $panelName }}Panel(screen, accordionItemContentConsumer, accordionItem, {{ call $DOT.Funcs.DeCap $panelName }}PanelInitData); err != nil {
+	if panel, err = _panels_.New{{ $panelName }}Panel(screen, accordionItemContentConsumer, accordionItem, preset); err != nil {
 		return
 	}
 	panelProducer := panel.Producer()
 	accordionItemContentConsumer.Bind(panelProducer)
 	// Add the tab to the layout.
 	screen.Layout.AddPanelerAccordionItemConsumer(panel, accordionItem, accordionItemContentConsumer)
-	// Update deps.
-	_ids_.AddAccordionItem(screen.ScreenID, panel.ID(), _ids_.{{ $panelName }}Item)
 	return
 }
 {{- end }}
@@ -66,8 +79,8 @@ func Open{{ $panelName }}AccordionItem(screen *_misc_.Miscellaneous, accordionIt
 
 // Open{{ $panelName }}AccordionItem constructs a {{ $panelName }}AccordionItem.
 // The {{ $panelName }}AccordionItem uses the {{ $panelName }} screen for content.
-func Open{{ $panelName }}AccordionItem(screen *_misc_.Miscellaneous, title string, {{ call $DOT.Funcs.DeCap $panelName }}ScreenInitData *_{{ call $DOT.Funcs.LowerCase $panelName }}startup_.ScreenInitData) (err error) {
-	accordionItem := widget.NewAccordionItem(title, widget.NewLabel("This is the {{ $panelName }} panel."))
+func Open{{ $panelName }}AccordionItem(screen *_misc_.Miscellaneous, preset *_presetting_.{{ $panelName }}ScreenPreset) (err error) {
+	accordionItem := widget.NewAccordionItem(preset.AccordionItemTitle, widget.NewLabel("This is the {{ $panelName }} panel."))
 	api := _screenmap_.Map["{{ $panelName }}"]
 	var accordionItemContentConsumer *_types_.AccordionItemContentConsumer
 	var accordionItemID string
@@ -78,13 +91,11 @@ func Open{{ $panelName }}AccordionItem(screen *_misc_.Miscellaneous, title strin
 		screen.Window,
 		screen.Layout.Accordion(),
 		accordionItem,
-		{{ call $DOT.Funcs.DeCap $panelName }}ScreenInitData,
+		preset.Preset,
 	); err != nil {
 		return
 	}
 	screen.Layout.AddRemoteScreenIDAccordionItemConsumer(accordionItemID, accordionItem, accordionItemContentConsumer)
-	// Update deps.
-	_ids_.AddAccordionItem(screen.ScreenID, accordionItemID, _ids_.{{ $panelName }}Item)
 	return
 }
 {{- end }}
@@ -97,8 +108,6 @@ func CloseAccordionItem(screen *_misc_.Miscellaneous, accordionItem *widget.Acco
 
 func CloseAccordionItemID(screen *_misc_.Miscellaneous, accordionItemID string) {
 	screen.Layout.RemoveID(accordionItemID)
-	// Update deps.
-	_ids_.RemoveAccordionItem(screen.ScreenID, accordionItemID)
 }
 
 `

@@ -15,13 +15,20 @@ import (
 )
 
 // Panelers is this screen's panels.
-// This screen has 2 panels.
-// The default panel is Home.
 type Panelers struct {
 {{- range $panelName := .LocalPanelNames }}
 	{{ $panelName }}  _types_.Paneler
 {{- end }}
 	DefaultPanel _types_.Paneler
+}
+
+// Map returns each panel's name mapped to it's implementation.
+func (panelers *Panelers) Map () (panelMap map[string]_types_.Paneler) {
+	panelMap = make(map[string]_types_.Paneler)
+{{- range $panelName := .LocalPanelNames}}
+	panelMap["{{ $panelName }}"] = panelers.{{ $panelName }}
+{{- end }}
+	return
 }
 `
 )

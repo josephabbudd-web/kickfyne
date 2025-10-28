@@ -3,6 +3,7 @@ package screens
 import (
 	"fmt"
 
+	_manifest_ "github.com/josephabbudd-web/kickfyne/manifest"
 	_accordion_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion"
 	_apptabs_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/apptabs"
 	_doctabs_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/doctabs"
@@ -28,17 +29,29 @@ It was added when you created this framework.
 It is provided as an example.
 See the code in the panels folder.
 `
-	err = BuildSimplePackage(
-		"HelloWorld",
-		[]string{"Hello", "HelloAgain"},
+	screenName := "HelloWorld"
+	panelsNames := []string{"Hello", "HelloAgain"}
+	if err = BuildSimplePackage(
+		screenName,
+		panelsNames,
 		docComment,
 		importPrefix,
 		folderPaths,
-	)
+	); err != nil {
+		return
+	}
+
+	// Update the manifest.
+	var manifest _manifest_.Manifest
+	if manifest, err = _manifest_.New(folderPaths); err != nil {
+		return
+	}
+	manifest.AddScreen(screenName, _manifest_.SimpleScreen, panelsNames...)
+	err = manifest.Write(folderPaths)
 	return
 }
 
-// BuildSimplePackage builds a type Simple screen package.
+// BuildAccordionPackage builds a type Accordion screen package.
 func BuildAccordionPackage(
 	packageName string,
 	rawPanelNames []string,

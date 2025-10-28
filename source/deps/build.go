@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path/filepath"
 
-	_container_ "github.com/josephabbudd-web/kickfyne/source/deps/container"
 	_metadata_ "github.com/josephabbudd-web/kickfyne/source/deps/metadata"
 	_paths_ "github.com/josephabbudd-web/kickfyne/source/deps/paths"
 	_thread_ "github.com/josephabbudd-web/kickfyne/source/deps/thread"
@@ -37,11 +36,6 @@ func CreateFramework(
 		ImportPrefix: importPrefix,
 	}
 	if err = _utils_.ProcessTemplate(depsFileName, path, depsTemplate, data); err != nil {
-		return
-	}
-
-	// deps/container/
-	if err = _container_.CreateFramework(folderPaths); err != nil {
 		return
 	}
 

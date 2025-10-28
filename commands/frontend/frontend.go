@@ -7,14 +7,18 @@ import (
 )
 
 const (
-	CmdScreen        = "screen"
-	subCmdHelp       = "help"
-	verbRemove       = "remove"
-	verbList         = "list"
-	verbAddSimple    = "add-simple"
-	verbAddDocTabs   = "add-doctabs"
-	verbAddAppTabs   = "add-apptabs"
-	verbAddAccordion = "add-accordion"
+	CmdScreen          = "screen"
+	subCmdHelp         = "help"
+	verbRemove         = "remove"
+	verbList           = "list"
+	verbAddSimple      = "add-simple"
+	verbAddDocTabs     = "add-doctabs"
+	verbAddAppTabs     = "add-apptabs"
+	verbAddDocTabsPlus = "add-doctabs+"
+	verbAddAppTabsPlus = "add-apptabs+"
+	verbAddAccordion   = "add-accordion"
+	verbAddItem        = "add-item"
+	verbRemoveItem     = "remove-item"
 )
 
 // Handler passes control to the correct handlers.

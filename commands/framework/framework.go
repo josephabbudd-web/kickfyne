@@ -3,6 +3,7 @@ package framework
 import (
 	"fmt"
 
+	_manifest_ "github.com/josephabbudd-web/kickfyne/manifest"
 	_source_ "github.com/josephabbudd-web/kickfyne/source"
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
@@ -76,6 +77,7 @@ func handleFramework(folderPaths *_utils_.FolderPaths, args []string, importPref
 	if err = _source_.CreateFramework(importPrefix, folderPaths); err != nil {
 		return
 	}
+
 	fmt.Println("Success. The framework is created.")
 	return
 }
@@ -89,6 +91,14 @@ func handleFrameworkRestart(folderPaths *_utils_.FolderPaths, args []string, imp
 		}
 	}()
 
+	// Reset the manifest.
+	var manifest _manifest_.Manifest
+	if manifest, err = _manifest_.New(folderPaths); err != nil {
+		return
+	}
+	manifest.Reset()
+	err = manifest.Write(folderPaths)
+
 	_ = args
 	// Create the framework code.
 	if err = folderPaths.Rebuild(); err != nil {
@@ -97,6 +107,7 @@ func handleFrameworkRestart(folderPaths *_utils_.FolderPaths, args []string, imp
 	if err = _source_.CreateFramework(importPrefix, folderPaths); err != nil {
 		return
 	}
+
 	fmt.Println("Success. The framework is recreated.")
 	return
 }

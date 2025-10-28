@@ -21,38 +21,21 @@ package {{ call .Funcs.LowerCase .PackageName }}
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 
-	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
-	_panels_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels"
-	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
-
+	_thread_ "{{ .ImportPrefix }}/deps/thread"
 	_layout_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/layout"
 	_panelers_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/panelers"
 	_producer_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/producer"
-
+	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
+	_panels_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels"
+	_presetting_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presetting"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
-	_thread_ "{{ .ImportPrefix }}/deps/thread"
 )
-
-type InitData  _presets_.ScreenInitData
-func NewInitData() (initData *_presets_.ScreenInitData) {
-	initData = _presets_.NewScreenInitData()
-	return
-}
-
-func Presets() (presets map[string]any) {
-	presets = make(map[string]any)
-	for k, v := range _presets_.Presets {
-		presets[k] = v
-	}
-	return
-}
 
 var screenCount uint = 0
 func nextScreenCount() (count uint) {
@@ -68,7 +51,7 @@ func NewWindowContentConsumer(
 	app fyne.App,
 	window fyne.Window,
 	isInMainMenu bool,
-	startupData any,
+	preset any,
 ) (
 	windowContentConsumer *_types_.WindowContentConsumer,
 	screenID string,
@@ -80,28 +63,22 @@ func NewWindowContentConsumer(
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:Window:%d", nextScreenCount())
 		// Consumer.
 		windowContentConsumer = _types_.NewWindowContentConsumer(window, isInMainMenu)
 		// Screen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = newScreen(ctx, ctxCancel, app, window, windowContentConsumer, screenID, startupData); err != nil {
+		if packageScreen, err = newScreen(ctx, ctxCancel, app, window, windowContentConsumer, screenID, preset); err != nil {
 			return
 		}
-
 		// This screen only show 1 of it's panels at a time.
 		// Show the default panel.
 		isMainThread := _thread_.IsMainThread()
 		packageScreen.Panelers.DefaultPanel.Show(isMainThread)
 		packageScreen.Layout.Producer().Refresh(isMainThread)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -115,7 +92,7 @@ func NewAppTabsTabItemContentConsumer(
 	window fyne.Window,
 	appTabs *container.AppTabs,
 	tabItem *container.TabItem,
-	startupData any,
+	preset any,
 ) (
 	appTabsTabItemContentConsumer *_types_.AppTabsTabItemContentConsumer,
 	screenID string, // id for the caller's appTabsItem that this screen is content for.	
@@ -127,28 +104,22 @@ func NewAppTabsTabItemContentConsumer(
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:AppTabsTabItem:%d", nextScreenCount())
 		// Consumer.
 		appTabsTabItemContentConsumer = _types_.NewAppTabsTabItemContentConsumer(appTabs, tabItem)
 		// Screen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = newScreen(ctx, ctxCancel, app, window, appTabsTabItemContentConsumer, screenID, startupData); err != nil {
+		if packageScreen, err = newScreen(ctx, ctxCancel, app, window, appTabsTabItemContentConsumer, screenID, preset); err != nil {
 			return
 		}
-
 		// This screen only show 1 of it's panels at a time.
 		// Show the default panel.
 		isMainThread := _thread_.IsMainThread()
 		packageScreen.Panelers.DefaultPanel.Show(isMainThread)
 		packageScreen.Layout.Producer().Refresh(isMainThread)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -162,7 +133,7 @@ func NewDocTabsTabItemContentConsumer(
 	window fyne.Window,
 	docTabs *container.DocTabs,
 	tabItem *container.TabItem,
-	startupData any,
+	preset any,
 ) (
 	docTabsTabItemContentConsumer *_types_.DocTabsTabItemContentConsumer,
 	screenID string, // id for the caller's docTabsItem that this screen is content for.	
@@ -174,28 +145,22 @@ func NewDocTabsTabItemContentConsumer(
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:DocTabsTabItem:%d", nextScreenCount())
 		// Consumer.
 		docTabsTabItemContentConsumer = _types_.NewDocTabsTabItemContentConsumer(docTabs, tabItem)
 		// Screen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = newScreen(ctx, ctxCancel, app, window, docTabsTabItemContentConsumer, screenID, startupData); err != nil {
+		if packageScreen, err = newScreen(ctx, ctxCancel, app, window, docTabsTabItemContentConsumer, screenID, preset); err != nil {
 			return
 		}
-
 		// This screen only show 1 of it's panels at a time.
 		// Show the default panel.
 		isMainThread := _thread_.IsMainThread()
 		packageScreen.Panelers.DefaultPanel.Show(isMainThread)
 		packageScreen.Layout.Producer().Refresh(isMainThread)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
 
 	return
@@ -209,7 +174,7 @@ func NewAccordionItemContentConsumer(
 	window fyne.Window,
 	accordion *widget.Accordion,
 	accordionItem *widget.AccordionItem,
-	startupData any,
+	preset any,
 ) (
 	accordionItemContentConsumer *_types_.AccordionItemContentConsumer,
 	screenID string, // id for the caller's accordionItem that this screen is content for.	
@@ -221,29 +186,24 @@ func NewAccordionItemContentConsumer(
 		}
 	}()
 
-	if startupData == nil {
-		startupData = _presets_.DefaultScreenInitData()
-	}
-	switch startupData := startupData.(type) {
-	case *_presets_.ScreenInitData:
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
 		// Screen ID.
 		screenID = fmt.Sprintf("{{ .PackageName }}:AccordionItem:%d", nextScreenCount())
 		// Consumer.
 		accordionItemContentConsumer = _types_.NewAccordionItemContentConsumer(accordion, accordionItem)
 		// Screen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = newScreen(ctx, ctxCancel, app, window, accordionItemContentConsumer, screenID, startupData); err != nil {
+		if packageScreen, err = newScreen(ctx, ctxCancel, app, window, accordionItemContentConsumer, screenID, preset); err != nil {
 			return
 		}
-
 		// This screen only show 1 of it's panels at a time.
 		// Show the default panel.
 		isMainThread := _thread_.IsMainThread()
 		packageScreen.Panelers.DefaultPanel.Show(isMainThread)
 		packageScreen.Layout.Producer().Refresh(isMainThread)
-	default:
-		err = errors.New("startupData is not a *_presets_.ScreenInitData")
 	}
+
 	return
 }
 
@@ -252,7 +212,7 @@ func newScreen(
 	app fyne.App, window fyne.Window,
 	consumer _types_.ContentConsumer,
 	id string,
-	startupData *_presets_.ScreenInitData,
+	preset *_presetting_.Preset,
 ) (screen *_misc_.Miscellaneous, err error) {
 	// Build the content & producer.
 	producer := _producer_.NewContentProducer(consumer)
@@ -271,7 +231,7 @@ func newScreen(
 {{- range $panelName := .LocalPanelNames }}
 	// {{ $panelName }} panel.
 	var {{ call $DOT.Funcs.DeCap $panelName }}Panel *_panels_.{{ $panelName }}Panel
-	if {{ call $DOT.Funcs.DeCap $panelName }}Panel, err = _panels_.New{{ $panelName }}Panel(screen, startupData.{{ $panelName }}Panel); err != nil {
+	if {{ call $DOT.Funcs.DeCap $panelName }}Panel, err = _panels_.New{{ $panelName }}Panel(screen, preset.{{ $panelName }}Panel); err != nil {
 		return
 	}
 	screen.Panelers.{{ $panelName }} = {{ call $DOT.Funcs.DeCap $panelName }}Panel

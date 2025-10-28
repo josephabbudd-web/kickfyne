@@ -4,7 +4,7 @@ import (
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-type ContentTemplateData struct {
+type TemplateData struct {
 	PackageName     string
 	PanelName       string
 	LocalPanelNames []string
@@ -39,6 +39,7 @@ type Content struct {
 	// Widgets with variable state. See state.go.
 	heading     *widget.Label
 	description *widget.Label
+	switcher    *widget.Select
 }
 
 // NewContent initializes this panel's content.
@@ -59,21 +60,17 @@ func NewContent(screen *_misc_.Miscellaneous) (panelContent *Content, err error)
 	}
 
 	// Layout the components.
-	isMainThread := _thread_.IsMainThread()
-	panelContent.content = container.NewVBox(
-		panelContent.heading,
-		panelContent.description,
-{{- range $panelName := .LocalPanelNames }}
- {{- if ne $panelName $DOT.PanelName }}
-		widget.NewButton(
-			"Switch to the {{ $panelName }} Panel",
-			func() {
-				panelContent.switchTo{{ $panelName }}(isMainThread);
-			},
-		),
- {{- end }}
-{{- end }}
-	)
+	objects := make([]fyne.CanvasObject, 0, 3)
+	objects = append(objects, panelContent.heading, panelContent.description)
+	panelContent.setSwitcher()
+	if panelContent.switcher != nil {
+		hbox := container.NewHBox(
+			widget.NewLabel("Switch to another panel."),
+			panelContent.switcher,
+		)
+		objects = append(objects, hbox)
+	}
+	panelContent.content = container.NewVBox(objects...)
 	return
 }
 
@@ -83,13 +80,38 @@ func (panelContent *Content) CanvasObject() (canvasObject fyne.CanvasObject) {
 	return
 }
 
-{{- range $panelName := .LocalPanelNames }}
- {{- if ne $panelName $DOT.PanelName }}
-
-func (panelContent *Content) switchTo{{ $panelName }}(isMainThread bool) {
-	panelContent.screen.Panelers.{{ $panelName }}.Show(isMainThread)
+// setSwitcher demonstrates how to switch panels in a Simple Screen.
+// KICKFYNE TODO: You will probably want to:
+// - Remove the line in NewContent that calls setSwitcher().
+// - Remove panelContent.switcher.
+// - Remove this func.
+func (panelContent *Content) setSwitcher() {
+	panelMap := panelContent.screen.Panelers.Map()
+	var length int
+	if length = len(panelMap); length == 1 {
+		return
+	}
+	options := make([]string, 0, length)
+	for name := range panelMap {
+		if name == "{{ .PanelName }}" {
+			continue
+		}
+		options = append(options, name)
+	}
+	panelContent.switcher = widget.NewSelect(
+		options,
+		func(value string) {
+			if len(value) == 0 {
+				return
+			}
+			panelerMap := panelContent.screen.Panelers.Map()
+			paneler := panelerMap[value]
+			isMainThread := _thread_.IsMainThread()
+			paneler.Show(isMainThread)			
+			panelContent.switcher.ClearSelected()
+		},
+	)
 }
- {{- end }}
-{{- end }}
+
 `
 )

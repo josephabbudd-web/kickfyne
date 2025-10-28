@@ -5,16 +5,14 @@ import (
 	"os"
 	"path/filepath"
 
-	_panels_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/panels"
-	_panel_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/panels/panel"
-	_presets_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/presets"
-
 	_accordionitems_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/deps/accordionItems"
 	_layout_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/deps/layout"
-	_panelers_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/deps/panelers"
 	_producer_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/deps/producer"
+	_layoutitems_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/layoutAccordionItems"
 	_misc_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/misc"
-
+	_panels_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/panels"
+	_panel_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/panels/panel"
+	_presetting_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion/presetting"
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
@@ -34,36 +32,17 @@ func Build(
 		}
 	}()
 
-	defaultPanelName := localPanelNames[0]
-	allStartupPanels := make([]_presets_.Panel, len(rawPanelNames))
-	allAPIPanels := make([]apiPanel, len(rawPanelNames))
-	for i, name := range rawPanelNames {
-		if name[:1] == "*" {
-			allStartupPanels[i] = _presets_.Panel{
-				Name:    name[1:],
-				IsLocal: false,
-			}
-			allAPIPanels[i] = apiPanel{
-				Name:    name[1:],
-				IsLocal: false,
-			}
-		} else {
-			allStartupPanels[i] = _presets_.Panel{
-				Name:    name,
-				IsLocal: true,
-			}
-			allAPIPanels[i] = apiPanel{
-				Name:    name,
-				IsLocal: true,
-			}
-		}
-	}
-
 	// Create the folder paths in this package.
 
 	// frontend/screens/«screen-package-name»
 	packagePath := filepath.Join(folderPaths.FrontendScreens, packageName)
 	if err = os.Mkdir(packagePath, _utils_.DMode); err != nil {
+		return
+	}
+
+	// frontend/screens/«screen-package-name»/layoutAccordionItems
+	packageLayoutItemsPath := filepath.Join(packagePath, _utils_.FolderNameLayoutAccorionItems)
+	if err = os.Mkdir(packageLayoutItemsPath, _utils_.DMode); err != nil {
 		return
 	}
 
@@ -85,19 +64,13 @@ func Build(
 		return
 	}
 
-	// frontend/screens/simple/«screen-package-name»/presets
-	packageStartupPath := filepath.Join(packagePath, _utils_.FolderNamePresets)
-	if err = os.Mkdir(packageStartupPath, _utils_.DMode); err != nil {
+	// frontend/screens/simple/«screen-package-name»/presetting
+	packagePresettingPath := filepath.Join(packagePath, _utils_.FolderNamePresetting)
+	if err = os.Mkdir(packagePresettingPath, _utils_.DMode); err != nil {
 		return
 	}
 
 	// deps/
-
-	// frontend/screens/«screen-package-name»/deps/panelers
-	packagePanelersPath := filepath.Join(packageDepsPath, _utils_.FolderNamePanelers)
-	if err = os.Mkdir(packagePanelersPath, _utils_.DMode); err != nil {
-		return
-	}
 
 	// frontend/screens/«screen-package-name»/deps/producer
 	packageProducerPath := filepath.Join(packageDepsPath, _utils_.FolderNameProducer)
@@ -126,11 +99,11 @@ func Build(
 
 	// frontend/screens/«screen-package-name»/doc.go
 	fPath = filepath.Join(packagePath, docFileName)
-	successMessage := docTemplateSuccessMessage(packageName, localPanelNames, folderPaths)
+	files := files(packageName, localPanelNames, folderPaths)
 	data = &docTemplateData{
 		PackageName: packageName,
 		PackageDoc:  packageDoc,
-		Files:       successMessage,
+		Files:       files,
 		Funcs:       funcs,
 	}
 	if err = _utils_.ProcessTemplate(docFileName, fPath, docTemplate, data); err != nil {
@@ -140,24 +113,26 @@ func Build(
 	// frontend/screens/«screen-package-name»/api.go
 	fPath = filepath.Join(packagePath, aPIFileName)
 	data = &aPITemplateData{
-		PackageName:      packageName,
-		AllPanels:        allAPIPanels,
-		AllPanelNames:    allPanelNames,
-		DefaultPanelName: defaultPanelName,
-		ImportPrefix:     importPrefix,
-		Funcs:            funcs,
+		PackageName:  packageName,
+		ImportPrefix: importPrefix,
+		Funcs:        funcs,
 	}
 	if err = _utils_.ProcessTemplate(aPIFileName, fPath, aPINoBETemplate, data); err != nil {
 		return
 	}
 
-	// frontend/screens/«screen-package-name»/panelers/panelers.go
-	fPath = filepath.Join(packagePanelersPath, _panelers_.PanelersFileName)
-	data = &_panelers_.PanelersTemplateData{
-		ImportPrefix:    importPrefix,
-		LocalPanelNames: localPanelNames,
+	// frontend/screens/«screen-package-name»/layoutAccordionItems folder.
+	data = &_layoutitems_.TemplateData{
+		PackageName:  packageName,
+		ImportPrefix: importPrefix,
+		AllItemNames: rawPanelNames,
 	}
-	if err = _utils_.ProcessTemplate(_panelers_.PanelersFileName, fPath, _panelers_.PanelersTemplate, data); err != nil {
+	fPath = filepath.Join(packageLayoutItemsPath, _utils_.DocFileName)
+	if err = _utils_.ProcessTemplate(_utils_.DocFileName, fPath, _layoutitems_.DocsTemplate, data); err != nil {
+		return
+	}
+	fPath = filepath.Join(packageLayoutItemsPath, _utils_.LayoutFileName)
+	if err = _utils_.ProcessTemplate(_utils_.LayoutFileName, fPath, _layoutitems_.LayoutTemplate, data); err != nil {
 		return
 	}
 
@@ -181,17 +156,28 @@ func Build(
 		return
 	}
 
-	// frontend/screens/simple/«screen-package-name»/presets/presets.go
-	fPath = filepath.Join(packageStartupPath, _utils_.PresetsFileName)
-	data = &_presets_.PresetsTemplateData{
+	// frontend/screens/simple/«screen-package-name»/presetting folder.
+
+	data = &_presetting_.TemplateData{
+		PackageName:      packageName,
 		ImportPrefix:     importPrefix,
-		AllPanels:        allStartupPanels,
 		LocalPanelNames:  localPanelNames,
 		RemotePanelNames: remotePanelNames,
 		Funcs:            funcs,
 	}
-	if err = _utils_.ProcessTemplate(_utils_.PresetsFileName, fPath, _presets_.PresetsTemplate, data); err != nil {
+	fPath = filepath.Join(packagePresettingPath, _utils_.APIFileName)
+	if err = _utils_.ProcessTemplate(_utils_.APIFileName, fPath, _presetting_.APITemplate, data); err != nil {
 		return
+	}
+	fPath = filepath.Join(packagePresettingPath, _utils_.DefaultPresetFileName)
+	if err = _utils_.ProcessTemplate(_utils_.DefaultPresetFileName, fPath, _presetting_.DefaultPresetTemplate, data); err != nil {
+		return
+	}
+	if len(remotePanelNames) > 0 {
+		fPath = filepath.Join(packagePresettingPath, _utils_.RemotePresetFileName)
+		if err = _utils_.ProcessTemplate(_utils_.RemotePresetFileName, fPath, _presetting_.RemotePresetTemplate, data); err != nil {
+			return
+		}
 	}
 
 	// panels folder.
@@ -221,7 +207,7 @@ func Build(
 			return
 		}
 
-		// Panel sub folder holding content and state.
+		// Panel sub folder holding content.go, state.go and preset.go.
 		// frontend/screens/«screen-package-name»/panels/«panel-name»Panel/
 		panelFolderName := panelName + "Panel"
 		fmt.Printf("making panel folder %s\n", panelFolderName)
@@ -229,28 +215,29 @@ func Build(
 		if err = os.Mkdir(panelFolderPath, _utils_.DMode); err != nil {
 			return
 		}
-		// content.go
-		fileName = _panel_.ContentFileName
-		fPath = filepath.Join(panelFolderPath, fileName)
-		data = &_panel_.ContentTemplateData{
+		data = &_panel_.TemplateData{
 			PackageName:     packageName,
 			PanelName:       panelName,
 			LocalPanelNames: localPanelNames,
 			ImportPrefix:    importPrefix,
 			Funcs:           funcs,
 		}
+		// content.go
+		fileName = _panel_.ContentFileName
+		fPath = filepath.Join(panelFolderPath, fileName)
 		if err = _utils_.ProcessTemplate(fileName, fPath, _panel_.ContentTemplate, data); err != nil {
 			return
 		}
 		// state.go
 		fileName = _panel_.StateFileName
 		fPath = filepath.Join(panelFolderPath, fileName)
-		data = &_panel_.StateTemplateData{
-			PackageName:  packageName,
-			PanelName:    panelName,
-			ImportPrefix: importPrefix,
-		}
 		if err = _utils_.ProcessTemplate(fileName, fPath, _panel_.StateTemplate, data); err != nil {
+			return
+		}
+		// preset.go
+		fileName = _utils_.PresetFileName
+		fPath = filepath.Join(panelFolderPath, fileName)
+		if err = _utils_.ProcessTemplate(fileName, fPath, _panel_.PresetTemplate, data); err != nil {
 			return
 		}
 	}
@@ -283,11 +270,8 @@ func Build(
 	// frontend/screens/«screen-package-name»/deps/layout/layout.go
 	fPath = filepath.Join(packageLayoutPath, _layout_.LayoutFileName)
 	data = &_layout_.LayoutTemplateData{
-		PackageName:      packageName,
-		ImportPrefix:     importPrefix,
-		Funcs:            funcs,
-		LocalPanelNames:  localPanelNames,
-		RemotePanelNames: remotePanelNames,
+		PackageName:  packageName,
+		ImportPrefix: importPrefix,
 	}
 	if err = _utils_.ProcessTemplate(_layout_.LayoutFileName, fPath, _layout_.LayoutTemplate, data); err != nil {
 		return

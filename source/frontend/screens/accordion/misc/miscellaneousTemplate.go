@@ -17,7 +17,6 @@ import (
 	"fyne.io/fyne/v2"
 
 	_layout_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/layout"
-	_panelers_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/panelers"
 	_producer_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/producer"
 )
 
@@ -29,7 +28,6 @@ type Miscellaneous struct {
 	Window    fyne.Window
 
 	Layout   *_layout_.Layout
-	Panelers *_panelers_.Panelers
 	Producer *_producer_.AccordionItemContentProducer
 	ScreenID string
 }
@@ -42,7 +40,6 @@ func NewMiscellaneous(ctx context.Context, ctxCancel context.CancelFunc, app fyn
 		CTXCancel: ctxCancel,
 		APP:       app,
 		Window:    w,
-		Panelers:  &_panelers_.Panelers{},
 		Layout:    layout,
 		ScreenID:  screenID,
 	}

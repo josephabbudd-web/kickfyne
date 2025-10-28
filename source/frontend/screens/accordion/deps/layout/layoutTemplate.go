@@ -1,16 +1,8 @@
 package misc
 
-import (
-	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
-)
-
 type LayoutTemplateData struct {
-	PackageName      string
-	AllPanelNames    []string
-	LocalPanelNames  []string
-	RemotePanelNames []string
-	ImportPrefix     string
-	Funcs            _utils_.Funcs
+	PackageName  string
+	ImportPrefix string
 }
 
 const (

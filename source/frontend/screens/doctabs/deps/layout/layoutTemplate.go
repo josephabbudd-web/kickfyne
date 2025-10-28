@@ -1,16 +1,9 @@
 package misc
 
-import (
-	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
-)
-
 type LayoutTemplateData struct {
-	PackageName      string
-	AllPanelNames    []string
-	LocalPanelNames  []string
-	RemotePanelNames []string
-	ImportPrefix     string
-	Funcs            _utils_.Funcs
+	PackageName  string
+	ImportPrefix string
+	UseConfigTab bool
 }
 
 const (
@@ -37,6 +30,10 @@ type Layout struct {
 	tabItemPaneler         map[*container.TabItem]_types_.Paneler
 	panelIDPaneler         map[string]_types_.Paneler
 	panelIDTabItem         map[string]*container.TabItem
+{{- if .UseConfigTab }}
+	lastTabItem            *container.TabItem
+	configurationTabItem   *container.TabItem
+{{- end }}
 }
 
 // NewLayout constructs this layout.
@@ -58,17 +55,80 @@ func NewLayout(tabbarConsumer _types_.ContentConsumer, tabItemContentProducer _t
 		panelIDPaneler:         make(map[string]_types_.Paneler),
 		panelIDTabItem:         make(map[string]*container.TabItem),
 	}
-	docTabs.CloseIntercept = func(tabItem *container.TabItem) {
-		var id string
-		var found bool
-		if id, found = layout.TabID(tabItem); found {
+	tabItemContentProducer.SetCanvasObject(layout.docTabs)
+	layout.SetTabItemHandlers(nil, nil, nil)
+
+return
+}
+
+// SetTabItemHandlers sets each item handler.
+// Param callBackCloseIntercept returns if the tab must be closed.
+func (layout *Layout) SetTabItemHandlers(
+	callBackCloseIntercept func(*container.TabItem) (closeTab bool),
+	callBackOnSelected func(*container.TabItem),
+	callBackOnUnselected func(*container.TabItem),
+) {
+	// CloseIntercept.
+	// Determine if the tab should be closed.
+	// Properly close the tab.
+	layout.docTabs.CloseIntercept = func(tabItem *container.TabItem) {
+{{- if .UseConfigTab }}
+		if layout.configurationTabItem == tabItem {
+			// Can't close the configuration tab.
+			return
+		}
+{{- end }}
+		// func callBackCloseIntercept returns if the tab must be closed.
+		if callBackCloseIntercept != nil {
+			if !callBackCloseIntercept(tabItem) {
+				// Don't close this tab.
+				return
+			}
+		}
+		// Close the tab.
+		if id, found := layout.TabID(tabItem); found {
 			layout.RemoveID(id)
 		}
 	}
-	tabItemContentProducer.SetCanvasObject(layout.docTabs)
+	// OnSelected.
+	layout.docTabs.OnSelected = callBackOnSelected
+	// OnUnselected.
+	layout.docTabs.OnUnselected = func(tabItem *container.TabItem) {
+{{- if .UseConfigTab }}
+		layout.lastTabItem = tabItem
+{{- end }}
+		if callBackOnUnselected != nil {
+			callBackOnUnselected(tabItem)
+		}
+	}
 
-	return
 }
+
+{{- if .UseConfigTab }}
+
+func (layout *Layout) Back() {
+	if layout.lastTabItem != nil {
+		layout.docTabs.Select(layout.lastTabItem)
+		layout.lastTabItem = nil
+		return
+	}
+	for _, tabItem := range layout.docTabs.Items {
+		if tabItem == layout.configurationTabItem {
+			continue
+		}
+		if tabItem.Disabled() {
+			continue
+		}
+		layout.docTabs.Select(tabItem)
+		return
+	}
+}
+
+func (layout *Layout) AddConfigurationTabItemConsumer(paneler _types_.Paneler, tabItem *container.TabItem, consumer *_types_.DocTabsTabItemContentConsumer) {
+	layout.AddPanelerTabItemConsumer(paneler, tabItem, consumer)
+	layout.configurationTabItem = tabItem
+}
+{{- end }}
 
 func (layout *Layout) TabbarConsumer() (tabbarConsumer _types_.ContentConsumer) {
 	tabbarConsumer = layout.tabbarConsumer
@@ -125,6 +185,15 @@ func (layout *Layout) RemoveID(removeID string) {
 		return
 	}
 	tabItem = layout.panelIDTabItem[removeID]
+{{- if .UseConfigTab }}
+	if tabItem == layout.configurationTabItem {
+		// Can't remove the configuration tab.
+		return
+	}
+	if tabItem == layout.lastTabItem {
+		layout.lastTabItem = nil
+	}
+{{- end }}
 	layout.docTabs.Remove(tabItem)
 	paneler.UnBindCleanUP()
 	delete(layout.tabItemPaneler, tabItem)

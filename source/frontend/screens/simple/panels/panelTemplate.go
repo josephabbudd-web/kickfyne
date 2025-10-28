@@ -22,24 +22,24 @@ import (
 	"fyne.io/fyne/v2"
 
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
-	_content_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels/{{ .PanelName }}Panel"
-	_presets_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presets"
+	_{{ call .Funcs.LowerCase .PanelName }}panel_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels/{{ .PanelName }}Panel"
 	_types_ "{{ .ImportPrefix }}/frontend/types"
 )
 
 
 // {{ .PanelName }}Panel is a {{ .PanelName }} panel.
-// It's content is at {{ .PanelName }}Panel/content.go.
-// It's content's state is at {{ .PanelName }}Panel/state.go.
+// The panel's content is at {{ .PanelName }}Panel/content.go.
+// The panel's content-state is at {{ .PanelName }}Panel/state.go.
+// The panel's state-presets are at {{ .PanelName }}Panel/preset.go.
 type {{ .PanelName }}Panel struct {
-	content   *_content_.Content
-	state     *_content_.State
-	screen    *_misc_.Miscellaneous
+	content *_{{ call .Funcs.LowerCase .PanelName }}panel_.Content
+	state   *_{{ call .Funcs.LowerCase .PanelName }}panel_.State
+	screen  *_misc_.Miscellaneous
 }
 
 // New{{ .PanelName }}Panel initializes this panel.
 // Returns the panel and the error.
-func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, startupData *_presets_.{{ .PanelName }}PanelInitData) (panel *{{ .PanelName }}Panel, err error) {
+func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, preset *_{{ call .Funcs.LowerCase .PanelName }}panel_.Preset) (panel *{{ .PanelName }}Panel, err error) {
 
 	defer func() {
 		if err != nil {
@@ -50,13 +50,13 @@ func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, startupData *_preset
 	panel = &{{ .PanelName }}Panel{
 		screen: screen,
 	}
-	if panel.content, err = _content_.NewContent(screen); err != nil {
+	if panel.content, err = _{{ call .Funcs.LowerCase .PanelName }}panel_.NewContent(screen); err != nil {
 		return
 	}
-	if panel.state, err = _content_.NewState(panel.content, screen.ScreenID); err != nil {
+	if panel.state, err = _{{ call .Funcs.LowerCase .PanelName }}panel_.NewState(panel.content, screen.ScreenID); err != nil {
 		return
 	}
-	panel.state.LoadStartupData(startupData)
+	panel.state.LoadStartupData(preset)
 
 	return
 }

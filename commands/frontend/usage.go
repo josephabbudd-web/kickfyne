@@ -11,32 +11,56 @@ const (
 	panelNameParam         = "«panel-name, ...»"
 	tabItemNameParam       = "«[*]tab-item-name, ...»"
 	accordionItemNameParam = "«[*]accordion-item-name, ...»"
+	screenItemNameParam    = "«[*]item-name or panel-name, ...»"
 
-	usage3F = "＄ %s %s %s"
-	usage4F = "＄ %s %s %s %s"
-	usage5F = "＄ %s %s %s %s %s"
+	usage3F = "💲 %s %s %s"
+	usage4F = "💲 %s %s %s %s"
+	usage5F = "💲 %s %s %s %s %s"
 )
 
 var (
-	UsageScreenAddSimple    = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddSimple, screenPackageNameParam, panelNameParam)
-	UsageScreenAddAccordion = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAccordion, screenPackageNameParam, accordionItemNameParam)
-	UsageScreenAddDocTabs   = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddDocTabs, screenPackageNameParam, tabItemNameParam)
-	usageScreenHelp         = fmt.Sprintf(usage3F, os.Args[0], CmdScreen, subCmdHelp)
-	usageScreenList         = fmt.Sprintf(usage3F, os.Args[0], CmdScreen, verbList)
-	UsageScreenRemove       = fmt.Sprintf(usage4F, os.Args[0], CmdScreen, verbRemove, screenPackageNameParam)
+	UsageScreenAddSimple      = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddSimple, screenPackageNameParam, panelNameParam)
+	UsageScreenAddAccordion   = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAccordion, screenPackageNameParam, accordionItemNameParam)
+	UsageScreenAddAppTabs     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAppTabs, screenPackageNameParam, tabItemNameParam)
+	UsageScreenAddAppTabsPlus = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAppTabsPlus, screenPackageNameParam, tabItemNameParam)
+	UsageScreenAddDocTabs     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddDocTabs, screenPackageNameParam, tabItemNameParam)
+	UsageScreenAddDocTabsPlus = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddDocTabsPlus, screenPackageNameParam, tabItemNameParam)
+	UsageScreenAddItem        = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddItem, screenPackageNameParam, screenItemNameParam)
+	UsageScreenRemoveItem     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbRemoveItem, screenPackageNameParam, screenItemNameParam)
+	usageScreenHelp           = fmt.Sprintf(usage3F, os.Args[0], CmdScreen, subCmdHelp)
+	usageScreenList           = fmt.Sprintf(usage3F, os.Args[0], CmdScreen, verbList)
+	UsageScreenRemove         = fmt.Sprintf(usage4F, os.Args[0], CmdScreen, verbRemove, screenPackageNameParam)
 )
 
 func UsageScreen() (usage string) {
-	commands := []string{
-		UsageScreenAddSimple,
-		UsageScreenAddAccordion,
-		UsageScreenAddDocTabs,
+	screenCommands := []string{
+		"Add a Simple screen:     " + UsageScreenAddSimple,
+		"Add an Accordion screen: " + UsageScreenAddAccordion,
+		"Add an AppTabs screen:   " + UsageScreenAddAppTabs,
+		" Plus (+) configuration: " + UsageScreenAddAppTabsPlus,
+		"Add a DocTabs screen:    " + UsageScreenAddAppTabs,
+		" Plus (+) configuration: " + UsageScreenAddAppTabsPlus,
+		"Add an DocTabs screen: " + UsageScreenAddDocTabs,
 		UsageScreenRemove,
+	}
+	helpCommands := []string{
 		usageScreenList,
 		usageScreenHelp,
 	}
+	itemCommands := []string{
+		UsageScreenAddItem,
+		UsageScreenRemoveItem,
+	}
 	usage = `📺 MANAGING SCREENS:
-` + strings.Join(commands, "\n") + `
+
+ADD & REMOVE A SCREEN:
+` + strings.Join(screenCommands, "\n") + `
+
+MODIFY A SCREEN:
+` + strings.Join(itemCommands, "\n") + `
+
+HELP:
+` + strings.Join(helpCommands, "\n") + `
 
 TabItem names:
 * A tab-item-name prefixed with '*':

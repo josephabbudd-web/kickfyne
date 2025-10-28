@@ -30,7 +30,7 @@ kickfyne is a work in progress. I'm using kickfyne to build my morse code traine
 
 An Accordion Screen lays out AccordionItems vertically. Each AccordionItem will use it's own single panel for content or will use another screen for content.
 
-Kickfyne allows the user to:
+Kickfyne allows the developer to:
 
 1. Add an Accordion Screen with it's AccordionItems.
 1. Add and remove AccordionItems from an Accordion Screen.
@@ -40,7 +40,7 @@ Kickfyne allows the user to:
 
 An AppTabs Screen lays out a tabbar with TabItems that the user can not close. The tabbar can be fixed at the top, right, bottom or left of the content. An optional settings tab allows the user to set the tabbar location. Each TabItem will use it's own single panel for content or will use another screen for content.
 
-Kickfyne allows the user to:
+Kickfyne allows the developer to:
 
 1. Add an AppTabs Screen with it's TabItems.
 1. Add TabItems to and remove TabItems from an AppTabs Screen.
@@ -50,7 +50,7 @@ Kickfyne allows the user to:
 
 A DocTabs Screen lays out a tabbar with TabItems that the user can close. The tabbar can be fixed at the top, right, bottom or left of the content. An optional settings tab allows the user to set the tabbar location. Each TabItem will use it's own single panel for content or will use another screen for content.
 
-Kickfyne allows the user to:
+Kickfyne allows the developer to:
 
 1. Add a DocTabs Screen with it's TabItems.
 1. Add TabItems to and remove TabItems from an DocTabs Screen.
@@ -60,7 +60,7 @@ Kickfyne allows the user to:
 
 A Simple Screen displays only one of it's panels at a time.
 
-Kickfyne allows the user to:
+Kickfyne allows the developer to:
 
 1. Add a Simple Screen with it's panels.
 1. Add panels to and remove panels from an Simple Screen.

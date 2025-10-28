@@ -122,6 +122,7 @@ func New(folderPaths *_utils_.FolderPaths) (manifest Manifest, err error) {
 		if os.IsNotExist(err) {
 			err = nil
 			_manifest = make(map[string]*Info)
+			manifest = _manifest
 		}
 		return
 	}

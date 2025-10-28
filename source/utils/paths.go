@@ -26,11 +26,10 @@ const (
 	folderNameScreenMap           = "screenmap"
 	folderNameDeps                = "deps"
 	// FolderNamePresets        = "presets"
-	FolderNameTabItems  = "tabItems"
-	folderNameThread    = "thread"
-	folderNameTypes     = "types"
-	FolderNameDocTabs   = "doctabs"
-	folderNameContainer = "container"
+	FolderNameTabItems = "tabItems"
+	folderNameThread   = "thread"
+	folderNameTypes    = "types"
+	FolderNameDocTabs  = "doctabs"
 )
 
 var (
@@ -39,10 +38,9 @@ var (
 	frontendScreenMap = filepath.Join(folderNameFrontend, folderNameScreenMap)
 	frontendTypes     = filepath.Join(folderNameFrontend, folderNameTypes)
 
-	depsContainer = filepath.Join(folderNameDeps, folderNameContainer)
-	depsMetaData  = filepath.Join(folderNameDeps, "metadata")
-	depsPaths     = filepath.Join(folderNameDeps, "paths")
-	depsThread    = filepath.Join(folderNameDeps, folderNameThread)
+	depsMetaData = filepath.Join(folderNameDeps, "metadata")
+	depsPaths    = filepath.Join(folderNameDeps, "paths")
+	depsThread   = filepath.Join(folderNameDeps, folderNameThread)
 )
 
 type FolderPaths struct {
@@ -53,11 +51,10 @@ type FolderPaths struct {
 	FrontendScreens, FrontendScreenMap string
 	FrontendTypes                      string
 
-	Deps          string
-	DepsContainer string
-	DepsMetaData  string
-	DepsPaths     string
-	DepsThread    string
+	Deps         string
+	DepsMetaData string
+	DepsPaths    string
+	DepsThread   string
 }
 
 // NewFolderPaths constructs paths and then makes them on the disk.
@@ -78,11 +75,10 @@ func NewFolderPaths(rootPath string) (folderPaths *FolderPaths, err error) {
 		FrontendScreenMap: filepath.Join(rootPath, frontendScreenMap),
 		FrontendTypes:     filepath.Join(rootPath, frontendTypes),
 
-		Deps:          filepath.Join(rootPath, folderNameDeps),
-		DepsContainer: filepath.Join(rootPath, depsContainer),
-		DepsMetaData:  filepath.Join(rootPath, depsMetaData),
-		DepsPaths:     filepath.Join(rootPath, depsPaths),
-		DepsThread:    filepath.Join(rootPath, depsThread),
+		Deps:         filepath.Join(rootPath, folderNameDeps),
+		DepsMetaData: filepath.Join(rootPath, depsMetaData),
+		DepsPaths:    filepath.Join(rootPath, depsPaths),
+		DepsThread:   filepath.Join(rootPath, depsThread),
 	}
 	return
 }
@@ -181,9 +177,6 @@ func (folderPaths *FolderPaths) buildFolderPaths() (err error) {
 
 	// Deps
 	if err = os.Mkdir(folderPaths.Deps, DMode); err != nil {
-		return
-	}
-	if err = os.Mkdir(folderPaths.DepsContainer, DMode); err != nil {
 		return
 	}
 	if err = os.Mkdir(folderPaths.DepsMetaData, DMode); err != nil {

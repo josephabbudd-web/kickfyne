@@ -229,19 +229,19 @@ I am too lazy to correct the definition of `var openingScreen` in mainmenu/mainm
 
 ### The ContactsAT screen
 
-The **ContactsAT** screen is an AppTabs screen. The user can not close an AppTabs tab. The **ContactsAT** screen is shown below with its default panel **Add** displayed.
+The **ContactsAT** screen is an AppTabs screen. The user can not close an AppTabs tab. The **ContactsAT** screen is shown below with its **Add** TabItem selected. The **Add** TabItem and displaying the content from it's **Add** panel.
 
 ![The AppTabs screen.](/images/kickfyne_contacts_app_tabs_screen.png)
 
 ### The ContactsDT screen
 
-The **ContactsDT** screen is an DocTabs screen. The **ContactsDT** screen is shown below with its **Edit** tab displayed. The **Edit** tab is using its own instance of the **Edit** screen for content. The **Edit** screen is displaying its default **Select** panel.
+The **ContactsDT** screen is an DocTabs screen. The **ContactsDT** screen is shown below with its **Edit** TabItem selected. The **Edit** TabItem is displaying the content from its own instance of the **Edit** screen. The **Edit** screen is displaying its default **Select** panel.
 
 ![The AppTabs screen.](/images/kickfyne_contacts_doc_tabs_screen.png)
 
 ### The ContactsAC screen
 
-The **ContactsAC** screen is an Accordion screen. The **ContactsAC** screen is shown below with its **Remove** label opened showing its content. The **Remove** label is using its own instance of the **Remove** screen for content. The **Remove** screen is displaying its default **Select** panel.
+The **ContactsAC** screen is an Accordion screen. The **ContactsAC** screen is shown below with its **Remove** AccordionItem selected. The **Remove** AccordionItem is displaying the content from its own instance of the **Remove** screen. The **Remove** screen is displaying its default **Select** panel.
 
 ![The Accordion screen.](/images/kickfyne_contacts_accordion_screen.png)
 

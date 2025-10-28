@@ -33,7 +33,7 @@ An Accordion Screen lays out AccordionItems vertically. Each AccordionItem will 
 Kickfyne allows the developer to:
 
 1. Add an Accordion Screen with it's AccordionItems.
-1. Add and remove AccordionItems from an Accordion Screen.
+1. Add AccordionItems to and remove AccordionItems from an Accordion Screen.
 1. Remove an Accordion Screen.
 
 ### The AppTabs Screen

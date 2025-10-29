@@ -60,7 +60,7 @@ func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, accordionItemContent
 	); err != nil {
 		return
 	}
-	panel.state.LoadStartupData(preset)
+	panel.state.LoadPreset(preset)
 
 	return
 }

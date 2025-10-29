@@ -36,8 +36,8 @@ func NewState(
 	return
 }
 
-// LoadStartupData is called by the panel's constructor.
-func (state *State) LoadStartupData(preset *Preset) {
+// LoadPreset is called by the panel's constructor.
+func (state *State) LoadPreset(preset *Preset) {
 	state.Set(
 		state.SetHeading(preset.Heading),
 		state.SetDescription(preset.Description),

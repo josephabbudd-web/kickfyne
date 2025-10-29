@@ -56,7 +56,7 @@ func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, preset *_{{ call .Fu
 	if panel.state, err = _{{ call .Funcs.LowerCase .PanelName }}panel_.NewState(panel.content, screen.ScreenID); err != nil {
 		return
 	}
-	panel.state.LoadStartupData(preset)
+	panel.state.LoadPreset(preset)
 
 	return
 }

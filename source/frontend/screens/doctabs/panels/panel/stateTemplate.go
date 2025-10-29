@@ -39,8 +39,8 @@ func NewState(
 	return
 }
 
-// LoadStartupData is called by the panel's constructor.
-func (state *State) LoadStartupData(preset *Preset) {
+// LoadPreset is called by the panel's constructor.
+func (state *State) LoadPreset(preset *Preset) {
 	var icon fyne.Resource
 	if len(preset.TabItemIconName) > 0 {
 		icon = state.content.screen.APP.Settings().Theme().Icon(preset.TabItemIconName)

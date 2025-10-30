@@ -18,19 +18,13 @@ kickfyne is a work in progress. I'm using kickfyne to build my morse code traine
 * removing features I don't want anymore.
 * adding features I want.
 
+## Up to date summary 
 
-## Even more fun with kickfyne
-
-With kickfyne I create the framework and then add and remove screens to the framework. A screen is a package that lays out panels.
-
-## So what is a panel?
-
-A panel has it's own folder where there are 3 files.
-1. content.go lays out the content and handles user input.
-1. state.go manages the complexities of a changing state and can set state using a preset.
-1. preset.go contains the versions of state settings or presets. Usually the **Default** version is all that is needed.
-
-## So what is a screen?
+1. kickfyne allows a developer to create a GUI framework.
+1. kickfyne allows the developer to modify the framework.
+1. The framework is built out of Screens. A Screen is a collection of panels. A panel displays content and handles user input.
+1. There is a main menu.
+1. The application can open displaying the first item in the main menu or displaying an opening screen.
 
 ### The Accordion Screen
 
@@ -99,7 +93,7 @@ Each panel in a Simple screen uses a Select widget which allows the developer to
 
 ![The new application's default opening screen.](/images/kickfyne_helloworld_screen.png)
 
-I will remove the **HelloWorld** screen afater I create my real opening screen.
+I will remove the **HelloWorld** screen when I create my real opening screen. Then I will also edit the framework's main menu, removing "HelloWorld" from the main menu and adding my real opening screen's name.
 
 ### Add a simple screen to Edit a contact.
 
@@ -125,11 +119,10 @@ The first panel, which is the Select panel is the default panel. In a real appli
 💲 go mod tidy
 ```
 
-### Add an AppTabs screen.
+### Add an AppTabs tabbar screen.
 
-The AppTabs screen lays out a tabbar of TabItems.
+The AppTabs tabbar lays out a tabbar of TabItems.
 None of the TabItems can be removed by the user.
-The tabbar can be positioned at the top, right, bottom or left.
 The AppTabs screen's API allows TabItems to be added and removed.
 
 This AppTabs screen is named **ContactsAT** and its TabItems are named **Add** **Edit** and **Remove**.
@@ -144,11 +137,10 @@ In the command line
 💲 go mod tidy
 ```
 
-### Add a DocTabs screen.
+### Add a DocTabs tabbar screen.
 
-The DocTabs screen lays out a tabbar of TabItems.
+The DocTabs tabbar lays out a tabbar of TabItems.
 Any TabItem can be removed by the user.
-The tabbar can be positioned at the top, right, bottom or left.
 The DocTabs screen's API also allows TabItems to be added and removed.
 
 This DocTabs screen is named **ContactsDT** and its TabItems are named **Add** **Edit** and **Remove**.
@@ -296,3 +288,32 @@ Below is an example showing the selected config tab with its content.
 1. Review my API for adding and removing tabs and accordion items.
 1. Review my inline and output documentation.
 1. Write tests.
+
+## So what is a panel?
+
+A panel has it's own folder where there are 3 files.
+1. content.go lays out the content and handles user input.
+1. state.go manages the complexities of a changing state and can set state using a preset.
+1. preset.go contains the versions of state settings or presets. Usually the **Default** version is all that is needed.
+
+## So what is a screen?
+
+### Accordion Screen
+
+1. A collection of AccordionItems laid out vertically.
+1. An AccordionItem either has it's own single panel for content or has another screen for content.
+
+### AppTabs Screen
+
+1. A collection of TabItems laid out in a tabbar.
+1. A TabItem either has it's own single panel for content or has another screen for content.
+
+### DocTabs Screen
+
+1. A collection of TabItems laid out in a tabbar.
+1. A TabItem either has it's own single panel for content or has another screen for content.
+
+### Simple Screen
+
+1. A collection of panels.
+1. Only 1 panel is displayed at a time.

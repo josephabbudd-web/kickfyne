@@ -96,6 +96,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
 	_producer_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/producer"
@@ -141,42 +142,53 @@ func NewContent(tabItemContentConsumer *_types_.DocTabsTabItemContentConsumer, s
 	}
 
 	// Layout the components.
-	leftRightHBox := container.NewHBox(
-		container.NewHBox(
-			widget.NewButton(
-				"Left",
-				func() {
-					panelContent.screen.Layout.Tabbar().SetTabLocation(container.TabLocationLeading)
-				},
-			),
-			widget.NewButton(
-				"Right",
-				func() {
-					panelContent.screen.Layout.Tabbar().SetTabLocation(container.TabLocationTrailing)
-				},
-			),
-		),
-	)
-	hBoxCentered := container.New(
+	topCentered := container.New(
 		layout.NewCenterLayout(),
-		leftRightHBox,
-	)
-	innerVBox := container.NewVBox(
-		panelContent.heading,
-		panelContent.description,
-		widget.NewButton(
-			"Top",
+		widget.NewButtonWithIcon(
+			"", // "Top",
+			theme.MoveUpIcon(),
 			func() {
 				panelContent.screen.Layout.Tabbar().SetTabLocation(container.TabLocationTop)
 			},
 		),
-		hBoxCentered,
-		widget.NewButton(
-			"Bottom",
+	)
+	leftRightCentered := container.New(
+		layout.NewCenterLayout(),
+		container.NewHBox(
+			container.NewHBox(
+				widget.NewButtonWithIcon(
+					"", // "Left",
+					theme.NavigateBackIcon(),
+					func() {
+						panelContent.screen.Layout.Tabbar().SetTabLocation(container.TabLocationLeading)
+					},
+				),
+				widget.NewButtonWithIcon(
+					"", // "Right",
+					theme.NavigateNextIcon(),
+					func() {
+						panelContent.screen.Layout.Tabbar().SetTabLocation(container.TabLocationTrailing)
+					},
+				),
+			),
+		),
+	)
+	bottomCentered := container.New(
+		layout.NewCenterLayout(),
+		widget.NewButtonWithIcon(
+			"", // "Bottom",
+			theme.MoveDownIcon(),
 			func() {
 				panelContent.screen.Layout.Tabbar().SetTabLocation(container.TabLocationBottom)
 			},
 		),
+	)
+	innerVBox := container.NewVBox(
+		panelContent.heading,
+		panelContent.description,
+		topCentered,
+		leftRightCentered,
+		bottomCentered,
 	)
 	// SuccessImportance
 	dismissButton := widget.NewButton(

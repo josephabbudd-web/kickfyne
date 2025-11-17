@@ -6,7 +6,7 @@ import (
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-// CreateFramework builds frontend/screenmap/screenMap.go
+// CreateFramework builds frontend/deps/screenmap/screenMap.go
 // Call it after a screen is added or removed.
 func CreateFramework(
 	importPrefix string,

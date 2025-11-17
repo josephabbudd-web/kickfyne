@@ -26,7 +26,6 @@ import (
 func RemovePanels(
 	packageName string,
 	removePanelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -71,7 +70,7 @@ func RemovePanels(
 	if infoCopy = manifest.InfoCopy(packageName); infoCopy == nil {
 		return
 	}
-	infoCopy.Remove(removePanelNames...)
+	infoCopy.RemoveItems(removePanelNames...)
 	allPanelNames, _, _ := infoCopy.GetItems()
 
 	// frontend/screens/simple/«screen-package-name»/api.go
@@ -116,7 +115,8 @@ func RemovePanels(
 			return
 		}
 		// frontend/screens/«screen-package-name»/panels/«panel-name»Panel/
-		fPath = filepath.Join(packagePanelsPath, panelName)
+		folderName := panelName + "Panel"
+		fPath = filepath.Join(packagePanelsPath, folderName)
 		if err = os.RemoveAll(fPath); err != nil {
 			return
 		}

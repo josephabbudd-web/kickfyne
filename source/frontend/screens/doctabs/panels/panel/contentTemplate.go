@@ -27,7 +27,7 @@ import (
 
 	_producer_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/producer"
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 // Content is the content for the {{ .PanelName }} panel.
@@ -101,7 +101,7 @@ import (
 
 	_producer_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/deps/producer"
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 // Content is the content for the Settings panel.

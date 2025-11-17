@@ -15,8 +15,8 @@ import (
 
 	"fyne.io/fyne/v2"
 
-	_screenmap_ "{{ .ImportPrefix }}/frontend/screenmap"
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_screenmap_ "{{ .ImportPrefix }}/frontend/deps/screenmap"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 type validMainMenuItem struct {
@@ -82,14 +82,14 @@ func Init(ctx context.Context, ctxCancelFunc context.CancelFunc, app fyne.App, w
 func openingScreenWindowContentConsumer(ctx context.Context, ctxCancelFunc context.CancelFunc, app fyne.App, w fyne.Window) (windowContentConsumer *_types_.WindowContentConsumer) {
 	var api *_screenmap_.API
 	if api = _screenmap_.Map[openingScreen.screen]; api == nil {
-		log.Printf("%q is not a valid openingScreen.screen in frontend/mainmenu/mainmenu.go.", openingScreen.screen)
+		log.Printf("%q is not a valid openingScreen.screen in frontend/deps/mainmenu/mainmenu.go.", openingScreen.screen)
 		return
 	}
 	var presets map[string]any
 	var preset any
 	presets = _screenmap_.PresetsMap[openingScreen.screen]
 	if preset = presets[openingScreen.preset]; preset == nil {
-		log.Printf("%q is not a valid openingScreen.preset in frontend/mainmenu/mainmenu.go.", openingScreen.preset)
+		log.Printf("%q is not a valid openingScreen.preset in frontend/deps/mainmenu/mainmenu.go.", openingScreen.preset)
 		return
 	}
 	var err error
@@ -104,18 +104,18 @@ func validateMainMenuItems() (valids []validMainMenuItem) {
 	for _, item := range mainMenuItems {
 		var isValid bool
 		if _, isValid = _screenmap_.Map[item.screen]; !isValid {
-			log.Printf("%q is not a valid screen name in frontend/mainmenu/mainmenu.go.", item.screen)
+			log.Printf("%q is not a valid screen name in frontend/deps/mainmenu/mainmenu.go.", item.screen)
 			continue
 		}
 		presets := _screenmap_.PresetsMap[item.screen]
 		var preset any
 		if preset, isValid = presets[item.preset]; !isValid {
-			log.Printf("%q is not a valid preset of the screen %q in frontend/mainmenu/mainmenu.go.", item.preset, item.screen)
+			log.Printf("%q is not a valid preset of the screen %q in frontend/deps/mainmenu/mainmenu.go.", item.preset, item.screen)
 			continue
 		}
 		for _, valid := range valids {
 			if valid.label == item.label {
-				log.Printf("The menu label %q is used more than once in frontend/mainmenu/mainmenu.go.", item.label)
+				log.Printf("The menu label %q is used more than once in frontend/deps/mainmenu/mainmenu.go.", item.label)
 				continue
 			}
 		}

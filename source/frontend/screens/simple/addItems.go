@@ -27,7 +27,6 @@ import (
 func AddPanels(
 	packageName string,
 	addPanelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -71,7 +70,7 @@ func AddPanels(
 	if infoCopy = manifest.InfoCopy(packageName); infoCopy == nil {
 		return
 	}
-	infoCopy.Add(addPanelNames...)
+	infoCopy.AddItems(addPanelNames...)
 	allPanelNames, _, _ := infoCopy.GetItems()
 
 	// frontend/screens/simple/«screen-package-name»/api.go

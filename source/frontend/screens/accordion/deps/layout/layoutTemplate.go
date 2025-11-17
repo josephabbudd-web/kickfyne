@@ -16,7 +16,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 	_thread_ "{{ .ImportPrefix }}/deps/thread"
 )
 

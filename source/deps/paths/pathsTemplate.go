@@ -78,10 +78,16 @@ func Init() (err error) {
 	return
 }
 
-// ImageURI returns the URI of the images folder.
+// ImageURI returns the URI of the file in the images folder.
 func ImageURI(filename string) (imageURI fyne.URI) {
 	path := filepath.Join(shareImagesPath, filename)
 	imageURI = storage.NewFileURI(path)
+	return
+}
+
+// ImagePath returns the path of the file in the images folder.
+func ImagePath(filename string) (imagePath string) {
+	imagePath = filepath.Join(shareImagesPath, filename)
 	return
 }
 

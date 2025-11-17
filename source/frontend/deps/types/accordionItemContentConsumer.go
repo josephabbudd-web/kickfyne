@@ -35,7 +35,7 @@ func NewAccordionItemContentConsumer(accordion *widget.Accordion, accordionItem 
 
 // ContentConsumer implementations.
 
-// Show sets the AccordionItem's content.
+// Show shows the AccordionItem's content.
 // Show is the implementation of ContentConsumer.
 func (consumer *AccordionItemContentConsumer) Show(isMainThread bool) {
 	if isMainThread {
@@ -53,7 +53,7 @@ func (consumer *AccordionItemContentConsumer) IsVisible() (is bool) {
 }
 
 // Refresh:
-// 1. Moves content from the producer to the accordionIItem.
+// 1. If there is new content then it's moved from the producer to the AccordionIItem.
 // 2. Has the accordionIItem refresh.
 // Refresh is the implementation of ContentConsumer.
 func (consumer *AccordionItemContentConsumer) Refresh(isMainThread bool) {

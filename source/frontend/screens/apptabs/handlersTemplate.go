@@ -30,14 +30,6 @@ func setTabItemHandlers(layout *_layout_.Layout) {
 	)
 }
 
-// closeIntercept is called when the user tries to close a tabItem.
-// Param tabToClose is the tab that the user is trying to close.
-// - Returns if it's ok to close the tab.
-func closeIntercept(tabToClose *container.TabItem) (closeTab bool) {
-	closeTab = true
-	return
-}
-
 // onSelected is called after the tab is selected and it's content is displayed.
 // Param selectedTab is the tab the user selected.
 func onSelected(selectedTab *container.TabItem) {

@@ -36,9 +36,6 @@ func (consumer *WindowContentConsumer) IsInMainMenu() (isInMainMenu bool) {
 }
 
 // Show sets consumer as the window's content.
-// Show is only called from frontend/mainmenu.go
-// 1. When a user clicks on a menu item.
-// 2. func Show(screenName string, isMainThread bool).
 // Show is the implementation of ContentConsumer.
 func (consumer *WindowContentConsumer) Show(isMainThread bool) {
 	if isMainThread {

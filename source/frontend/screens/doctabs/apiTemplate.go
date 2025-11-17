@@ -30,7 +30,7 @@ import (
 	_layouttabitems_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/layoutTabItems"
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_presetting_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presetting"
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 var screenCount uint = 0
@@ -182,6 +182,43 @@ func NewAccordionItemContentConsumer(
 		// PackageScreen.
 		var packageScreen *_misc_.Miscellaneous
 		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, accordionItemContentConsumer, screenID); err != nil {
+			return
+		}
+		// Layout the tab items.
+		err = _layouttabitems_.LayoutTabItems(packageScreen, preset)
+	}
+	return
+}
+
+// NewBorderAreaContentConsumer constructs a new screen and returns a BorderArea content consumer of the screen's content.
+func NewBorderAreaContentConsumer(
+	ctx context.Context,
+	ctxCancel context.CancelFunc,
+	app fyne.App,
+	window fyne.Window,
+	border *fyne.Container,
+	areaIndex int,
+	preset any,
+) (
+	borderAreaContentConsumer *_types_.BorderAreaContentConsumer,
+	screenID string, // id for the caller's borderArea that this screen is content for.
+	err error,
+) {
+	defer func() {
+		if err != nil {
+			err = fmt.Errorf("{{ .PackageName }}.NewBorderAreaContentConsumer: %w", err)
+		}
+	}()
+
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
+		// Screen ID.
+		screenID = fmt.Sprintf("{{ .PackageName }}:BorderArea:%d", nextScreenCount())
+		// Consumer.
+		borderAreaContentConsumer = _types_.NewBorderAreaContentConsumer(border, areaIndex)
+		// PackageScreen.
+		var packageScreen *_misc_.Miscellaneous
+		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, borderAreaContentConsumer, screenID); err != nil {
 			return
 		}
 		// Layout the tab items.

@@ -6,6 +6,7 @@ import (
 	_manifest_ "github.com/josephabbudd-web/kickfyne/manifest"
 	_accordion_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion"
 	_apptabs_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/apptabs"
+	_border_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/border"
 	_doctabs_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/doctabs"
 	_simple_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/simple"
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
@@ -13,6 +14,7 @@ import (
 
 // CreateFramework creates the HelloWorld simple screen so that the app will run.
 func CreateFramework(
+	manifest _manifest_.Manifest,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -22,19 +24,11 @@ func CreateFramework(
 			err = fmt.Errorf("frontend.CreateFramework: %w", err)
 		}
 	}()
-
-	docComment := `Package HelloWorld is a Simple screen package.
-A Simple screen package displays only one of it's panels at a time.
-It was added when you created this framework.
-It is provided as an example.
-See the code in the panels folder.
-`
 	screenName := "HelloWorld"
 	panelsNames := []string{"Hello", "HelloAgain"}
 	if err = BuildSimplePackage(
 		screenName,
 		panelsNames,
-		docComment,
 		importPrefix,
 		folderPaths,
 	); err != nil {
@@ -42,12 +36,7 @@ See the code in the panels folder.
 	}
 
 	// Update the manifest.
-	var manifest _manifest_.Manifest
-	if manifest, err = _manifest_.New(folderPaths); err != nil {
-		return
-	}
-	manifest.AddScreen(screenName, _manifest_.SimpleScreen, panelsNames...)
-	err = manifest.Write(folderPaths)
+	manifest.AddScreen(screenName, _manifest_.SimpleScreenInfoKind, panelsNames...)
 	return
 }
 
@@ -56,7 +45,6 @@ func BuildAccordionPackage(
 	packageName string,
 	rawPanelNames []string,
 	allPanelNames, localPanelNames, remotePanelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -64,7 +52,6 @@ func BuildAccordionPackage(
 		packageName,
 		rawPanelNames,
 		allPanelNames, localPanelNames, remotePanelNames,
-		packageDoc,
 		importPrefix,
 		folderPaths,
 	)
@@ -75,7 +62,6 @@ func BuildAppTabsPackage(
 	packageName string,
 	rawPanelNames []string,
 	allPanelNames, localPanelNames, remotePanelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -83,7 +69,6 @@ func BuildAppTabsPackage(
 		packageName,
 		rawPanelNames,
 		allPanelNames, localPanelNames, remotePanelNames,
-		packageDoc,
 		importPrefix,
 		folderPaths,
 	)
@@ -94,7 +79,6 @@ func BuildDocTabsPackage(
 	packageName string,
 	rawPanelNames []string,
 	allPanelNames, localPanelNames, remotePanelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -102,7 +86,21 @@ func BuildDocTabsPackage(
 		packageName,
 		rawPanelNames,
 		allPanelNames, localPanelNames, remotePanelNames,
-		packageDoc,
+		importPrefix,
+		folderPaths,
+	)
+}
+
+// BuildDocTabsPackage builds a type DocTabs screen package.
+func BuildBorderPackage(
+	packageName string,
+	rawPanelNames []string,
+	importPrefix string,
+	folderPaths *_utils_.FolderPaths,
+) (err error) {
+	return _border_.Build(
+		packageName,
+		rawPanelNames,
 		importPrefix,
 		folderPaths,
 	)
@@ -112,14 +110,12 @@ func BuildDocTabsPackage(
 func BuildSimplePackage(
 	packageName string,
 	panelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
 	return _simple_.Build(
 		packageName,
 		panelNames,
-		packageDoc,
 		importPrefix,
 		folderPaths,
 	)

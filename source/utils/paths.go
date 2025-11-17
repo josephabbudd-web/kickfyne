@@ -15,7 +15,7 @@ const (
 	FolderNameLayout              = "layout"
 	FolderNameLayoutTabItems      = "layoutTabItems"
 	FolderNameLayoutAccorionItems = "layoutAccordionItems"
-	folderNameMainMenu            = "mainmenu"
+	FolderNameMainMenu            = "mainmenu"
 	folderNameMessage             = "message"
 	FolderNameMisc                = "misc"
 	FolderNamePanelers            = "panelers"
@@ -30,13 +30,16 @@ const (
 	folderNameThread   = "thread"
 	folderNameTypes    = "types"
 	FolderNameDocTabs  = "doctabs"
+	FolderNameBorder   = "border"
 )
 
 var (
-	frontendMainMenu  = filepath.Join(folderNameFrontend, folderNameMainMenu)
-	frontendScreens   = filepath.Join(folderNameFrontend, FolderNameScreens)
-	frontendScreenMap = filepath.Join(folderNameFrontend, folderNameScreenMap)
-	frontendTypes     = filepath.Join(folderNameFrontend, folderNameTypes)
+	frontendScreens = filepath.Join(folderNameFrontend, FolderNameScreens)
+
+	frontendDeps      = filepath.Join(folderNameFrontend, folderNameDeps)
+	frontendMainMenu  = filepath.Join(frontendDeps, FolderNameMainMenu)
+	frontendScreenMap = filepath.Join(frontendDeps, folderNameScreenMap)
+	frontendTypes     = filepath.Join(frontendDeps, folderNameTypes)
 
 	depsMetaData = filepath.Join(folderNameDeps, "metadata")
 	depsPaths    = filepath.Join(folderNameDeps, "paths")
@@ -47,6 +50,7 @@ type FolderPaths struct {
 	App string
 
 	Frontend                           string
+	FrontendDeps                       string
 	FrontendMainMenu                   string
 	FrontendScreens, FrontendScreenMap string
 	FrontendTypes                      string
@@ -70,8 +74,9 @@ func NewFolderPaths(rootPath string) (folderPaths *FolderPaths, err error) {
 		App: rootPath,
 
 		Frontend:          filepath.Join(rootPath, folderNameFrontend),
-		FrontendMainMenu:  filepath.Join(rootPath, frontendMainMenu),
 		FrontendScreens:   filepath.Join(rootPath, frontendScreens),
+		FrontendDeps:      filepath.Join(rootPath, frontendDeps),
+		FrontendMainMenu:  filepath.Join(rootPath, frontendMainMenu),
 		FrontendScreenMap: filepath.Join(rootPath, frontendScreenMap),
 		FrontendTypes:     filepath.Join(rootPath, frontendTypes),
 
@@ -162,10 +167,13 @@ func (folderPaths *FolderPaths) buildFolderPaths() (err error) {
 	if err = os.Mkdir(folderPaths.Frontend, DMode); err != nil {
 		return
 	}
-	if err = os.Mkdir(folderPaths.FrontendMainMenu, DMode); err != nil {
+	if err = os.Mkdir(folderPaths.FrontendScreens, DMode); err != nil {
 		return
 	}
-	if err = os.Mkdir(folderPaths.FrontendScreens, DMode); err != nil {
+	if err = os.Mkdir(folderPaths.FrontendDeps, DMode); err != nil {
+		return
+	}
+	if err = os.Mkdir(folderPaths.FrontendMainMenu, DMode); err != nil {
 		return
 	}
 	if err = os.Mkdir(folderPaths.FrontendScreenMap, DMode); err != nil {

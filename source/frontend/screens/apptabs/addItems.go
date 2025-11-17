@@ -29,7 +29,6 @@ import (
 func AddItems(
 	packageName string,
 	addItemNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -45,14 +44,11 @@ func AddItems(
 	if infoCopy = manifest.InfoCopy(packageName); infoCopy == nil {
 		return
 	}
-	infoCopy.Add(addItemNames...)
-	allItemNames, allLocalItemNames, allRemoteItemNames := infoCopy.GetItems()
+	infoCopy.AddItems(addItemNames...)
+	manifestAllItemNames, manifestLocalItemNames, manifestRemoteItemNames := infoCopy.GetItems()
 	addLocalItemNames := make([]string, 0, len(addItemNames))
-	// addRemoteItemNames := make([]string, 0, len(addItemNames))
 	for _, itemName := range addItemNames {
-		if itemName[:1] == "*" {
-			// addRemoteItemNames = append(addRemoteItemNames, itemName[1:])
-		} else {
+		if itemName[:1] != "*" {
 			addLocalItemNames = append(addLocalItemNames, itemName)
 		}
 	}
@@ -95,7 +91,6 @@ func AddItems(
 	files := files(packageName, addLocalItemNames, folderPaths)
 	data = &docTemplateData{
 		PackageName: packageName,
-		PackageDoc:  packageDoc,
 		Files:       files,
 		Funcs:       funcs,
 	}
@@ -118,7 +113,7 @@ func AddItems(
 	data = &_layoutitems_.TemplateData{
 		PackageName:  packageName,
 		ImportPrefix: importPrefix,
-		AllItemNames: allItemNames,
+		AllItemNames: manifestAllItemNames,
 	}
 	fPath = filepath.Join(packageLayoutItemsPath, _utils_.DocFileName)
 	if err = _utils_.ProcessTemplate(_utils_.DocFileName, fPath, _layoutitems_.DocsTemplate, data); err != nil {
@@ -144,8 +139,8 @@ func AddItems(
 	data = &_presetting_.TemplateData{
 		PackageName:      packageName,
 		ImportPrefix:     importPrefix,
-		LocalPanelNames:  allLocalItemNames,
-		RemotePanelNames: allRemoteItemNames,
+		LocalPanelNames:  manifestLocalItemNames,
+		RemotePanelNames: manifestRemoteItemNames,
 		Funcs:            funcs,
 	}
 	fPath = filepath.Join(packagePresettingPath, _utils_.APIFileName)
@@ -157,7 +152,7 @@ func AddItems(
 		return
 	}
 	fPath = filepath.Join(packagePresettingPath, _utils_.RemotePresetFileName)
-	if len(allRemoteItemNames) > 0 {
+	if len(manifestRemoteItemNames) > 0 {
 		if err = _utils_.ProcessTemplate(_utils_.RemotePresetFileName, fPath, _presetting_.RemotePresetTemplate, data); err != nil {
 			return
 		}
@@ -171,8 +166,7 @@ func AddItems(
 
 	// frontend/screens/«screen-package-name»/panels.log
 	fPath = filepath.Join(packagePanelsPath, _panels_.LogFileName)
-	fmt.Printf("fPath is %s\n", fPath)
-	content := _panels_.LogContent(packageName, allLocalItemNames, folderPaths)
+	content := _panels_.LogContent(packageName, manifestLocalItemNames, folderPaths)
 	if err = _utils_.WriteFile(fPath, []byte(content)); err != nil {
 		return
 	}
@@ -196,7 +190,6 @@ func AddItems(
 		// Panel sub folder holding content.go, state.go and preset.go.
 		// frontend/screens/«screen-package-name»/panels/«panel-name»Panel/
 		panelFolderName := panelName + "Panel"
-		fmt.Printf("making panel folder %s\n", panelFolderName)
 		panelFolderPath := filepath.Join(packagePanelsPath, panelFolderName)
 		if err = os.Mkdir(panelFolderPath, _utils_.DMode); err != nil {
 			return
@@ -204,7 +197,7 @@ func AddItems(
 		data = &_panel_.TemplateData{
 			PackageName:     packageName,
 			PanelName:       panelName,
-			LocalPanelNames: allLocalItemNames,
+			LocalPanelNames: manifestLocalItemNames,
 			ImportPrefix:    importPrefix,
 			Funcs:           funcs,
 		}
@@ -246,8 +239,8 @@ func AddItems(
 		PackageName:      packageName,
 		ImportPrefix:     importPrefix,
 		Funcs:            funcs,
-		LocalPanelNames:  allLocalItemNames,
-		RemotePanelNames: allRemoteItemNames,
+		LocalPanelNames:  manifestLocalItemNames,
+		RemotePanelNames: manifestRemoteItemNames,
 	}
 	if err = _utils_.ProcessTemplate(_tabs_.FileName, fPath, _tabs_.NoBETemplate, data); err != nil {
 		return

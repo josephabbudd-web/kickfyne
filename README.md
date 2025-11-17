@@ -3,6 +3,11 @@
 ![kickfyne fyne with a kick.](/images/kick.jpeg)
 Image courtesy of https://isorepublic.com/photo/flying-kick/
 
+## November 17, 2025
+
+Added the Border screen.
+Added the system tray menu.
+
 ## Fun with Fyne
 
 [The Fyne Toolkit](https://fyne.io/) is my favorite Go application tool kit. It is really nice. After creating a couple of apps using the fyne toolkit, I decided to make my own tool to build and manage building my fyne apps. So my tool is called kickfyne.
@@ -16,61 +21,20 @@ kickfyne is a work in progress. I'm using kickfyne to build my morse code traine
 * fixing bugs in kickfyne.
 * improving documentation in kickfyne.
 * removing features I don't want anymore.
-* adding features I want.
+* adding features I do want.
 
+## Summary
 
-## Even more fun with kickfyne
+With kickfyne I create the framework and then add and remove screens in the framework. A screen is a package that lays out panels.
 
-With kickfyne I create the framework and then add and remove screens to the framework. A screen is a package that lays out panels.
+## Most of the developer's attention is toward each panel in a screen
 
-## So what is a panel?
+### A panel is a content producer
 
 A panel has it's own folder where there are 3 files.
 1. content.go lays out the content and handles user input.
-1. state.go manages the complexities of a changing state and can set state using a preset.
-1. preset.go contains the versions of state settings or presets. Usually the **Default** version is all that is needed.
-
-## So what is a screen?
-
-### The Accordion Screen
-
-An Accordion Screen lays out AccordionItems vertically. Each AccordionItem will use it's own single panel for content or will use another screen for content.
-
-Kickfyne allows the developer to:
-
-1. Add an Accordion Screen with it's AccordionItems.
-1. Add AccordionItems to and remove AccordionItems from an Accordion Screen.
-1. Remove an Accordion Screen.
-
-### The AppTabs Screen
-
-An AppTabs Screen lays out a tabbar with TabItems that the user can not close. The tabbar can be fixed at the top, right, bottom or left of the content. An optional settings tab allows the user to set the tabbar location. Each TabItem will use it's own single panel for content or will use another screen for content.
-
-Kickfyne allows the developer to:
-
-1. Add an AppTabs Screen with it's TabItems.
-1. Add TabItems to and remove TabItems from an AppTabs Screen.
-1. Remove an AppTabs Screen.
-
-### The DocTabs Screen
-
-A DocTabs Screen lays out a tabbar with TabItems that the user can close. The tabbar can be fixed at the top, right, bottom or left of the content. An optional settings tab allows the user to set the tabbar location. Each TabItem will use it's own single panel for content or will use another screen for content.
-
-Kickfyne allows the developer to:
-
-1. Add a DocTabs Screen with it's TabItems.
-1. Add TabItems to and remove TabItems from an DocTabs Screen.
-1. Remove a DocTabs Screen.
-
-### The Simple Screen
-
-A Simple Screen displays only one of it's panels at a time.
-
-Kickfyne allows the developer to:
-
-1. Add a Simple Screen with it's panels.
-1. Add panels to and remove panels from an Simple Screen.
-1. Remove a Simple Screen.
+1. state.go manages the complexities of a updating content and can update content using a preset.
+1. preset.go contains the versions of state. Usually the **Default** preset is all that is needed.
 
 ## Example
 
@@ -89,9 +53,9 @@ The framework always works when modified with kickfyne.
 💲 ./mycrud
 ```
 
-### HelloWorld is the kickfyne framwork's opening screen
+### HelloWorld is the kickfyne framework's opening screen
 
-The kickfyne framwork, when built and run, will open with it's default **HelloWorld** screen. The screen has 2 panels **Hello** and **HelloAgain**.
+The kickfyne framework, when built and run, will open with it's default **HelloWorld** screen. The screen has 2 panels **Hello** and **HelloAgain**.
 
 The **HelloWorld** screen is a Simple screen. A simple screen has 1 or more panels and only displays one panel at a time.
 
@@ -99,7 +63,7 @@ Each panel in a Simple screen uses a Select widget which allows the developer to
 
 ![The new application's default opening screen.](/images/kickfyne_helloworld_screen.png)
 
-I will remove the **HelloWorld** screen afater I create my real opening screen.
+I will remove the **HelloWorld** screen after I create my real opening screen.
 
 ### Add a simple screen to Edit a contact.
 
@@ -180,17 +144,54 @@ In the command line
 💲 go mod tidy
 ```
 
-### Rewrite the app's main menu in the file at frontend/mainmenu/mainmenu.go.
+### Add a Border screen.
 
-I remove the mainMenuItem for HellowWorld and add the mainMenuItem for the 3 new main screens.
+A Border Screen is a content producer. A Border Screen lays out content in it's 5 areas, Top, Bottom, Left, Right and Center. The Top, Bottom, Left, and Right areas will only consume the content from their panel with the same name. The Center area can be set to use content from it's panel with the same name or from another screen.
+
+The Border screen's API also allows the 5 areas to be added and removed.
+
+This Border screen is named **ContactsB** and I'll use all 5 areas for demonstration. I'll use the content from the **ContactsAC** screen for the Center area.
+
+In the command line
+ * The Top area will gets it's content from it's own Top panel.
+ * The Bottom area will gets it's content from it's own Bottom panel.
+ * The Left area will gets it's content from it's own Left panel.
+ * The Right area will gets it's content from it's own Right panel.
+ * The Center area will gets it's content from an implementation of the **ContactsAC** screen.
+ 
+```shell
+💲 kickfyne screen add-border ContactsB Top Bottom Left Right Center=*ContactsAC
+💲 go mod tidy
+```
+
+### Rewrite the app's opening screen and main menu in the file at frontend/settings.go.
+
+1. Redefine the constants `openingScreenName` and `openingScreenPresetName` in frontend/settings.go so that they reference my new opening screen.
+1. Redefine var mainMenuItems to reference the 3 new main screens.
 
 ```go
-// The first mainMenuItem is also the opening screen.
-// The following items in mainMenuItems are ignored and logged without an error.
-//   - Repeated labels.
-//   - Invalid screen package names.
-//   - Invalid presets names.
-var mainMenuItems = []mainMenuItem{
+package frontend
+
+import (
+	_mainmenu_ "example.com/toolbar/frontend/deps/mainmenu"
+)
+
+const (
+	// usingMainMenu. Is the application using a main menu.
+	usingMainMenu = true
+
+	// This is the screen that the application opens with.
+	// It does not have to be referenced in var mainMenuItems.
+	openingScreenName       = "ContactsAT"
+	openingScreenPresetName = "Default"
+)
+
+// mainMenuItems is the list of items for the main menu.
+// The following issues will generate an error.
+//   - Repeated Label.
+//   - Unknown ScreenName.
+//   - Unknown PresetName.
+var mainMenuItems = []_mainmenu_.MainMenuItem{
 	{
 		label:  "App Tabs",
 		screen: "ContactsAT",
@@ -206,22 +207,11 @@ var mainMenuItems = []mainMenuItem{
 		screen: "ContactsAC",
 		preset: "Default",
 	},
-}
-```
-
-### The opening screen.
-
-I have not removed the **HelloWorld** screen but I will in the next step.
-
-For that reason, I should rewrite `var openingScreen` in mainmenu/mainmenu.go because it references that **HelloWorld** screen. If I don't correct `var openingScreen` the framework will quietly
-
-1. Print an error message to stdout.
-1. Display the first screen in the main menu.
-
-```go
-var openingScreen = mainMenuItem{
-		screen: "HelloWorld",
+	{
+		label:  "Border",
+		screen: "ContactsB",
 		preset: "Default",
+	},
 }
 ```
 
@@ -232,8 +222,6 @@ var openingScreen = mainMenuItem{
 💲 go build
 💲 ./mycrud
 ```
-
-I am too lazy to correct the definition of `var openingScreen` in mainmenu/mainmenu.go. So, because there is no **HelloWorld** screen now to open with, the application will silently print an error message and then go ahead and open with the ContactsAT screen which is the first screen named in MainMenu.
 
 ### The ContactsAT screen
 
@@ -253,6 +241,12 @@ The **ContactsAC** screen is an Accordion screen. The **ContactsAC** screen is s
 
 ![The Accordion screen.](/images/kickfyne_contacts_accordion_screen.png)
 
+### The ContactsB screen
+
+The **ContactsB** screen is a Border screen. Notice that the Top, Left, Right and Bottom areas also show buttons by default. That's to make them easier to identify. Notice that the Center area is displaying content from the **ContactsAC** screen which has its **Edit** AccordionItem selected.
+
+![The Border screen.](/images/kickfyne_contacts_border_screen.png)
+
 ### The main menu
 
 The main menu is at the top left of the app and it is shown open.
@@ -265,6 +259,7 @@ The main menu is at the top left of the app and it is shown open.
 1. AccordionItems can be appended to and removed from an Accordion screen.
 1. TabItems can be appended to and removed from an AppTab screen.
 1. TabItems can be appended to and removed from a DocTab screen.
+1. Areas can be added to and removed from a Border screen.
 1. Panels can be added to and removed from a simple screen.
 
 ```shell

@@ -21,7 +21,6 @@ import (
 func Build(
 	packageName string,
 	localPanelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -93,10 +92,9 @@ func Build(
 
 	// frontend/screens/simple/«screen-package-name»/doc.go
 	fPath = filepath.Join(packagePath, docFileName)
-	files := files(packageName, localPanelNames, folderPaths)
+	files := files(localPanelNames, folderPaths)
 	data = &docTemplateData{
 		PackageName: packageName,
-		PackageDoc:  packageDoc,
 		Files:       files,
 		Funcs:       funcs,
 	}

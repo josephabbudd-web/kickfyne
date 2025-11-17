@@ -34,7 +34,7 @@ func NewAppTabsTabItemContentConsumer(tabbar *container.AppTabs, tabItem *contai
 
 // ContentConsumer implementations.
 
-// Show sets the TabItem's content.
+// Show shows the TabItem's content.
 // Show is the implementation of ScreenCanvasWatcher.
 func (consumer *AppTabsTabItemContentConsumer) Show(isMainThread bool) {
 	if isMainThread {
@@ -52,7 +52,7 @@ func (consumer *AppTabsTabItemContentConsumer) IsVisible() (is bool) {
 }
 
 // Refresh:
-// 1. Moves content from the producer to the tabItem.
+// 1. If there is new content then it's moved from the producer to the TabIItem.
 // 2. Refreshes the tabItem.
 // 3. Refreshes the tab-bar.
 // Refresh is the implementation of ContentConsumer.

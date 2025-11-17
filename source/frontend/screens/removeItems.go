@@ -3,74 +3,82 @@ package screens
 import (
 	_accordion_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/accordion"
 	_apptabs_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/apptabs"
+	_border_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/border"
 	_doctabs_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/doctabs"
 	_simple_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/simple"
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-// RemoveItemsFromAccordionPackage builds a type Accordion screen package.
+// RemoveItemsFromAccordionPackage _accordion_.RemoveItems.
 func RemoveItemsFromAccordionPackage(
 	packageName string,
 	newItemNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
 	return _accordion_.RemoveItems(
 		packageName,
 		newItemNames,
-		packageDoc,
 		importPrefix,
 		folderPaths,
 	)
 }
 
-// RemoveItemsFromAppTabsPackage builds a type AppTabs screen package.
+// RemoveItemsFromAppTabsPackage calls _apptabs_.RemoveItems.
 func RemoveItemsFromAppTabsPackage(
 	packageName string,
 	newItemNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
 	return _apptabs_.RemoveItems(
 		packageName,
 		newItemNames,
-		packageDoc,
 		importPrefix,
 		folderPaths,
 	)
 }
 
-// RemoveItemsFromDocTabsPackage builds a type DocTabs screen package.
+// RemoveItemsFromDocTabsPackage calls _doctabs_.RemoveItems.
 func RemoveItemsFromDocTabsPackage(
 	packageName string,
 	newItemNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
 	return _doctabs_.RemoveItems(
 		packageName,
 		newItemNames,
-		packageDoc,
 		importPrefix,
 		folderPaths,
 	)
 }
 
-// RemovePanelsFromSimplePackage builds a type Simple screen package.
+// RemovePanelsFromSimplePackage calls _simple_.RemovePanels.
 func RemovePanelsFromSimplePackage(
 	packageName string,
 	panelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
 	return _simple_.RemovePanels(
 		packageName,
 		panelNames,
-		packageDoc,
+		importPrefix,
+		folderPaths,
+	)
+}
+
+// RemoveAreasFromBorderPackage calls _border_.RemoveAreas.
+func RemoveAreasFromBorderPackage(
+	packageName string,
+	areaNames []string,
+	importPrefix string,
+	folderPaths *_utils_.FolderPaths,
+) (err error) {
+	return _border_.RemoveAreas(
+		packageName,
+		areaNames,
 		importPrefix,
 		folderPaths,
 	)

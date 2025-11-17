@@ -24,7 +24,7 @@ import (
 
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_{{ call .Funcs.LowerCase .PanelName }}panel_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels/{{ .PanelName }}Panel"
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 // {{ .PanelName }}Panel is a {{ .PanelName }} panel.

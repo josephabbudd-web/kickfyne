@@ -31,12 +31,12 @@ import (
 {{- end }}
 
 {{ if ne (len .RemotePanelNames) 0 }}
-	_screenmap_ "{{ .ImportPrefix }}/frontend/screenmap"
+	_screenmap_ "{{ .ImportPrefix }}/frontend/deps/screenmap"
 {{ end }}
 	_misc_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/misc"
 	_panels_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/panels"
 	_presetting_ "{{ .ImportPrefix }}/frontend/screens/{{ .PackageName }}/presetting"
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 func SetInitialAccordionItems(screen *_misc_.Miscellaneous, screenPreset *_presetting_.Preset) (err error) {

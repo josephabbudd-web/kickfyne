@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	_manifest_ "github.com/josephabbudd-web/kickfyne/manifest"
 	_deps_ "github.com/josephabbudd-web/kickfyne/source/deps"
 	_frontend_ "github.com/josephabbudd-web/kickfyne/source/frontend"
 	_root_ "github.com/josephabbudd-web/kickfyne/source/root"
@@ -36,6 +37,7 @@ func HasAppFolder(currentWP, appName string) (hasAppFolder bool, err error) {
 
 // CreateFramework builds the framework in an appName folder in this parent folder.
 func CreateFramework(
+	manifest _manifest_.Manifest,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -59,9 +61,12 @@ func CreateFramework(
 	}
 
 	// Frontend
-	if err = _frontend_.CreateFramework(importPrefix, folderPaths); err != nil {
+	if err = _frontend_.CreateFramework(manifest, importPrefix, folderPaths); err != nil {
 		return
 	}
+
+	// Update the manifest.
+	manifest.AddFramework()
 
 	return
 }

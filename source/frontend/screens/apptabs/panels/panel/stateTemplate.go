@@ -13,7 +13,7 @@ import (
 	"fyne.io/fyne/v2"
 
 	_thread_ "{{ .ImportPrefix }}/deps/thread"
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 // State is the state for the {{ .PanelName }} panel.
@@ -56,7 +56,7 @@ func (state *State) LoadPreset(preset *Preset) {
 // Refresh moves the state's new content to the producer.
 // This new content was created int func NewContent before the tab item consumer and screen producer were added.
 // This is only called in func layout.AddPanelerTabItemConsumer.
-// It is part of the frontend/types/Stater implementation.
+// It is part of the frontend/deps/types/Stater implementation.
 func (state *State) Refresh(isMainThread bool) {
 	producer := state.content.producer
 	producer.SetCanvasObject(state.content.content)
@@ -64,7 +64,7 @@ func (state *State) Refresh(isMainThread bool) {
 }
 
 // Set sets the state.
-// It is part of the frontend/types/Stater implementation.
+// It is part of the frontend/deps/types/Stater implementation.
 func (state *State) Set(setters ..._types_.StateSetter) {
 	isMainThread := _thread_.IsMainThread()
 	var refreshCanvasObject bool

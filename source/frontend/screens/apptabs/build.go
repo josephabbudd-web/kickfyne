@@ -23,7 +23,6 @@ func Build(
 	packageName string,
 	rawPanelNames []string,
 	allPanelNames, localPanelNames, remotePanelNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -103,7 +102,6 @@ func Build(
 	files := files(packageName, localPanelNames, folderPaths)
 	data = &docTemplateData{
 		PackageName:  packageName,
-		PackageDoc:   packageDoc,
 		Files:        files,
 		UseConfigTab: useConfigTab,
 		Funcs:        funcs,
@@ -188,14 +186,12 @@ func Build(
 
 	// frontend/screens/«screen-package-name»/panels.log
 	fPath = filepath.Join(packagePanelsPath, _panels_.LogFileName)
-	fmt.Printf("fPath is %s\n", fPath)
 	content := _panels_.LogContent(packageName, localPanelNames, folderPaths)
 	if err = _utils_.WriteFile(fPath, []byte(content)); err != nil {
 		return
 	}
 
 	// Add each panel's file and sub folder.
-	fmt.Printf("localPanelNames is %+v", localPanelNames)
 	for _, panelName := range localPanelNames {
 		// Panel file.
 		// frontend/screens/«screen-package-name»/panels/«panel-name»Panel/
@@ -214,7 +210,6 @@ func Build(
 		// Panel sub folder holding content.go, state.go and preset.go.
 		// frontend/screens/«screen-package-name»/panels/«panel-name»Panel/
 		panelFolderName := panelName + "Panel"
-		fmt.Printf("making panel folder %s\n", panelFolderName)
 		panelFolderPath := filepath.Join(packagePanelsPath, panelFolderName)
 		if err = os.Mkdir(panelFolderPath, _utils_.DMode); err != nil {
 			return

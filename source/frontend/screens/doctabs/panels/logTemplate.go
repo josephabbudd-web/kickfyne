@@ -45,8 +45,8 @@ func LogContent(
 	builder := strings.Builder{}
 	builder.WriteString(fmt.Sprintf(howPanelsWork, screenPackageName))
 	for _, panelName := range localPanelNames {
-		contentPath := _utils_.PanelContentFilePath(screenPackageName, panelName, folderPaths)
-		statePath := _utils_.PanelStateFilePath(screenPackageName, panelName, folderPaths)
+		contentPath := _utils_.PanelContentFullFilePath(screenPackageName, panelName, folderPaths)
+		statePath := _utils_.PanelStateFullFilePath(screenPackageName, panelName, folderPaths)
 		builder.WriteString("  " + panelName + "Panel\n")
 		builder.WriteString(fmt.Sprintf("    Content:   %s.\n", contentPath))
 		builder.WriteString(fmt.Sprintf("    State:     %s.\n", statePath))

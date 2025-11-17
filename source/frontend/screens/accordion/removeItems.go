@@ -20,7 +20,6 @@ import (
 func RemoveItems(
 	packageName string,
 	removeItemNames []string,
-	packageDoc string,
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
 ) (err error) {
@@ -36,14 +35,11 @@ func RemoveItems(
 	if infoCopy = manifest.InfoCopy(packageName); infoCopy == nil {
 		return
 	}
-	infoCopy.Remove(removeItemNames...)
-	allItemNames, allLocalItemNames, allRemoteItemNames := infoCopy.GetItems()
+	infoCopy.RemoveItems(removeItemNames...)
+	finalAllItemNames, finalLocalItemNames, finalRemoteItemNames := infoCopy.GetItems()
 	removeLocalItemNames := make([]string, 0, len(removeItemNames))
-	// removeRemoteItemNames := make([]string, 0, len(removeItemNames))
 	for _, itemName := range removeItemNames {
-		if itemName[:1] == "*" {
-			// removeRemoteItemNames = append(removeRemoteItemNames, itemName[1:])
-		} else {
+		if itemName[:1] != "*" {
 			removeLocalItemNames = append(removeLocalItemNames, itemName)
 		}
 	}
@@ -83,10 +79,9 @@ func RemoveItems(
 
 	// frontend/screens/«screen-package-name»/doc.go
 	fPath = filepath.Join(packagePath, docFileName)
-	files := files(packageName, allLocalItemNames, folderPaths)
+	files := files(packageName, finalLocalItemNames, folderPaths)
 	data = &docTemplateData{
 		PackageName: packageName,
-		PackageDoc:  packageDoc,
 		Files:       files,
 		Funcs:       funcs,
 	}
@@ -109,7 +104,7 @@ func RemoveItems(
 	data = &_layoutitems_.TemplateData{
 		PackageName:  packageName,
 		ImportPrefix: importPrefix,
-		AllItemNames: allItemNames,
+		AllItemNames: finalAllItemNames,
 	}
 	fPath = filepath.Join(packageLayoutItemsPath, _utils_.DocFileName)
 	if err = _utils_.ProcessTemplate(_utils_.DocFileName, fPath, _layoutitems_.DocsTemplate, data); err != nil {
@@ -125,8 +120,8 @@ func RemoveItems(
 	data = &_presetting_.TemplateData{
 		PackageName:      packageName,
 		ImportPrefix:     importPrefix,
-		LocalPanelNames:  allLocalItemNames,
-		RemotePanelNames: allRemoteItemNames,
+		LocalPanelNames:  finalLocalItemNames,
+		RemotePanelNames: finalRemoteItemNames,
 		Funcs:            funcs,
 	}
 	fPath = filepath.Join(packagePresettingPath, _utils_.APIFileName)
@@ -138,7 +133,7 @@ func RemoveItems(
 		return
 	}
 	fPath = filepath.Join(packagePresettingPath, _utils_.RemotePresetFileName)
-	if len(allRemoteItemNames) > 0 {
+	if len(finalRemoteItemNames) > 0 {
 		if err = _utils_.ProcessTemplate(_utils_.RemotePresetFileName, fPath, _presetting_.RemotePresetTemplate, data); err != nil {
 			return
 		}
@@ -152,7 +147,7 @@ func RemoveItems(
 
 	// frontend/screens/«screen-package-name»/panels.log
 	fPath = filepath.Join(packagePanelsPath, _panels_.LogFileName)
-	content := _panels_.LogContent(packageName, allLocalItemNames, folderPaths)
+	content := _panels_.LogContent(packageName, finalLocalItemNames, folderPaths)
 	if err = _utils_.WriteFile(fPath, []byte(content)); err != nil {
 		return
 	}
@@ -167,7 +162,8 @@ func RemoveItems(
 			return
 		}
 		// frontend/screens/«screen-package-name»/panels/«panel-name»Panel/
-		fPath = filepath.Join(packagePanelsPath, panelName)
+		folderName := panelName + "Panel"
+		fPath = filepath.Join(packagePanelsPath, folderName)
 		if err = os.RemoveAll(fPath); err != nil {
 			return
 		}
@@ -191,8 +187,8 @@ func RemoveItems(
 		PackageName:      packageName,
 		ImportPrefix:     importPrefix,
 		Funcs:            funcs,
-		LocalPanelNames:  allLocalItemNames,
-		RemotePanelNames: allRemoteItemNames,
+		LocalPanelNames:  finalLocalItemNames,
+		RemotePanelNames: finalRemoteItemNames,
 	}
 	if err = _utils_.ProcessTemplate(_accordionitems_.FileName, fPath, _accordionitems_.NoBETemplate, data); err != nil {
 		return

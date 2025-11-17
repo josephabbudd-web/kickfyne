@@ -11,7 +11,7 @@ const (
 import (
 	"fyne.io/fyne/v2"
 
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 type appTabsContentProducerState struct {

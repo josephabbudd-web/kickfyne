@@ -8,10 +8,9 @@ import (
 
 const (
 	screenPackageNameParam = "«screen-package-name»"
-	panelNameParam         = "«panel-name, ...»"
-	tabItemNameParam       = "«[*]tab-item-name, ...»"
-	accordionItemNameParam = "«[*]accordion-item-name, ...»"
-	screenItemNameParam    = "«[*]item-name or panel-name, ...»"
+	panelNameParam         = "«panel-name» ..."
+	itemNameParam          = "«panel-name»|*«screen-name» ..."
+	borderAreaNameParam    = "[Top|Bottom|Left|Right|Center[=*«screen-name»]] ..."
 
 	usage3F = "💲 %s %s %s"
 	usage4F = "💲 %s %s %s %s"
@@ -20,13 +19,14 @@ const (
 
 var (
 	UsageScreenAddSimple      = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddSimple, screenPackageNameParam, panelNameParam)
-	UsageScreenAddAccordion   = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAccordion, screenPackageNameParam, accordionItemNameParam)
-	UsageScreenAddAppTabs     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAppTabs, screenPackageNameParam, tabItemNameParam)
-	UsageScreenAddAppTabsPlus = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAppTabsPlus, screenPackageNameParam, tabItemNameParam)
-	UsageScreenAddDocTabs     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddDocTabs, screenPackageNameParam, tabItemNameParam)
-	UsageScreenAddDocTabsPlus = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddDocTabsPlus, screenPackageNameParam, tabItemNameParam)
-	UsageScreenAddItem        = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddItem, screenPackageNameParam, screenItemNameParam)
-	UsageScreenRemoveItem     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbRemoveItem, screenPackageNameParam, screenItemNameParam)
+	UsageScreenAddAccordion   = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAccordion, screenPackageNameParam, itemNameParam)
+	UsageScreenAddAppTabs     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAppTabs, screenPackageNameParam, itemNameParam)
+	UsageScreenAddAppTabsPlus = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddAppTabsPlus, screenPackageNameParam, itemNameParam)
+	UsageScreenAddDocTabs     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddDocTabs, screenPackageNameParam, itemNameParam)
+	UsageScreenAddDocTabsPlus = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddDocTabsPlus, screenPackageNameParam, itemNameParam)
+	UsageAddBorder            = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddBorder, screenPackageNameParam, borderAreaNameParam)
+	UsageScreenAddItem        = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbAddItem, screenPackageNameParam, itemNameParam)
+	UsageScreenRemoveItem     = fmt.Sprintf(usage5F, os.Args[0], CmdScreen, verbRemoveItem, screenPackageNameParam, itemNameParam)
 	usageScreenHelp           = fmt.Sprintf(usage3F, os.Args[0], CmdScreen, subCmdHelp)
 	usageScreenList           = fmt.Sprintf(usage3F, os.Args[0], CmdScreen, verbList)
 	UsageScreenRemove         = fmt.Sprintf(usage4F, os.Args[0], CmdScreen, verbRemove, screenPackageNameParam)
@@ -38,10 +38,10 @@ func UsageScreen() (usage string) {
 		"Add an Accordion screen: " + UsageScreenAddAccordion,
 		"Add an AppTabs screen:   " + UsageScreenAddAppTabs,
 		" Plus (+) configuration: " + UsageScreenAddAppTabsPlus,
-		"Add a DocTabs screen:    " + UsageScreenAddAppTabs,
-		" Plus (+) configuration: " + UsageScreenAddAppTabsPlus,
-		"Add an DocTabs screen: " + UsageScreenAddDocTabs,
-		UsageScreenRemove,
+		"Add a DocTabs screen:    " + UsageScreenAddDocTabs,
+		" Plus (+) configuration: " + UsageScreenAddDocTabsPlus,
+		"Add a Border screen:     " + UsageAddBorder,
+		"Remove a screen:         " + UsageScreenRemove,
 	}
 	helpCommands := []string{
 		usageScreenList,
@@ -77,7 +77,16 @@ AccordionItem names:
 * An accordion-item-name not prefixed with '*':
   Will get its content from a panel of the same name.
   That panel will be created in the same accordion screen package.
-  
+
+BorderArea names:
+* An area-name prefixed with '*':
+  Will get its content from the screen package of the same name.
+  That screen must already exist.
+* An area-name not prefixed with '*':
+  Will get its content from a panel of the same name.
+  That panel will be created in the same border screen package.
+* There must be 2 or more areas defined for a border screen.
+
 After a screen is added:
 1. A link to it's screen.zig file is displayed.
 2. A search for KICKFYNE TODO in the screen package files will reveal instructions for proper developement and management of the screen operation.
@@ -87,10 +96,11 @@ After a screen is added:
 
 func Usage() (usage string) {
 	usage = `👀 THE front-end:
-Screen names must be in TitleCase.
-Panel names must be in TitleCase.
-TabItem names must be in TitleCase.
-AccordionItem names must be in TitleCase.
+Screen names must be in PascalCase.
+Panel names must be in PascalCase.
+TabItem names must be in PascalCase.
+AccordionItem names must be in PascalCase.
+BorderArea names must be in PascalCase.
 
 ` + UsageScreen()
 	return

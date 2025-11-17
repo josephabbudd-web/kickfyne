@@ -40,7 +40,7 @@ func CreateFramework(
 		AppName:    appName,
 		AppID:      strings.Join(appIDParts, "."),
 	}
-	if err = _utils_.ProcessTemplate(_utils_.FyneAppTOMLFileName, _utils_.FyneAppTOMLFilePath(folderPaths), dyneAppTOMLTemplate, data); err != nil {
+	if err = _utils_.ProcessTemplate(_utils_.FyneAppTOMLFileName, _utils_.FyneAppTOMLFullFilePath(folderPaths), dyneAppTOMLTemplate, data); err != nil {
 		return
 	}
 

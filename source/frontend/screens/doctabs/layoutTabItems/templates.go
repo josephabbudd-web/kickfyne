@@ -55,7 +55,7 @@ import (
 /* KICKFYNE TODO:
 - You may need to customize func LayoutTabItems.
   Kickfyne always keeps updated example code for you to review in example.go.
-  Example.go is updated whenever you add or remove a tab from this package.
+  The example in docs.go is updated whenever you add or remove a tab from this package.
 */
 
 // KICKFYNE TODO:

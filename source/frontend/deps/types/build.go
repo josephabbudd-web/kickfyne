@@ -7,7 +7,7 @@ import (
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
-// CreateFramework creates the framework's frontend/types.
+// CreateFramework creates the framework's frontend/deps/types.
 func CreateFramework(
 	importPrefix string,
 	folderPaths *_utils_.FolderPaths,
@@ -22,25 +22,31 @@ func CreateFramework(
 	var oPath string
 	var templateData any
 
-	// frontend/types/interfaces.go.
+	// frontend/deps/types/interfaces.go.
 	oPath = filepath.Join(folderPaths.FrontendTypes, interfacesFileName)
 	if err = _utils_.WriteFile(oPath, []byte(interfacesNoBETemplate)); err != nil {
 		return
 	}
 
-	// frontend/types/accordionItemContentConsumer.go
+	// frontend/deps/types/accordionItemContentConsumer.go
 	oPath = filepath.Join(folderPaths.FrontendTypes, accordionItemContentConsumerFileName)
 	if err = _utils_.WriteFile(oPath, []byte(accordionItemContentConsumerTemplate)); err != nil {
 		return
 	}
 
-	// frontend/types/appTabItemContentConsumer.go
+	// frontend/deps/types/appTabItemContentConsumer.go
 	oPath = filepath.Join(folderPaths.FrontendTypes, appTabItemContentConsumerFileName)
 	if err = _utils_.WriteFile(oPath, []byte(appTabItemContentConsumerTemplate)); err != nil {
 		return
 	}
 
-	// frontend/types/docTabItemContentConsumer.go
+	// frontend/deps/types/borderAreaContentConsumer.go
+	oPath = filepath.Join(folderPaths.FrontendTypes, borderAreaContentConsumerFileName)
+	if err = _utils_.WriteFile(oPath, []byte(borderAreaContentConsumerTemplate)); err != nil {
+		return
+	}
+
+	// frontend/deps/types/docTabItemContentConsumer.go
 	templateData = &docTabItemContentConsumerTemplateData{
 		ImportPrefix: importPrefix,
 	}
@@ -49,7 +55,7 @@ func CreateFramework(
 		return
 	}
 
-	// frontend/types/windowContentConsumer.go
+	// frontend/deps/types/windowContentConsumer.go
 	oPath = filepath.Join(folderPaths.FrontendTypes, windowContentConsumerFileName)
 	if err = _utils_.ProcessTemplate(windowContentConsumerFileName, oPath, windowContentConsumerTemplate, nil); err != nil {
 		return

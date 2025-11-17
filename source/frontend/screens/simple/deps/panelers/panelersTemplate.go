@@ -11,7 +11,7 @@ const (
 	PanelersTemplate = `package panelers
 
 import (
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 // Panelers is this screen's panels.

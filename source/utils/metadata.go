@@ -55,7 +55,7 @@ func loadMetaData(folderPaths *FolderPaths) (data FyneAppMetaData, err error) {
 		}
 	}()
 
-	path := FyneAppTOMLFilePath(folderPaths)
+	path := FyneAppTOMLFullFilePath(folderPaths)
 	if file, err = os.Open(path); err != nil {
 		return
 	}

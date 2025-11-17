@@ -17,10 +17,24 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 
-	_types_ "{{ .ImportPrefix }}/frontend/types"
+	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
 type API struct {
+	NewBorderAreaContentConsumer func(
+		ctx context.Context,
+		ctxCancel context.CancelFunc,
+		app fyne.App,
+		window fyne.Window,
+		border *fyne.Container,
+		areaIndex int,
+		preset any,
+	) (
+		borderAreaContentConsumer *_types_.BorderAreaContentConsumer,
+		screenID string, // id for the caller's borderArea that this screen is content for.
+		err error,
+	)
+
 	NewWindowContentConsumer func(
 		ctx context.Context,
 		ctxCancel context.CancelFunc,

@@ -2,6 +2,7 @@ package frontend
 
 import (
 	"fmt"
+	"slices"
 
 	_manifest_ "github.com/josephabbudd-web/kickfyne/manifest"
 	_frontend_ "github.com/josephabbudd-web/kickfyne/source/frontend"
@@ -51,8 +52,8 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			fmt.Println(failureMessage)
 			return
 		}
-		screenKind := manifest.ScreenKind(args[2])
-		if screenKind == _manifest_.NilScreen {
+		screenKind := manifest.InfoKind(args[2])
+		if screenKind == _manifest_.NilInfoKind {
 			fmt.Printf("Failure: The screen package %q does not exists.\n", args[2])
 			return
 		}
@@ -62,7 +63,7 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			if !manifest.HasScreenItem(args[2], itemName) {
 				haveInvalidItemName = true
 				switch screenKind {
-				case _manifest_.SimpleScreen:
+				case _manifest_.SimpleScreenInfoKind:
 					fmt.Printf("Failure: The %q screen package does not have a panel named %q.\n", args[2], itemName)
 				default:
 					fmt.Printf("Failure: The %q screen package does not have an item named \"%s\".\n", args[2], itemName)
@@ -71,12 +72,12 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			}
 			isRemote, isScreenName := manifest.IsRemoteNameIsScreenName(itemName)
 			switch screenKind {
-			case _manifest_.SimpleScreen:
-				if isRemote && isScreenName {
+			case _manifest_.SimpleScreenInfoKind:
+				if isRemote {
 					haveInvalidItemName = true
 					fmt.Printf("Failure: The panel name \"%s\" can not be a reference to a screen package.\n    Simple screens only have local panels.\n", itemName)
 				}
-			case _manifest_.AccordionScreen, _manifest_.AppTabsScreen, _manifest_.DocTabsScreen:
+			case _manifest_.AccordionScreenInfoKind, _manifest_.AppTabsScreenInfoKind, _manifest_.DocTabsScreenInfoKind:
 				if isRemote && !isScreenName {
 					haveInvalidItemName = true
 					fmt.Printf("Failure: The item name \"%s\" is not a reference to an existing screen package.\n", itemName)
@@ -96,46 +97,52 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 		lengthScreenItems := manifest.CountScreenItems(args[2])
 		if lengthArgsItems == lengthScreenItems {
 			switch screenKind {
-			case _manifest_.AccordionScreen:
+			case _manifest_.AccordionScreenInfoKind:
 				fmt.Printf("Failure: The Accordion screen %q needs at least 1 AccordionItem.\n", args[2])
-			case _manifest_.AppTabsScreen:
+			case _manifest_.AppTabsScreenInfoKind:
 				fmt.Printf("Failure: The AppTabs screen %q needs at least 1 TabItem.\n", args[2])
-			case _manifest_.DocTabsScreen:
+			case _manifest_.DocTabsScreenInfoKind:
 				fmt.Printf("Failure: The DocTabs screen %q needs at least 1 TabItem.\n", args[2])
-			case _manifest_.SimpleScreen:
+			case _manifest_.SimpleScreenInfoKind:
 				fmt.Printf("Failure: The Simple screen %q needs at least 1 panel.\n", args[2])
 			}
 			return
 		}
 		// Remove items from the screen.
 		switch screenKind {
-		case _manifest_.SimpleScreen:
-			screenDocComment := fmt.Sprintf("Package %s is a Simple screen package.\nA simple screen displays only one panel at a time.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-			if err = handleScreenRemoveSimplePanels(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		case _manifest_.AccordionScreenInfoKind:
+			if err = handleScreenRemoveAccordionItems(args[2], args[3:], importPrefix, folderPaths); err != nil {
 				return
 			}
-		case _manifest_.AccordionScreen:
-			screenDocComment := fmt.Sprintf("Package %s is an AppTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-			if err = handleScreenRemoveAccordionItems(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+			manifest := _manifest_.NewAgain()
+			manifest.LogRemoveItems(args[2], args[3:])
+		case _manifest_.AppTabsScreenInfoKind:
+			if err = handleScreenRemoveAppTabsItems(args[2], args[3:], importPrefix, folderPaths); err != nil {
 				return
 			}
-		case _manifest_.AppTabsScreen:
-			screenDocComment := fmt.Sprintf("Package %s is an AppTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-			if err = handleScreenRemoveAppTabsItems(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		case _manifest_.DocTabsScreenInfoKind:
+			if err = handleScreenRemoveDocTabsItems(args[2], args[3:], importPrefix, folderPaths); err != nil {
 				return
 			}
-		case _manifest_.DocTabsScreen:
-			screenDocComment := fmt.Sprintf("Package %s is a DocTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-			if err = handleScreenRemoveDocTabsItems(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		case _manifest_.SimpleScreenInfoKind:
+			if err = handleScreenRemoveSimplePanels(args[2], args[3:], importPrefix, folderPaths); err != nil {
 				return
 			}
-		}
-		if err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths); err != nil {
-			return
+		case _manifest_.BorderScreenInfoKind:
+			if err = handleScreenRemoveBorderAreas(args[2], args[3:], importPrefix, folderPaths); err != nil {
+				return
+			}
 		}
 		// Update the manifest.
-		manifest.RemoveItems(args[2], args[3:]...)
-		err = manifest.Write(folderPaths)
+		manifest.RemoveItemsLogAction(args[2], args[3:]...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
 		return
 	case verbAddItem:
 		// args[0] is "screen"
@@ -151,8 +158,8 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			fmt.Println(failureMessage)
 			return
 		}
-		screenKind := manifest.ScreenKind(args[2])
-		if screenKind == _manifest_.NilScreen {
+		screenKind := manifest.InfoKind(args[2])
+		if screenKind == _manifest_.NilInfoKind {
 			fmt.Printf("Failure: The screen package %q does not exists.\n", args[2])
 			return
 		}
@@ -162,7 +169,7 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			if manifest.HasScreenItem(args[2], itemName) {
 				haveInvalidItemName = true
 				switch screenKind {
-				case _manifest_.SimpleScreen:
+				case _manifest_.SimpleScreenInfoKind:
 					fmt.Printf("Failure: The %q screen package already has a panel named %q.\n", args[2], itemName)
 				default:
 					fmt.Printf("Failure: The %q screen package already has an item named \"*%s\".\n", args[2], itemName)
@@ -171,15 +178,15 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			}
 			isRemote, isScreenName := manifest.IsRemoteNameIsScreenName(itemName)
 			switch screenKind {
-			case _manifest_.SimpleScreen:
-				if isRemote && isScreenName {
+			case _manifest_.SimpleScreenInfoKind:
+				if isRemote {
 					haveInvalidItemName = true
-					fmt.Printf("Failure: The panel name \"*%s\" can not be a reference to a screen package.\n    Simple screens only have local panels.\n", itemName)
+					fmt.Printf("Failure: The panel name \"%s\" can not be a reference to a screen package.\n    Simple screens only have local panels.\n", itemName)
 				}
-			case _manifest_.AccordionScreen, _manifest_.AppTabsScreen, _manifest_.DocTabsScreen:
+			case _manifest_.AccordionScreenInfoKind, _manifest_.AppTabsScreenInfoKind, _manifest_.DocTabsScreenInfoKind:
 				if isRemote && !isScreenName {
 					haveInvalidItemName = true
-					fmt.Printf("Failure: The item name \"*%s\" is not a reference to an existing screen package.\n", itemName)
+					fmt.Printf("Failure: The item name \"%s\" is not a reference to an existing screen package.\n", itemName)
 				}
 			}
 		}
@@ -192,33 +199,88 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 		}
 		// Add items to the screen.
 		switch screenKind {
-		case _manifest_.SimpleScreen:
-			screenDocComment := fmt.Sprintf("Package %s is a Simple screen package.\nA simple screen displays only one panel at a time.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-			if err = handleScreenAddSimplePanels(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		case _manifest_.SimpleScreenInfoKind:
+			if err = handleScreenAddSimplePanels(args[2], args[3:], importPrefix, folderPaths); err != nil {
 				return
 			}
-		case _manifest_.AccordionScreen:
-			screenDocComment := fmt.Sprintf("Package %s is an AppTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-			if err = handleScreenAddAccordionItems(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		case _manifest_.AccordionScreenInfoKind:
+			if err = handleScreenAddAccordionItems(args[2], args[3:], importPrefix, folderPaths); err != nil {
 				return
 			}
-		case _manifest_.AppTabsScreen:
-			screenDocComment := fmt.Sprintf("Package %s is an AppTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-			if err = handleScreenAddAppTabsItems(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		case _manifest_.AppTabsScreenInfoKind:
+			if err = handleScreenAddAppTabsItems(args[2], args[3:], importPrefix, folderPaths); err != nil {
 				return
 			}
-		case _manifest_.DocTabsScreen:
-			screenDocComment := fmt.Sprintf("Package %s is a DocTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-			if err = handleScreenAddDocTabsItems(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		case _manifest_.DocTabsScreenInfoKind:
+			if err = handleScreenAddDocTabsItems(args[2], args[3:], importPrefix, folderPaths); err != nil {
+				return
+			}
+		case _manifest_.BorderScreenInfoKind:
+			if err = handleScreenAddBorderAreas(args[2], args[3:], importPrefix, folderPaths); err != nil {
 				return
 			}
 		}
-		if err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths); err != nil {
+		// Update the manifest.
+		manifest.AddItemsLogAction(args[2], args[3:]...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
+		return
+	case verbAddBorder:
+		// args[0] is "screen"
+		// args[1] is "add-border"
+		// args[2] is the «screen-package-name»
+		// args[3..] is ["Top"|"Bottom"|"Left"|"Right"|"Center=*«screen-name»"] ...
+		if len(args) < 4 {
+			fmt.Println(UsageScreen())
+			return
+		}
+		// Validate the screen package name.
+		if isValid, failureMessage := _utils_.ValidatePascalCase(args[2], "screen"); !isValid || err != nil {
+			fmt.Println(failureMessage)
+			return
+		}
+		if manifest.HasScreen(args[2]) {
+			fmt.Printf("Failure: The screen package %q already exists.\n", args[2])
+			return
+		}
+		// Validate item names.
+		for _, itemName := range args[3:] {
+			isValid, _, screenName, failureMessage := _utils_.ValidBorderAreaItem(itemName)
+			if !isValid {
+				fmt.Println(failureMessage)
+				return
+			}
+			if len(screenName) > 0 && !manifest.HasScreen(screenName) {
+				fmt.Printf("Failure: The screen package %q does not exist.\n", screenName)
+				return
+			}
+		}
+		// Build the new screen.
+		if err = handleScreenAddBorder(args[2], args[3:], importPrefix, folderPaths); err != nil {
+			return
+		}
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNames = append(screenNames, args[2])
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
 			return
 		}
 		// Update the manifest.
-		manifest.AddItems(args[2], args[3:]...)
-		err = manifest.Write(folderPaths)
+		manifest.AddScreen(args[2], _manifest_.BorderScreenInfoKind, args[3:]...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
 		return
 	case verbAddSimple:
 		// args[0] is "screen"
@@ -255,16 +317,25 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			return
 		}
 		// Build the new screen.
-		screenDocComment := fmt.Sprintf("Package %s is a Simple screen package.\nA simple screen displays only one panel at a time.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-		if err = handleScreenAddSimple(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		if err = HandleScreenAddSimple(args[2], args[3:], importPrefix, folderPaths); err != nil {
 			return
 		}
-		if err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths); err != nil {
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNames = append(screenNames, args[2])
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
 			return
 		}
 		// Update the manifest.
-		manifest.AddScreen(args[2], _manifest_.SimpleScreen, args[3:]...)
-		err = manifest.Write(folderPaths)
+		manifest.AddScreen(args[2], _manifest_.SimpleScreenInfoKind, args[3:]...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
 		return
 	case verbAddAccordion:
 		// args[0] is "screen"
@@ -301,16 +372,25 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			return
 		}
 		// Build the new screen.
-		screenDocComment := fmt.Sprintf("Package %s is an Accordion screen package.\nAn accordion screen displays each panel as a titled item that can be opened.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-		if err = handleScreenAddAccordion(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		if err = handleScreenAddAccordion(args[2], args[3:], importPrefix, folderPaths); err != nil {
 			return
 		}
-		if err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths); err != nil {
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNames = append(screenNames, args[2])
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
 			return
 		}
 		// Update the manifest.
-		manifest.AddScreen(args[2], _manifest_.AccordionScreen, args[3:]...)
-		err = manifest.Write(folderPaths)
+		manifest.AddScreen(args[2], _manifest_.AccordionScreenInfoKind, args[3:]...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
 		return
 	case verbAddAppTabs:
 		// args[0] is "screen"
@@ -347,16 +427,25 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			return
 		}
 		// Build the new screen.
-		screenDocComment := fmt.Sprintf("Package %s is an AppTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nThe user is not able to close a tab but your app can.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-		if err = handleScreenAddAppTabs(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		if err = handleScreenAddAppTabs(args[2], args[3:], importPrefix, folderPaths); err != nil {
 			return
 		}
-		if err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths); err != nil {
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNames = append(screenNames, args[2])
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
 			return
 		}
 		// Update the manifest.
-		manifest.AddScreen(args[2], _manifest_.AppTabsScreen, args[3:]...)
-		err = manifest.Write(folderPaths)
+		manifest.AddScreen(args[2], _manifest_.AppTabsScreenInfoKind, args[3:]...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
 		return
 	case verbAddAppTabsPlus:
 		// args[0] is "screen"
@@ -393,21 +482,30 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			return
 		}
 		// Build the new screen.
-		screenDocComment := fmt.Sprintf("Package %s is an AppTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nThe user is not able to close a tab but your app can.\nThe first tab is a configuration tab and allows the user to configure where the tabbar is located.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
 		itemNames := make([]string, len(args[3:])+1)
 		itemNames[0] = _utils_.ConfigTabName
 		for i, itemName := range args[3:] {
 			itemNames[i+1] = itemName
 		}
-		if err = handleScreenAddAppTabs(args[2], itemNames, screenDocComment, importPrefix, folderPaths); err != nil {
+		if err = handleScreenAddAppTabs(args[2], itemNames, importPrefix, folderPaths); err != nil {
 			return
 		}
-		if err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths); err != nil {
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNames = append(screenNames, args[2])
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
 			return
 		}
 		// Update the manifest.
-		manifest.AddScreen(args[2], _manifest_.AppTabsScreen, itemNames...)
-		err = manifest.Write(folderPaths)
+		manifest.AddScreen(args[2], _manifest_.AppTabsScreenInfoKind, itemNames...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
 		return
 	case verbAddDocTabs:
 		// args[0] is "screen"
@@ -444,16 +542,25 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			return
 		}
 		// Build the new screen.
-		screenDocComment := fmt.Sprintf("Package %s is a DocTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
-		if err = handleScreenAddDocTabs(args[2], args[3:], screenDocComment, importPrefix, folderPaths); err != nil {
+		if err = handleScreenAddDocTabs(args[2], args[3:], importPrefix, folderPaths); err != nil {
 			return
 		}
-		if err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths); err != nil {
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNames = append(screenNames, args[2])
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
 			return
 		}
 		// Update the manifest.
-		manifest.AddScreen(args[2], _manifest_.DocTabsScreen, args[3:]...)
-		err = manifest.Write(folderPaths)
+		manifest.AddScreen(args[2], _manifest_.DocTabsScreenInfoKind, args[3:]...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
 		return
 	case verbAddDocTabsPlus:
 		// args[0] is "screen"
@@ -490,21 +597,30 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			return
 		}
 		// Build the new screen.
-		screenDocComment := fmt.Sprintf("Package %s is a DocTabs screen package.\nA tabbar screen where a tab displays it's panel or another screen.\nThe first tab is a configuration tab and allows the user to configure where the tabbar is located.\nKICKFYNE TODO: Complete this package doc commment.", args[2])
 		itemNames := make([]string, len(args[3:])+1)
 		itemNames[0] = _utils_.ConfigTabName
 		for i, itemName := range args[3:] {
 			itemNames[i+1] = itemName
 		}
-		if err = handleScreenAddDocTabs(args[2], itemNames, screenDocComment, importPrefix, folderPaths); err != nil {
+		if err = handleScreenAddDocTabs(args[2], itemNames, importPrefix, folderPaths); err != nil {
 			return
 		}
-		if err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths); err != nil {
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNames = append(screenNames, args[2])
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
 			return
 		}
 		// Update the manifest.
-		manifest.AddScreen(args[2], _manifest_.DocTabsScreen, itemNames...)
-		err = manifest.Write(folderPaths)
+		manifest.AddScreen(args[2], _manifest_.DocTabsScreenInfoKind, itemNames...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
 		return
 	case verbRemove:
 		// args[0] is "screen"
@@ -525,10 +641,21 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 		if err = handleScreenRemove(args[2], folderPaths); err != nil {
 			return
 		}
-		err = _frontend_.RebuildFrontendGo(importPrefix, folderPaths)
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNamesIndex := slices.Index(screenNames, args[2])
+		screenNames = slices.Delete(screenNames, screenNamesIndex, screenNamesIndex+1)
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
+			return
+		}
+
 		// Update the manifest.
 		manifest.RemoveScreen(args[2])
-		err = manifest.Write(folderPaths)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Print the success message.
+		fmt.Printf("Success:\nRemoved the screen named %q.\n", args[2])
 		return
 	case subCmdHelp:
 		// args[0] is "screen"

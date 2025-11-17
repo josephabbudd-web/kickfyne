@@ -17,6 +17,7 @@ const (
 	verbAddDocTabsPlus = "add-doctabs+"
 	verbAddAppTabsPlus = "add-apptabs+"
 	verbAddAccordion   = "add-accordion"
+	verbAddBorder      = "add-border"
 	verbAddItem        = "add-item"
 	verbRemoveItem     = "remove-item"
 )

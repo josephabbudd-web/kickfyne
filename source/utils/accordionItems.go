@@ -23,7 +23,7 @@ func ValidateAccordionItemNames(
 
 	var cleanAccordionItemNames = make([]string, 0, len(accordionItemNames))
 
-	// Must be TitleCase.
+	// Must be PascalCase.
 	for _, accordionItemName := range accordionItemNames {
 		var cleanAccordionItemName string
 		if accordionItemName[:1] == "*" {
@@ -31,7 +31,7 @@ func ValidateAccordionItemNames(
 		} else {
 			cleanAccordionItemName = accordionItemName
 		}
-		// Valid. Not title case.
+		// Valid.
 		if isValid, failureMessage = ValidatePascalCase(cleanAccordionItemName, "accordionItem"); !isValid {
 			failureMessages = append(failureMessages, failureMessage)
 		}

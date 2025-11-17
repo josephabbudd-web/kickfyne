@@ -34,10 +34,10 @@ func Handler(args []string, importPrefix string, folderPaths *_utils_.FolderPath
 		// Check the verb.
 		switch args[0] {
 		case verbRestart:
-			if err = handleFrameworkRestart(folderPaths, args, importPrefix); err != nil {
+			if err = handleFrameworkRestart(folderPaths, importPrefix); err != nil {
 				return
 			}
-			// fyneAppTOMLFilePath := _utils_.FyneAppTOMLFilePath(folderPaths)
+			// fyneAppTOMLFilePath := _utils_.FyneAppTOMLFullFilePath(folderPaths)
 			// fmt.Printf("KICKFYNE TODO: Check MenuItems in %s.\n", _utils_.Clickable(fyneAppTOMLFilePath))
 		case verbHelp:
 			fmt.Println(Usage())
@@ -52,7 +52,7 @@ func Handler(args []string, importPrefix string, folderPaths *_utils_.FolderPath
 		if len(args) > 0 {
 			fmt.Println(Usage())
 		}
-		if err = handleFramework(folderPaths, args, importPrefix); err != nil {
+		if err = handleFramework(folderPaths, importPrefix); err != nil {
 			return
 		}
 	}
@@ -60,54 +60,59 @@ func Handler(args []string, importPrefix string, folderPaths *_utils_.FolderPath
 }
 
 // handleFramework creates the framework.
-func handleFramework(folderPaths *_utils_.FolderPaths, args []string, importPrefix string) (err error) {
-
-	defer func() {
-		if err != nil {
-			err = fmt.Errorf("framework.handleFramework: %w", err)
-		}
-	}()
-
-	_ = args // Add optional backend signal.
+func handleFramework(folderPaths *_utils_.FolderPaths, importPrefix string) (err error) {
+	// Reset the manifest.
+	var manifest _manifest_.Manifest
+	if manifest, err = _manifest_.New(folderPaths); err != nil {
+		return
+	}
 
 	// Create the framework code.
 	if err = folderPaths.Build(); err != nil {
 		return
 	}
-	if err = _source_.CreateFramework(importPrefix, folderPaths); err != nil {
+	if err = _source_.CreateFramework(manifest, importPrefix, folderPaths); err != nil {
 		return
 	}
-
-	fmt.Println("Success. The framework is created.")
+	// Save the updated manifest.
+	if err = manifest.Write(folderPaths); err != nil {
+		return
+	}
+	// Display the success message.
+	fmt.Println("Success:")
+	fmt.Println(
+		manifest.LastFrameworkLogMesssage(),
+	)
 	return
 }
 
 // handleFrameworkRestart creates the framework.
-func handleFrameworkRestart(folderPaths *_utils_.FolderPaths, args []string, importPrefix string) (err error) {
-
-	defer func() {
-		if err != nil {
-			err = fmt.Errorf("framework.handleFrameworkRestart: %w", err)
-		}
-	}()
-
+func handleFrameworkRestart(folderPaths *_utils_.FolderPaths, importPrefix string) (err error) {
 	// Reset the manifest.
 	var manifest _manifest_.Manifest
 	if manifest, err = _manifest_.New(folderPaths); err != nil {
 		return
 	}
 	manifest.Reset()
-	err = manifest.Write(folderPaths)
+	if err = manifest.Write(folderPaths); err != nil {
+		return
+	}
 
-	_ = args
 	// Create the framework code.
 	if err = folderPaths.Rebuild(); err != nil {
 		return
 	}
-	if err = _source_.CreateFramework(importPrefix, folderPaths); err != nil {
+	if err = _source_.CreateFramework(manifest, importPrefix, folderPaths); err != nil {
 		return
 	}
-
-	fmt.Println("Success. The framework is recreated.")
+	// Save the updated manifest.
+	if err = manifest.Write(folderPaths); err != nil {
+		return
+	}
+	// Display the success message.
+	fmt.Println("Success:")
+	fmt.Println(
+		manifest.LastFrameworkLogMesssage(),
+	)
 	return
 }

@@ -25,6 +25,7 @@ const (
 	RemotePresetFileName  = "remotePreset.go"
 	DefaultPresetFileName = "defaultPreset.go"
 	ManifestFileName      = "manifest.yaml"
+	MainMenuFileName      = "mainmenu.go"
 
 	ralativeFilePathSuffix = ":1:1"
 )
@@ -34,9 +35,15 @@ func Clickable(path string) (clickable string) {
 	return
 }
 
-// FyneAppTOMLFilePath
-func FyneAppTOMLFilePath(folderPaths *FolderPaths) (metaDataTOMLFilePath string) {
+// FyneAppTOMLFullFilePath
+func FyneAppTOMLFullFilePath(folderPaths *FolderPaths) (metaDataTOMLFilePath string) {
 	metaDataTOMLFilePath = filepath.Join(folderPaths.App, FyneAppTOMLFileName)
+	return
+}
+
+// MainMenuFilePath
+func MainMenuFilePath(folderPaths *FolderPaths) (mainMenuFilePath string) {
+	mainMenuFilePath = filepath.Join(folderPaths.FrontendMainMenu, MainMenuFileName)
 	return
 }
 
@@ -52,48 +59,81 @@ func PanelContentFolderName(panelName string) (fileName string) {
 	return
 }
 
-// PanelContentFilePath returns the relative path for a panel content file.
-func PanelContentFilePath(screenPackageName, panelName string, folderPaths *FolderPaths) (filePath string) {
+// PanelContentFullFilePath returns the relative path for a panel content file.
+func PanelContentFullFilePath(screenPackageName, panelName string, folderPaths *FolderPaths) (filePath string) {
 	contentFolderName := PanelContentFolderName(panelName)
 	filePath = path.Join(folderPaths.FrontendScreens, screenPackageName, FolderNamePanels, contentFolderName, ContentFileName)
 	return
 }
 
-// PanelStateFilePath returns the relative path for a panel's content state file.
-func PanelStateFilePath(screenPackageName, panelName string, folderPaths *FolderPaths) (filePath string) {
+// PanelStateFullFilePath returns the full path for a panel's content state file.
+func PanelStateFullFilePath(screenPackageName, panelName string, folderPaths *FolderPaths) (filePath string) {
 	contentFolderName := PanelContentFolderName(panelName)
 	filePath = path.Join(folderPaths.FrontendScreens, screenPackageName, FolderNamePanels, contentFolderName, StateFileName)
 	return
 }
 
-// PanelPresetFilePath returns the relative path for a panel's content state file.
-func PanelPresetFilePath(screenPackageName, panelName string, folderPaths *FolderPaths) (filePath string) {
+// PanelPresetFullFilePath returns the relative path for a panel's content state file.
+func PanelPresetFullFilePath(screenPackageName, panelName string, folderPaths *FolderPaths) (filePath string) {
 	contentFolderName := PanelContentFolderName(panelName)
 	filePath = path.Join(folderPaths.FrontendScreens, screenPackageName, FolderNamePanels, contentFolderName, PresetFileName)
 	return
 }
 
-// ScreenFileRelativeFilePath returns the relative path for a screen's screen.go file.
-func ScreenFileRelativeFilePath(screenPackageName string) (relativeFilePath string) {
+// PanelContentFileRelativePath returns the relative path for a panel content file.
+func PanelContentFileRelativePath(panelName string, folderPaths *FolderPaths) (filePath string) {
+	contentFolderName := PanelContentFolderName(panelName)
+	filePath = path.Join(FolderNamePanels, contentFolderName, ContentFileName)
+	return
+}
+
+// PanelStateFileRelativePath returns the relative path for a panel's content state file.
+func PanelStateFileRelativePath(panelName string, folderPaths *FolderPaths) (filePath string) {
+	contentFolderName := PanelContentFolderName(panelName)
+	filePath = path.Join(FolderNamePanels, contentFolderName, StateFileName)
+	return
+}
+
+// PanelPresetRelativeFilePath returns the relative path for a panel's content state file.
+func PanelPresetFileRelativePath(panelName string, folderPaths *FolderPaths) (filePath string) {
+	contentFolderName := PanelContentFolderName(panelName)
+	filePath = path.Join(FolderNamePanels, contentFolderName, PresetFileName)
+	return
+}
+
+// ScreenFileRelativePath returns the relative path for a screen's screen.go file.
+func ScreenFileRelativePath(screenPackageName string) (relativeFilePath string) {
 	relativeFilePath = path.Join(folderNameFrontend, FolderNameScreens, screenPackageName, ScreenFileName+ralativeFilePathSuffix)
 	return
 }
 
-// DocFileRelativeFilePath returns the relative path for a screen's screen.go file.
-func DocFileRelativeFilePath(screenPackageName string, folderPaths *FolderPaths) (relativeFilePath string) {
+// ScreenDocFileFullPath returns the relative path for a screen's doc.go file.
+func ScreenDocFileFullPath(screenPackageName string, folderPaths *FolderPaths) (relativeFilePath string) {
 	relativeFilePath = path.Join(folderPaths.FrontendScreens, screenPackageName, DocFileName)
 	return
 }
 
-// ScreenDocFilePath returns the relative path for a screen's doc.go file.
-func ScreenDocFilePath(screenPackageName string, folderPaths *FolderPaths) (relativeFilePath string) {
-	relativeFilePath = path.Join(folderPaths.FrontendScreens, screenPackageName, DocFileName)
+// ScreenPresettingAPIFileRelativePath returns the relative path for a screen's doc.go file.
+func ScreenPresettingAPIFileRelativePath() (relativeFilePath string) {
+	relativeFilePath = path.Join(FolderNamePresetting, APIFileName)
 	return
 }
 
 // ScreenPresettingAPIFilePath returns the relative path for a screen's doc.go file.
 func ScreenPresettingAPIFilePath(screenPackageName string, folderPaths *FolderPaths) (relativeFilePath string) {
 	relativeFilePath = path.Join(folderPaths.FrontendScreens, screenPackageName, FolderNamePresetting, APIFileName)
+	return
+}
+
+// ScreenPresettingDefaultPresetFileFullPath returns the full path for a screen's doc.go file.
+func ScreenPresettingDefaultPresetFileFullPath(screenPackageName string, folderPaths *FolderPaths) (relativeFilePath string) {
+	relativeFilePath = path.Join(folderPaths.FrontendScreens, screenPackageName, FolderNamePresetting, DefaultPresetFileName)
+	return
+}
+
+// ScreenPresettingDefaultPresetFileRelativePath returns the relative path for a screen's doc.go file.
+func ScreenPresettingDefaultPresetFileRelativePath() (relativeFilePath string) {
+	relativeFilePath = path.Join(FolderNamePresetting, DefaultPresetFileName)
 	return
 }
 

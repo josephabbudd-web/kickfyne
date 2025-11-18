@@ -224,27 +224,27 @@ var mainMenuItems = []_mainmenu_.MainMenuItem{
 💲 ./mycrud
 ```
 
-### The new opening screen. The ContactsAT screen
+### The new opening AppTabs screen
 
 The **ContactsAT** screen is an AppTabs screen. The user can not close an AppTabs TabItem. The **ContactsAT** screen is shown below with its **Add** TabItem selected. The **Add** TabItem and displaying the content from it's **Add** panel.
 
 ![The AppTabs screen.](/images/kickfyne_contacts_app_tabs_screen.png)
 
-### The ContactsDT screen
+### The DocTabs screen
 
 The **ContactsDT** screen is an DocTabs screen. The **ContactsDT** screen is shown below with its **Edit** TabItem selected. The **Edit** TabItem is displaying the content from its own instance of the **Edit** screen. The **Edit** screen is displaying its default **Select** panel.
 
-![The AppTabs screen.](/images/kickfyne_contacts_doc_tabs_screen.png)
+![The DocTabs screen.](/images/kickfyne_contacts_doc_tabs_screen.png)
 
-### The ContactsAC screen
+### The Accordion screen
 
 The **ContactsAC** screen is an Accordion screen. The **ContactsAC** screen is shown below with its **Remove** AccordionItem selected. The **Remove** AccordionItem is displaying the content from its own instance of the **Remove** screen. The **Remove** screen is displaying its default **Select** panel.
 
 ![The Accordion screen.](/images/kickfyne_contacts_accordion_screen.png)
 
-### The ContactsB screen
+### The Border screen
 
-The **ContactsB** screen is a Border screen. Notice that the Top, Left, Right and Bottom areas also show buttons by default. That's to make them easier to identify. Notice that the Center area is displaying content from the **ContactsAC** screen which has its **Edit** AccordionItem selected.
+The **ContactsB** screen is a Border screen. Notice that the Top, Left, Right and Bottom areas also show buttons by default. That's to make them easier to identify. Notice that the Center area is displaying content from the **ContactsAC** screen which has its **Edit** AccordionItem selected. That **Edit** AccordionItem is displaying the content from its own instance of the **Edit** screen. The **Edit** screen is displaying its default **Select** panel.
 
 ![The Border screen.](/images/kickfyne_contacts_border_screen.png)
 

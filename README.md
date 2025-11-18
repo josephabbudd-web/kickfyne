@@ -36,7 +36,7 @@ A panel has it's own folder where there are 3 files.
 1. state.go manages the complexities of a updating content and can update content using a preset.
 1. preset.go contains the versions of state. Usually the **Default** preset is all that is needed.
 
-## Example
+## Example: Code a GUI application with kickfyne
 
 ### Create the framework.
 
@@ -146,7 +146,7 @@ In the command line
 
 ### Add a Border screen.
 
-A Border Screen is a content producer. A Border Screen lays out content in it's 5 areas, Top, Bottom, Left, Right and Center. The Top, Bottom, Left, and Right areas will only consume the content from their panel with the same name. The Center area can be set to use content from it's panel with the same name or from another screen.
+A Border Screen lays out content in it's 5 areas, Top, Bottom, Left, Right and Center. The Top, Bottom, Left, and Right areas will only consume the content from their panel with the same name. The Center area can be set to use content from it's panel with the same name or from another screen.
 
 The Border screen's API also allows the 5 areas to be added and removed.
 
@@ -164,10 +164,10 @@ In the command line
 💲 go mod tidy
 ```
 
-### Rewrite the app's opening screen and main menu in the file at frontend/settings.go.
+### Rewrite the app's opening screen and main menu in the file at frontend/settings.go
 
-1. Redefine the constants `openingScreenName` and `openingScreenPresetName` in frontend/settings.go so that they reference my new opening screen.
-1. Redefine var mainMenuItems to reference the 3 new main screens.
+1. I want the application to open with the **ContactsAT** screen. So I will set the constant `openingScreenName` in frontend/settings.go to "ContactsAT". I will leave `openingScreenPresetName` set to "Default".
+1. var mainMenuItems needs to reference the 3 new main screens.
 
 ```go
 package frontend
@@ -215,15 +215,20 @@ var mainMenuItems = []_mainmenu_.MainMenuItem{
 }
 ```
 
-### Remove that default HelloWorld screen and build the app.
+### Remove that default HelloWorld screen
 
 ```shell
 💲 kickfyne screen remove HelloWorld
+```
+
+## Example: Build and run the app
+
+```shell
 💲 go build
 💲 ./mycrud
 ```
 
-### The ContactsAT screen
+### The new opening screen. The ContactsAT screen
 
 The **ContactsAT** screen is an AppTabs screen. The user can not close an AppTabs tab. The **ContactsAT** screen is shown below with its **Add** TabItem selected. The **Add** TabItem and displaying the content from it's **Add** panel.
 
@@ -267,9 +272,9 @@ The main menu is at the top left of the app and it is shown open.
 💲 kickfyne screen remove-item «screen-package-name» «[*]item name» ...
 ```
 
-## October 27, 2025
+## User configuration with AppTabs and DocTabs screens
 
-Added user configuration to the AppTabs and DocTabs screens. With user configuration
+With user configuration
 
  * The first TabItem following the settings tab is selected at startup.
  * After the user selects the settings tab, makes a change and clicks the dismiss button, the settings tab gets unselected and the previously selected tab is selected. 

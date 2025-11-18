@@ -114,9 +114,9 @@ The DocTabs screen's API also allows TabItems to be added and removed.
 This DocTabs screen is named **ContactsDT** and its TabItems are named **Add** **Edit** and **Remove**.
 
 In the command line
- * The TabItem name Add will gets it's content from it's own Add panel.
- * The TabItem name Edit is prefixed with *. So it's content comes from another instance of the Edit screen I previously made.
- * The TabItem name Remove is prefixed with *. So it's content comes from another instance of the Remove screen I previously made.
+ * The TabItem named Add will gets it's content from it's own Add panel.
+ * The TabItem named Edit is prefixed with *. So it's content comes from another instance of the Edit screen I previously made.
+ * The TabItem named Remove is prefixed with *. So it's content comes from another instance of the Remove screen I previously made.
 
 ```shell
 💲 kickfyne screen add-doctabs ContactsDT Add *Edit *Remove
@@ -131,9 +131,9 @@ The Accordion screen's API also allows AccordionItems to be added and removed.
 This Accordion screen is named **ContactsAC** and its AccordionItems are named **Add**, **Edit** and **Remove**.
 
 In the command line
- * The label name Add will gets it's content from it's own Add panel.
- * The label name Edit is prefixed with *. So it's content comes from another instance of the Edit screen I previously made.
- * The label name Remove is prefixed with *. So it's content comes from another instance of the Remove screen I previously made.
+ * The AccordionItem named Add will gets it's content from it's own Add panel.
+ * The AccordionItem named Edit is prefixed with *. So it's content comes from another instance of the Edit screen I previously made.
+ * The AccordionItem named Remove is prefixed with *. So it's content comes from another instance of the Remove screen I previously made.
 
 ```shell
 💲 kickfyne screen add-accordion ContactsAC Add *Edit *Remove

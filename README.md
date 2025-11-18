@@ -3,7 +3,7 @@
 ![kickfyne fyne with a kick.](/images/kick.jpeg)
 Image courtesy of https://isorepublic.com/photo/flying-kick/
 
-## November 17, 2025
+## November 18, 2025
 
 Added the Border screen.
 Added the system tray menu.
@@ -27,14 +27,10 @@ kickfyne is a work in progress. I'm using kickfyne to build my morse code traine
 
 With kickfyne I create the framework and then add and remove screens in the framework. A screen is a package that lays out panels.
 
-## Most of the developer's attention is toward each panel in a screen
-
-### A panel is a content producer
-
-A panel has it's own folder where there are 3 files.
+A panel is designed to be simple and do only one thing. A panel has it's own folder where there are 3 files.
 1. content.go lays out the content and handles user input.
 1. state.go manages the complexities of a updating content and can update content using a preset.
-1. preset.go contains the versions of state. Usually the **Default** preset is all that is needed.
+1. preset.go contains the different initial settings for all or part of state. Usually the **Default** preset is all that is needed.
 
 ## Example: Code a GUI application with kickfyne
 
@@ -99,9 +95,9 @@ The AppTabs screen's API allows TabItems to be added and removed.
 This AppTabs screen is named **ContactsAT** and its TabItems are named **Add** **Edit** and **Remove**.
 
 In the command line
- * The tab named Add will gets it's content from it's own Add panel.
- * The tab named Edit is prefixed with *. So it's content comes from a new instance of the Edit screen I previously made.
- * The tab named Remove is prefixed with *. So it's content comes from a new instance of the Remove screen I previously made.
+ * The TabItem named Add will gets it's content from it's own Add panel.
+ * The TabItem named Edit is prefixed with *. So it's content comes from a new instance of the Edit screen I previously made.
+ * The TabItem named Remove is prefixed with *. So it's content comes from a new instance of the Remove screen I previously made.
 
 ```shell
 💲 kickfyne screen add-apptabs ContactsAT Add *Edit *Remove
@@ -118,9 +114,9 @@ The DocTabs screen's API also allows TabItems to be added and removed.
 This DocTabs screen is named **ContactsDT** and its TabItems are named **Add** **Edit** and **Remove**.
 
 In the command line
- * The tab name Add will gets it's content from it's own Add panel.
- * The tab name Edit is prefixed with *. So it's content comes from another instance of the Edit screen I previously made.
- * The tab name Remove is prefixed with *. So it's content comes from another instance of the Remove screen I previously made.
+ * The TabItem name Add will gets it's content from it's own Add panel.
+ * The TabItem name Edit is prefixed with *. So it's content comes from another instance of the Edit screen I previously made.
+ * The TabItem name Remove is prefixed with *. So it's content comes from another instance of the Remove screen I previously made.
 
 ```shell
 💲 kickfyne screen add-doctabs ContactsDT Add *Edit *Remove
@@ -230,7 +226,7 @@ var mainMenuItems = []_mainmenu_.MainMenuItem{
 
 ### The new opening screen. The ContactsAT screen
 
-The **ContactsAT** screen is an AppTabs screen. The user can not close an AppTabs tab. The **ContactsAT** screen is shown below with its **Add** TabItem selected. The **Add** TabItem and displaying the content from it's **Add** panel.
+The **ContactsAT** screen is an AppTabs screen. The user can not close an AppTabs TabItem. The **ContactsAT** screen is shown below with its **Add** TabItem selected. The **Add** TabItem and displaying the content from it's **Add** panel.
 
 ![The AppTabs screen.](/images/kickfyne_contacts_app_tabs_screen.png)
 
@@ -276,17 +272,17 @@ The main menu is at the top left of the app and it is shown open.
 
 With user configuration
 
- * The first TabItem following the settings tab is selected at startup.
- * After the user selects the settings tab, makes a change and clicks the dismiss button, the settings tab gets unselected and the previously selected tab is selected. 
+ * The first TabItem following the settings TabItem is selected at startup.
+ * After the user selects the settings TabItem, makes a change and clicks the dismiss button, the settings TabItem gets unselected and the previously selected TabItem is selected. 
 
-By adding a **+** to the verbs `add-apptabs` and `add-apptabs` a tabbar screen is created with a settings tab that allows the user to set where the tabs are located.
+By adding a **+** to the verbs `add-apptabs` and `add-apptabs` a tabbar screen is created with a settings TabItem that allows the user to set where the tabs are located.
 
 ```shell
 💲 kickfyne screen add-apptabs+ «screen-package-name» «[*]tab-item-name, ...»
 💲 kickfyne screen add-doctabs+ «screen-package-name» «[*]tab-item-name, ...»
 ```
 
-Below is an example showing the selected config tab with its content.
+Below is an example showing the selected config TabItem with its content.
 
 ![The new configurable AppTabs screen.](/images/kickfyne_apptabs_config.png)
 

@@ -33,7 +33,7 @@ func newDefaultPreset() (preset *Preset) {
 {{- range $panelName := .RemotePanelNames }}
 		new{{ $panelName }}ScreenPreset(
 			"{{ $panelName }}", // accordionItemTitle string
-			_{{ call $DOT.Funcs.LowerCase $panelName }}screenpresetting_.Presets["Default"],
+			_{{ call $DOT.Funcs.LowerCase $panelName }}screenpresetting_.Presets["AccordionItem"],
 		),
 {{- end }}
 	)

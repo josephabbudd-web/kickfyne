@@ -186,7 +186,7 @@ func Build(
 
 	// frontend/screens/«screen-package-name»/panels.log
 	fPath = filepath.Join(packagePanelsPath, _panels_.LogFileName)
-	content := _panels_.LogContent(packageName, localPanelNames, folderPaths)
+	content := _panels_.DocContent(packageName, localPanelNames, folderPaths)
 	if err = _utils_.WriteFile(fPath, []byte(content)); err != nil {
 		return
 	}

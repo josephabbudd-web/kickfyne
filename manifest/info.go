@@ -16,12 +16,22 @@ const (
 	AppTabsScreenInfoKind   InfoKind = "AppTabs"
 	DocTabsScreenInfoKind   InfoKind = "DocTabs"
 	BorderScreenInfoKind    InfoKind = "Border"
+	SplitScreenInfoKind     InfoKind = "Split"
 )
 
 type Info struct {
 	Kind  InfoKind
 	Items []string
 	Log   []*LogItem
+}
+
+func (info *Info) cleanItemNames() (cleanNames []string) {
+	cleanNames = make([]string, len(info.Items))
+	for i, item := range info.Items {
+		parts := strings.Split(item, "=")
+		cleanNames[i] = parts[0]
+	}
+	return
 }
 
 func newScreenInfo(screenName string, screenKind InfoKind, itemNames []string) (info *Info) {

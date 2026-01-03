@@ -131,7 +131,7 @@ func RemoveAreas(
 
 	// frontend/screens/«screen-package-name»/panels.log
 	fPath = filepath.Join(packagePanelsPath, _panels_.LogFileName)
-	content := _panels_.LogContent(packageName, generalTemplateData.Areas, folderPaths)
+	content := _panels_.DocContent(packageName, generalTemplateData.Areas, folderPaths)
 	if err = _utils_.WriteFile(fPath, []byte(content)); err != nil {
 		return
 	}

@@ -122,7 +122,7 @@ func (producer *DocTabsContentProducer) Die() {
 	// Get a list of consumers from the map.
 	consumers := make([]_types_.ContentConsumer, len(producer.consumers))
 	var i int = 0
-	for consumer, _ := range producer.consumers {
+	for consumer := range producer.consumers {
 		consumers[i] = consumer
 		i++
 	}

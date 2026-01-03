@@ -26,7 +26,7 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 
 	_deps_ "{{ .ImportPrefix }}/deps"
-	_paths_ "example.com/mycrud/deps/paths"
+	_paths_ "{{ .ImportPrefix }}/deps/paths"
  	_thread_ "{{ .ImportPrefix }}/deps/thread"
 	_frontend_ "{{ .ImportPrefix }}/frontend"
 )
@@ -80,7 +80,6 @@ func main() {
 
 	// The app icon.
 	iconPath := _paths_.ImagePath("app-icon.jpeg")
-	log.Println("iconPath is ", iconPath)
 	var iconResource fyne.Resource
 	if iconResource, exitError = fyne.LoadResourceFromPath(iconPath); exitError != nil {
 		return

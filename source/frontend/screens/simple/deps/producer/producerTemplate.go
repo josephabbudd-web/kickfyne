@@ -117,8 +117,6 @@ func (producer *ContentProducer) Label(consumer _types_.ContentConsumer) (label 
 		if stats.hasNewLabel {
 			stats.hasNewLabel = false
 			label = &producer.label
-		} else if consumer.IsWindowContentConsumer() {
-			label = &producer.label
 		}
 	}
 	return
@@ -137,11 +135,19 @@ func (producer *ContentProducer) Icon(consumer _types_.ContentConsumer) (icon fy
 }
 
 func (producer *ContentProducer) Bind(consumer _types_.ContentConsumer) {
+	if producer.consumers[consumer] != nil {
+		return
+	}
 	producer.consumers[consumer] = &consumerStat{}
+	consumer.Bind(producer)
 }
 
 func (producer *ContentProducer) UnBind(consumer _types_.ContentConsumer) {
+	if producer.consumers[consumer] == nil {
+		return
+	}
 	delete(producer.consumers, consumer)
+	consumer.UnBind()
 }
 
 // IsVisible returns if this content is visible in the window.

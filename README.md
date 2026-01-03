@@ -3,10 +3,11 @@
 ![kickfyne fyne with a kick.](/images/kick.jpeg)
 Image courtesy of https://isorepublic.com/photo/flying-kick/
 
-## November 18, 2025
+## Jan 3, 2026
 
-Added the Border screen.
-Added the system tray menu.
+1. Added the Split screen.
+1. Created all new presets.
+1. Created the demo shell script which creates an application showing all possible screen combinations.
 
 ## Fun with Fyne
 
@@ -43,7 +44,7 @@ The framework always works when modified with kickfyne.
 💲 cd mycrud
 💲 go mod init example.com/mycrud
 💲 kickfyne framework
-💲 go get fyne.io/fyne/v2/storage/repository@v2.6.3
+💲 go get fyne.io/fyne/v2/storage/repository@latest
 💲 go mod tidy
 💲 go build
 💲 ./mycrud
@@ -160,6 +161,36 @@ In the command line
 💲 go mod tidy
 ```
 
+### Add a couple of Split screens.
+
+A Split Screen lays out content in it's 2 areas, Leading and Trailing. By default the Split presets layout Leading and Trailing vertically except when used for content in another Split screen's Leading or Trailing content. Layout is determined by the screen's presets.
+
+#### The first split screen: Split1
+
+I'll use the content from the **Edit** screen for the Leading content and I'll use the content from the **Remove** screen for the Trailing content.
+
+In the command line
+ * The Leading area will gets it's content from an implementation of the **Edit** screen.
+ * The Trailing area will gets it's content from an implementation of the **Remove** screen.
+ 
+```shell
+💲 kickfyne screen add-split Split1 Leading=*Edit Trailing=*Remove
+💲 go mod tidy
+```
+
+#### The second split screen: Split2
+
+I'll use the content from the screen's own **Leading** panel for the Leading content and I'll use the content from the **Split1** screen for the Trailing content.
+
+In the command line
+ * The Leading area will gets it's content from the screen's own **Leading** panel.
+ * The Trailing area will gets it's content from an implementation of the **Split1** screen.
+ 
+```shell
+💲 kickfyne screen add-split Split2 Leading Trailing=*Split1
+💲 go mod tidy
+```
+
 ### Rewrite the app's opening screen and main menu in the file at frontend/settings.go
 
 1. I want the application to open with the **ContactsAT** screen. So I will set the constant `openingScreenName` in frontend/settings.go to "ContactsAT". I will leave `openingScreenPresetName` set to "Default".
@@ -179,7 +210,7 @@ const (
 	// This is the screen that the application opens with.
 	// It does not have to be referenced in var mainMenuItems.
 	openingScreenName       = "ContactsAT"
-	openingScreenPresetName = "Default"
+	openingScreenPresetName = "Window"
 )
 
 // mainMenuItems is the list of items for the main menu.
@@ -191,22 +222,32 @@ var mainMenuItems = []_mainmenu_.MainMenuItem{
 	{
 		label:  "App Tabs",
 		screen: "ContactsAT",
-		preset: "Default",
+		preset: "Window",
 	},
 	{
 		label:  "Doc Tabs",
 		screen: "ContactsDT",
-		preset: "Default",
+		preset: "Window",
 	},
 	{
 		label:  "Accordion",
 		screen: "ContactsAC",
-		preset: "Default",
+		preset: "Window",
 	},
 	{
 		label:  "Border",
 		screen: "ContactsB",
-		preset: "Default",
+		preset: "Window",
+	},
+	{
+		label:  "Split1",
+		screen: "Split1",
+		preset: "Window",
+	},
+	{
+		label:  "Split2",
+		screen: "Split2",
+		preset: "Window",
 	},
 }
 ```
@@ -248,6 +289,18 @@ The **ContactsB** screen is a Border screen. Notice that the Top, Left, Right an
 
 ![The Border screen.](/images/kickfyne_contacts_border_screen.png)
 
+### The Split1 screen
+
+The **Split1** screen is a Split screen. Notice that the Leading and Trailing areas are laid out vertically by default. Notice that the Leading area is using the **Edit** screen for content. Notice that the Trailing area is using the **Remove** screen for content.
+
+![The Split1 screen.](images/kickfyne_split1.png)
+
+### The Split2 screen
+
+The **Split2** screen is another Split screen. Notice that the Leading and Trailing areas are laid out vertically by default. The Trailing area is using the **Split1** screen for content. The **Split1** screen laid itself out horizontally according to it's own **SplitTrailing** preset.
+
+![The Split2 screen.](images/kickfyne_split2.png)
+
 ### The main menu
 
 The main menu is at the top left of the app and it is shown open.
@@ -286,8 +339,21 @@ Below is an example showing the selected config TabItem with its content.
 
 ![The new configurable AppTabs screen.](/images/kickfyne_apptabs_config.png)
 
+## Screen presets
+
+Each screen has it's own presets.
+
+* **Window** (Used by the main menu for the App's content.)
+* **AccordionItem** (Used by the AppTabs and DocTabs screens for TabItem content.)
+* **BorderCenter** (Used by the Border screens for Center area content.)
+* **SplitLeading** (Used by the Split screens for Leading area content.)
+* **SplitTrailing** (Used by the Split screens for Trailing area content.)
+* **TabItem** (Used by the AppTabs and DocTabs screens for TabItem content.)
+
+
 ## To do
 
+1. Make sure a screen never loads itself even while loading other screens.
 1. Adding the ability to safely undo changes when an error occurs.
 1. Review my API for adding and removing tabs and accordion items.
 1. Review my inline and output documentation.

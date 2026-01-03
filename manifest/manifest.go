@@ -2,9 +2,11 @@ package manifest
 
 import (
 	"fmt"
+	"log"
 	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/goccy/go-yaml"
@@ -152,34 +154,92 @@ func (manifest Manifest) InfoKind(screenName string) (screenKind InfoKind) {
 
 // IsRemoteNameIsScreenName returns if the manifest has the screen.
 func (manifest Manifest) IsRemoteNameIsScreenName(itemName string) (isRemoteName, isScreenName bool) {
-	parts := strings.Split(itemName, "=")
-	switch len(parts) {
-	case 1:
-		if parts[0][:1] == "*" {
-			isRemoteName = true
-			isScreenName = manifest[parts[0][1:]] != nil
-		} else {
-			isRemoteName = false
-			isScreenName = manifest[parts[0]] != nil
+	if !strings.Contains(itemName, "=") {
+		// *Edit
+		if len(itemName) <= 1 {
+			// "*" is not valid syntax.
+			return
 		}
-	case 2:
-		if parts[1][:1] == "*" {
+		if itemName[:1] == "*" {
 			isRemoteName = true
-			isScreenName = manifest[parts[1][1:]] != nil
+			screenName := itemName[1:]
+			isScreenName = manifest[screenName] != nil
+			return
 		}
-	default:
+		// Simple local item name.
+		return
 	}
+	isValidSyntax, _, screenName := manifest.ParseBorderAreaParam(itemName)
+	if !isValidSyntax {
+		return
+	}
+	isRemoteName = len(screenName) > 0
+	isScreenName = manifest[screenName] != nil
+	return
+}
+
+// IsRemoteNameIsScreenName returns if the manifest has the screen.
+func (manifest Manifest) ParseBorderAreaParam(paramName string) (isValidSyntax bool, areaName, screenName string) {
+	parts := strings.Split(paramName, "=")
+	// No "=" is ok.
+	if len(parts) == 1 {
+		// The syntax is valid.
+		isValidSyntax = true
+		areaName = parts[0]
+		return
+	}
+	// Invalid syntaxes.
+	if len(parts) != 2 {
+		return
+	}
+	if len(parts[0]) == 0 {
+		return
+	}
+	if len(parts[1]) <= 1 {
+		return
+	}
+	if parts[1][:1] != "*" {
+		return
+	}
+	// The syntax is valid.
+	isValidSyntax = true
+	areaName = parts[0]
+	screenName = parts[1][1:]
 	return
 }
 
 // HasScreenItem returns if the screen has the item.
 // Param itemName is "[*]ItemName"
-func (manifest Manifest) HasScreenItem(screenName string, itemName string) (hasItemName bool) {
+func (manifest Manifest) HasScreenItem(screenName string, itemName string) (cleanItemName string, hasItemName bool) {
 	info := manifest[screenName]
 	if info == nil {
+		log.Printf("HasScreenItem: screenName %q is not a valid screen name.", screenName)
 		return
 	}
-	hasItemName = info.HasItem(itemName)
+	cleanNames := info.cleanItemNames()
+	log.Printf("HasScreenItem: cleanNames is %#v", cleanNames)
+
+	if hasItemName = slices.Contains(cleanNames, itemName); hasItemName {
+		// Ex: "Edit", "Center", "Center=*Edit"
+		cleanItemName = itemName
+		log.Printf("HasScreenItem: 1 screenName %q has item %q.", screenName, itemName)
+		return
+	}
+	log.Printf("HasScreenItem: 1 screenName %q does not have item %q.", screenName, itemName)
+
+	if info.Kind == BorderScreenInfoKind {
+		// Border area syntax.
+		// area-name=*screen-name
+		parts := strings.Split(itemName, "=")
+		if len(parts) == 2 {
+			if hasItemName = slices.Contains(cleanNames, parts[0]); hasItemName {
+				cleanItemName = parts[0]
+				log.Printf("HasScreenItem: 2 screenName %q has item %q.", screenName, cleanItemName)
+			}
+		}
+	}
+	log.Printf("HasScreenItem: 2 screenName %q does not have item %q.", screenName, itemName)
+
 	return
 }
 

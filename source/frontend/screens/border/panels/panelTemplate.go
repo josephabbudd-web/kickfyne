@@ -51,7 +51,7 @@ func New{{ .PanelName }}Panel(screen *_misc_.Miscellaneous, preset *_{{ call .Fu
 }
 
 // Bind binds the border area's consumer with the panel's producer.
-func (panel *{{ .PanelName }}Panel) Bind(borderAreaContentConsumer *_types_.BorderAreaContentConsumer) {
+func (panel *{{ .PanelName }}Panel) Bind(borderAreaContentConsumer *_types_.BorderCenterAreaContentConsumer) {
 	borderAreaContentConsumer.SetBorder(panel.screen.Layout.Border())
 	panel.content.Bind(borderAreaContentConsumer)
 }

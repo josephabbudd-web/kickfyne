@@ -1,6 +1,9 @@
-ADDING OR REMOVING SCREEN ITEMS:
+Make sure user can not.
 
-Must not be able to remove all screens.
+Remove all screens.
+Import content from same screen.
+Import content from another screen importing same screen.
+
 
 ADDING OR REMOVING A SCREEN:
 source/frontend/build.go

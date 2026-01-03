@@ -1,8 +1,8 @@
 package producer
 
 const (
-	BorderAreaContentProducerFileName = "borderarea.go"
-	BorderAreaContentProducerTemplate = `package producer
+	BorderCenterAreaContentProducerFileName = "borderCenterArea.go"
+	BorderCenterAreaContentProducerTemplate = `package producer
 
 import (
 	"fyne.io/fyne/v2"
@@ -10,31 +10,31 @@ import (
 	_types_ "{{ .ImportPrefix }}/frontend/deps/types"
 )
 
-type AreaContentProducerState struct {
+type BorderCenterAreaContentProducerState struct {
 	hasNewCanvasObject bool
 	hasNewTitle        bool
 	hasNewLabel        bool
 	hasNewIcon         bool
 }
 
-type AreaContentProducer struct {
+type BorderCenterAreaContentProducer struct {
 	canvasObject fyne.CanvasObject
 	title        string
 	label        string
 	icon         fyne.Resource
-	consumers    map[_types_.ContentConsumer]*AreaContentProducerState
+	consumers    map[_types_.ContentConsumer]*BorderCenterAreaContentProducerState
 }
 
-func NewAreaContentProducer(consumer _types_.ContentConsumer) (producer *AreaContentProducer) {
-	producer = &AreaContentProducer{
-		consumers: make(map[_types_.ContentConsumer]*AreaContentProducerState),
+func NewBorderCenterAreaContentProducer(consumer _types_.ContentConsumer) (producer *BorderCenterAreaContentProducer) {
+	producer = &BorderCenterAreaContentProducer{
+		consumers: make(map[_types_.ContentConsumer]*BorderCenterAreaContentProducerState),
 	}
 	consumer.Bind(producer)
 	producer.Bind(consumer)
 	return
 }
 
-func (producer *AreaContentProducer) HasWindowConsumer() (has bool) {
+func (producer *BorderCenterAreaContentProducer) HasWindowConsumer() (has bool) {
 	for consumer := range producer.consumers {
 		if has = consumer.IsWindowContentConsumer(); has {
 			break
@@ -43,48 +43,48 @@ func (producer *AreaContentProducer) HasWindowConsumer() (has bool) {
 	return
 }
 
-func (producer *AreaContentProducer) Refresh(isMainThread bool) {
+func (producer *BorderCenterAreaContentProducer) Refresh(isMainThread bool) {
 	for consumer := range producer.consumers {
 		consumer.Refresh(isMainThread)
 	}
 }
 
-func (producer *AreaContentProducer) SetCanvasObject(canvasObject fyne.CanvasObject) {
+func (producer *BorderCenterAreaContentProducer) SetCanvasObject(canvasObject fyne.CanvasObject) {
 	producer.canvasObject = canvasObject
 	for _, stat := range producer.consumers {
 		stat.hasNewCanvasObject = true
 	}
 }
 
-func (producer *AreaContentProducer) SetIcon(icon fyne.Resource) {
+func (producer *BorderCenterAreaContentProducer) SetIcon(icon fyne.Resource) {
 	producer.icon = icon
 	for _, stat := range producer.consumers {
 		stat.hasNewIcon = true
 	}
 }
 
-func (producer *AreaContentProducer) SetTitle(title string) {
+func (producer *BorderCenterAreaContentProducer) SetTitle(title string) {
 	producer.title = title
 	for _, stat := range producer.consumers {
 		stat.hasNewTitle = true
 	}
 }
 
-func (producer *AreaContentProducer) SetLabel(label string) {
+func (producer *BorderCenterAreaContentProducer) SetLabel(label string) {
 	producer.label = label
 	for _, stat := range producer.consumers {
 		stat.hasNewLabel = true
 	}
 }
 
-// Implementations of _types_.AreaContentProducer.
+// Implementations of _types_.BorderCenterAreaContentProducer.
 
-func (producer *AreaContentProducer) CanvasObjectForce(consumer _types_.ContentConsumer) (canvasObject fyne.CanvasObject) {
+func (producer *BorderCenterAreaContentProducer) CanvasObjectForce(consumer _types_.ContentConsumer) (canvasObject fyne.CanvasObject) {
 	canvasObject = producer.canvasObject
 	return
 }
 
-func (producer *AreaContentProducer) CanvasObject(consumer _types_.ContentConsumer) (canvasObject fyne.CanvasObject) {
+func (producer *BorderCenterAreaContentProducer) CanvasObject(consumer _types_.ContentConsumer) (canvasObject fyne.CanvasObject) {
 	if stats, found := producer.consumers[consumer]; found {
 		if stats.hasNewCanvasObject {
 			stats.hasNewCanvasObject = false
@@ -94,7 +94,7 @@ func (producer *AreaContentProducer) CanvasObject(consumer _types_.ContentConsum
 	return
 }
 
-func (producer *AreaContentProducer) Title(consumer _types_.ContentConsumer) (title *string) {
+func (producer *BorderCenterAreaContentProducer) Title(consumer _types_.ContentConsumer) (title *string) {
 	if stats, found := producer.consumers[consumer]; found {
 		if stats.hasNewTitle {
 			stats.hasNewTitle = false
@@ -104,7 +104,7 @@ func (producer *AreaContentProducer) Title(consumer _types_.ContentConsumer) (ti
 	return
 }
 
-func (producer *AreaContentProducer) Label(consumer _types_.ContentConsumer) (label *string) {
+func (producer *BorderCenterAreaContentProducer) Label(consumer _types_.ContentConsumer) (label *string) {
 	if stats, found := producer.consumers[consumer]; found {
 		if stats.hasNewLabel {
 			stats.hasNewLabel = false
@@ -114,7 +114,7 @@ func (producer *AreaContentProducer) Label(consumer _types_.ContentConsumer) (la
 	return
 }
 
-func (producer *AreaContentProducer) Icon(consumer _types_.ContentConsumer) (icon fyne.Resource) {
+func (producer *BorderCenterAreaContentProducer) Icon(consumer _types_.ContentConsumer) (icon fyne.Resource) {
 	if stats, found := producer.consumers[consumer]; found {
 		if stats.hasNewIcon {
 			stats.hasNewIcon = false
@@ -124,15 +124,15 @@ func (producer *AreaContentProducer) Icon(consumer _types_.ContentConsumer) (ico
 	return
 }
 
-func (producer *AreaContentProducer) Bind(consumer _types_.ContentConsumer) {
+func (producer *BorderCenterAreaContentProducer) Bind(consumer _types_.ContentConsumer) {
 	if producer.consumers[consumer] != nil {
 		return
 	}
-	producer.consumers[consumer] = &AreaContentProducerState{}
+	producer.consumers[consumer] = &BorderCenterAreaContentProducerState{}
 	consumer.Bind(producer)
 }
 
-func (producer *AreaContentProducer) UnBind(consumer _types_.ContentConsumer) {
+func (producer *BorderCenterAreaContentProducer) UnBind(consumer _types_.ContentConsumer) {
 	if producer.consumers[consumer] == nil {
 		return
 	}
@@ -140,11 +140,11 @@ func (producer *AreaContentProducer) UnBind(consumer _types_.ContentConsumer) {
 	consumer.UnBind()
 }
 
-func (producer *AreaContentProducer) Die() {
+func (producer *BorderCenterAreaContentProducer) Die() {
 	// Get a list of consumers from the map.
 	consumers := make([]_types_.ContentConsumer, len(producer.consumers))
 	var i int = 0
-	for consumer, _ := range producer.consumers {
+	for consumer := range producer.consumers {
 		consumers[i] = consumer
 		i++
 	}
@@ -154,8 +154,8 @@ func (producer *AreaContentProducer) Die() {
 }
 
 // IsVisible returns if this content is visible in the window.
-// IsVisible is the implementation of AreaContentProducer.
-func (producer *AreaContentProducer) IsVisible() (is bool) {
+// IsVisible is the implementation of BorderCenterAreaContentProducer.
+func (producer *BorderCenterAreaContentProducer) IsVisible() (is bool) {
 	for consumer := range producer.consumers {
 		if is = consumer.IsVisible(); is {
 			break

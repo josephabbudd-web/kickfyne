@@ -39,21 +39,23 @@ type ContentConsumer interface {
 type ContentProducer interface {
 	// Window, TabItem, AccordionItem funcs.
 	CanvasObjectForce(consumer ContentConsumer) (canvasObject fyne.CanvasObject)
-	CanvasObject(consumer ContentConsumer) (canvasObject fyne.CanvasObject)
-	SetCanvasObject(canvasObject fyne.CanvasObject)
 	Bind(consumer ContentConsumer)
 	UnBind(consumer ContentConsumer) //Stop using this consumer. Delete the package if no other consumers.
 	IsVisible() (is bool)
 	Refresh(isMainThread bool)
 
-	// Window only func.
+	// State canvas object.
+	CanvasObject(consumer ContentConsumer) (canvasObject fyne.CanvasObject)
+	SetCanvasObject(canvasObject fyne.CanvasObject)
+	// State window title.
 	Title(consumer ContentConsumer) (title *string)
-
-	// TabItem only func.
+	SetTitle(title string)
+	// State TabItem Icon.
 	Icon(consumer ContentConsumer) (icon fyne.Resource)
-
-	// TabItem and AccordionItem only funcs.
+	SetIcon(icon fyne.Resource)
+	// State TabItem Label and AccordionItem Label.
 	Label(consumer ContentConsumer) (label *string)
+	SetLabel(label string)
 }
 `
 )

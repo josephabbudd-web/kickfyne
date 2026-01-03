@@ -38,6 +38,7 @@ import (
 )
 
 var screenCount uint = 0
+
 func nextScreenCount() (count uint) {
 	count = screenCount
 	screenCount++
@@ -71,7 +72,7 @@ func NewWindowContentConsumer(
 		windowContentConsumer = _types_.NewWindowContentConsumer(window, isInMainMenu)
 		// PackageScreen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, windowContentConsumer, screenID); err != nil {
+		if _, packageScreen, err = buildLayout(ctx, ctxCancel, app, window, windowContentConsumer, screenID); err != nil {
 			return
 		}
 		// Layout the accordion items.
@@ -109,7 +110,7 @@ func NewAccordionItemContentConsumer(
 		accordionItemContentConsumer = _types_.NewAccordionItemContentConsumer(accordion, accordionItem)
 		// PackageScreen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, accordionItemContentConsumer, screenID); err != nil {
+		if _, packageScreen, err = buildLayout(ctx, ctxCancel, app, window, accordionItemContentConsumer, screenID); err != nil {
 			return
 		}
 		// Layout the accordion items.
@@ -142,12 +143,12 @@ func NewAppTabsTabItemContentConsumer(
 	switch preset := preset.(type) {
 	case *_presetting_.Preset:
 		// Screen ID.
-		screenID = fmt.Sprintf("{{ .PackageName }}:TabItem:%d", nextScreenCount())
+		screenID = fmt.Sprintf("{{ .PackageName }}:AppTabsTabItem:%d", nextScreenCount())
 		// Consumer.
 		appTabsTabItemContentConsumer = _types_.NewAppTabsTabItemContentConsumer(appTabs, tabItem)
 		// PackageScreen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, appTabsTabItemContentConsumer, screenID); err != nil {
+		if tabItem.Content, packageScreen, err = buildLayout(ctx, ctxCancel, app, window, appTabsTabItemContentConsumer, screenID); err != nil {
 			return
 		}
 		// Layout the accordion items.
@@ -180,12 +181,12 @@ func NewDocTabsTabItemContentConsumer(
 	switch preset := preset.(type) {
 	case *_presetting_.Preset:
 		// Screen ID.
-		screenID = fmt.Sprintf("{{ .PackageName }}:TabItem:%d", nextScreenCount())
+		screenID = fmt.Sprintf("{{ .PackageName }}:DocTabsTabItem:%d", nextScreenCount())
 		// Consumer.
 		docTabsTabItemContentConsumer = _types_.NewDocTabsTabItemContentConsumer(docTabs, tabItem)
 		// PackageScreen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, docTabsTabItemContentConsumer, screenID); err != nil {
+		if tabItem.Content, packageScreen, err = buildLayout(ctx, ctxCancel, app, window, docTabsTabItemContentConsumer, screenID); err != nil {
 			return
 		}
 		// Layout the accordion items.
@@ -195,8 +196,8 @@ func NewDocTabsTabItemContentConsumer(
 	return
 }
 
-// NewBorderAreaContentConsumer constructs a new screen and returns a BorderArea content consumer of the screen's content.
-func NewBorderAreaContentConsumer(
+// NewBorderCenterAreaContentConsumer constructs a new screen and returns a BorderCenterArea content consumer of the screen's content.
+func NewBorderCenterAreaContentConsumer(
 	ctx context.Context,
 	ctxCancel context.CancelFunc,
 	app fyne.App,
@@ -205,25 +206,60 @@ func NewBorderAreaContentConsumer(
 	areaIndex int,
 	preset any,
 ) (
-	borderAreaContentConsumer *_types_.BorderAreaContentConsumer,
+	borderAreaContentConsumer *_types_.BorderCenterAreaContentConsumer,
 	screenID string, // id for the caller's borderArea that this screen is content for.
 	err error,
 ) {
 	defer func() {
 		if err != nil {
-			err = fmt.Errorf("{{ .PackageName }}.NewBorderAreaContentConsumer: %w", err)
+			err = fmt.Errorf("{{ .PackageName }}.NewBorderCenterAreaContentConsumer: %w", err)
 		}
 	}()
 
 	switch preset := preset.(type) {
 	case *_presetting_.Preset:
 		// Screen ID.
-		screenID = fmt.Sprintf("{{ .PackageName }}:BorderArea:%d", nextScreenCount())
+		screenID = fmt.Sprintf("{{ .PackageName }}:BorderCenterArea:%d", nextScreenCount())
 		// Consumer.
-		borderAreaContentConsumer = _types_.NewBorderAreaContentConsumer(border, areaIndex)
+		borderAreaContentConsumer = _types_.NewBorderCenterAreaContentConsumer(border, areaIndex)
 		// PackageScreen.
 		var packageScreen *_misc_.Miscellaneous
-		if packageScreen, err = buildLayout(ctx, ctxCancel, app, window, borderAreaContentConsumer, screenID); err != nil {
+		if border.Objects[areaIndex], packageScreen, err = buildLayout(ctx, ctxCancel, app, window, borderAreaContentConsumer, screenID); err != nil {
+			return
+		}
+		// Layout the accordion items.
+		err = _layoutaccordionitems_.LayoutAccordionItems(packageScreen, preset)
+	}
+	return
+}
+
+// NewSplitAreaContentConsumer constructs a new screen and returns a SplitArea content consumer of the screen's content.
+func NewSplitAreaContentConsumer(
+	ctx context.Context,
+	ctxCancel context.CancelFunc,
+	app fyne.App,
+	window fyne.Window,
+	preset any,
+) (
+	splitAreaContentConsumer *_types_.SplitAreaContentConsumer,
+	screenID string, // id for the caller's splitArea that this screen is content for.
+	err error,
+) {
+	defer func() {
+		if err != nil {
+			err = fmt.Errorf("{{ .PackageName }}.NewSplitAreaContentConsumer: %w", err)
+		}
+	}()
+
+	switch preset := preset.(type) {
+	case *_presetting_.Preset:
+		// Screen ID.
+		screenID = fmt.Sprintf("{{ .PackageName }}:SplitArea:%d", nextScreenCount())
+		// Consumer.
+		splitAreaContentConsumer = _types_.NewSplitAreaContentConsumer()
+		// PackageScreen.
+		var packageScreen *_misc_.Miscellaneous
+		if _, packageScreen, err = buildLayout(ctx, ctxCancel, app, window, splitAreaContentConsumer, screenID); err != nil {
 			return
 		}
 		// Layout the accordion items.
@@ -237,7 +273,7 @@ func buildLayout(
 	app fyne.App, window fyne.Window,
 	consumer _types_.ContentConsumer,
 	screenID string,
-) (screen *_misc_.Miscellaneous, err error) {
+) (content fyne.CanvasObject, screen *_misc_.Miscellaneous, err error) {
 	// Build the Accordion content producer.
 	accordionContentProducer := _producer_.NewAccordionContentProducer(consumer)
 	consumer.Bind(accordionContentProducer)
@@ -250,6 +286,7 @@ func buildLayout(
 	if screen, err = _misc_.NewMiscellaneous(ctx, ctxCancel, app, window, layout, screenID); err != nil {
 		return
 	}
+	content = accordionContentProducer.CanvasObjectForce(consumer)
 	return
 }
 `

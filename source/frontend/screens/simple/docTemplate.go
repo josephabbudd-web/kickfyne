@@ -58,11 +58,13 @@ Content producers and consumers.
 1. The Simple screen displays only one of its panels at a time.
 2. The package has 1 producer that all of the panels use.
 3. That producer gives the content's of its only visible panel to the package's consumer.
-   The package provides 1 of 4 different consumers in api.go.
+   The package provides 1 of 6 different consumers in api.go.
    1. A WindowContentConsumer consumers the container's content for the entire application window.
-   2. An AppTabsTabItemContentConsumer consumes the container's content for a single TabItem in a separate AppTab screen.
-   3. A SimpleTabItemContentConsumer consumes the container's content for a single TabItem in a separate DocTab screen.
-   4. An AccordionConsumer consumes the container's content for a single AccordionItem in a separate Accordion screen.
+   2. An AccordionConsumer consumes the container's content for a single AccordionItem in a separate Accordion screen.
+   3. An AppTabsTabItemContentConsumer consumes the container's content for a single TabItem in a separate AppTab screen.
+   4. A BorderCenterAreaContentConsumer consumes the container's content for a Center Border area in a separate Border screen.
+   5. An DocTabsTabItemContentConsumer consumes the container's content for a single TabItem in a separate DocTab screen.
+   6. A SplitAreaContentConsumer consumes the container's content for a Leading or Trailing Split area in a separate Split screen.
 */
 `
 )

@@ -53,7 +53,12 @@ func new(presets ...any) (screenPreset *Preset) {
 
 // See func Presets() (screenPreset map[string]any) in this package's api.go.
 var Presets = map[string]*Preset {
-	"Default" : newDefaultPreset(),
+	"Window":        newDefaultPreset(),
+	"AccordionItem": newDefaultPreset(),
+	"BorderCenter":  newDefaultPreset(),
+	"SplitLeading":  newDefaultPreset(),
+	"SplitTrailing": newDefaultPreset(),
+	"TabItem":       newDefaultPreset(),
 }
 `
 )

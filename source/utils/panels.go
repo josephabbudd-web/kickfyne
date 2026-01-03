@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -57,11 +58,9 @@ func ValidatePanelNames(
 		if i == last {
 			break
 		}
-		for _, testName := range panelNames[i+1:] {
-			if testName == panelName {
-				failureMessage = fmt.Sprintf("Each panel name must be unique but %q is not.", panelName)
-				failureMessages = append(failureMessages, failureMessage)
-			}
+		if slices.Contains(panelNames[i+1:], panelName) {
+			failureMessage = fmt.Sprintf("Each panel name must be unique but %q is not.", panelName)
+			failureMessages = append(failureMessages, failureMessage)
 		}
 	}
 	return

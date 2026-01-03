@@ -18,6 +18,7 @@ const (
 	verbAddAppTabsPlus = "add-apptabs+"
 	verbAddAccordion   = "add-accordion"
 	verbAddBorder      = "add-border"
+	verbAddSplit       = "add-split"
 	verbAddItem        = "add-item"
 	verbRemoveItem     = "remove-item"
 )

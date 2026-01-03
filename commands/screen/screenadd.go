@@ -59,7 +59,7 @@ func handleScreenAddDocTabs(
 	return
 }
 
-// handleScreenAddDocTabs handles adding a DocTabs screen package.
+// handleScreenAddBorder handles adding a DocTabs screen package.
 func handleScreenAddBorder(
 	screenPackageName string,
 	rawPanelNames []string,
@@ -85,6 +85,22 @@ func HandleScreenAddSimple(
 	err = _screens_.BuildSimplePackage(
 		screenPackageName,
 		panelNames,
+		importPrefix,
+		folderPaths,
+	)
+	return
+}
+
+// handleScreenAddSplit handles adding a DocTabs screen package.
+func handleScreenAddSplit(
+	screenPackageName string,
+	rawPanelNames []string,
+	importPrefix string,
+	folderPaths *_utils_.FolderPaths,
+) (err error) {
+	err = _screens_.BuildSplitPackage(
+		screenPackageName,
+		rawPanelNames,
 		importPrefix,
 		folderPaths,
 	)

@@ -28,6 +28,12 @@ func CreateFramework(
 		return
 	}
 
+	// frontend/deps/types/producerState.go.
+	oPath = filepath.Join(folderPaths.FrontendTypes, producerStateFileName)
+	if err = _utils_.WriteFile(oPath, []byte(producerStateTemplate)); err != nil {
+		return
+	}
+
 	// frontend/deps/types/accordionItemContentConsumer.go
 	oPath = filepath.Join(folderPaths.FrontendTypes, accordionItemContentConsumerFileName)
 	if err = _utils_.WriteFile(oPath, []byte(accordionItemContentConsumerTemplate)); err != nil {
@@ -58,6 +64,24 @@ func CreateFramework(
 	// frontend/deps/types/windowContentConsumer.go
 	oPath = filepath.Join(folderPaths.FrontendTypes, windowContentConsumerFileName)
 	if err = _utils_.ProcessTemplate(windowContentConsumerFileName, oPath, windowContentConsumerTemplate, nil); err != nil {
+		return
+	}
+
+	// frontend/deps/types/splitContentProducer.go
+	oPath = filepath.Join(folderPaths.FrontendTypes, splitContentProducerFileName)
+	if err = _utils_.ProcessTemplate(splitContentProducerFileName, oPath, splitContentProducerTemplate, templateData); err != nil {
+		return
+	}
+
+	// frontend/deps/types/splitAreaContentProducer.go
+	oPath = filepath.Join(folderPaths.FrontendTypes, splitAreaContentProducerFileName)
+	if err = _utils_.WriteFile(oPath, []byte(splitAreaContentProducerTemplate)); err != nil {
+		return
+	}
+
+	// frontend/deps/types/splitAreaContentConsumer.go
+	oPath = filepath.Join(folderPaths.FrontendTypes, splitAreaContentConsumerFileName)
+	if err = _utils_.WriteFile(oPath, []byte(splitAreaContentConsumerTemplate)); err != nil {
 		return
 	}
 

@@ -15,7 +15,7 @@ const (
 	// This is the screen that the application opens with.
 	// It does not have to be referenced in var mainMenuItems.
 	openingScreenName       = "HelloWorld"
-	openingScreenPresetName = "Default"
+	openingScreenPresetName = "Window"
 )
 
 // mainMenuItems is the list of items for the main menu.
@@ -27,7 +27,7 @@ var mainMenuItems = []_mainmenu_.MainMenuItem{
 	{
 		Label:      "Hello World!",
 		ScreenName: "HelloWorld",
-		PresetName: "Default",
+		PresetName: "Window",
 	},
 }
 `

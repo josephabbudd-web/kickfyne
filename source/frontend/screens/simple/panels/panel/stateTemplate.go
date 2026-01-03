@@ -59,7 +59,7 @@ func (state *State) Set(setters ..._types_.StateSetter) {
 		}
 	}
 	if refreshCanvasObject {
-		state.content.screen.Layout.RefreshIfCurrent(state.id, state.content.content)
+		state.content.screen.Layout.RefreshIfCurrent(state.id, state.content.content, isMainThread)
 	}
 }
 

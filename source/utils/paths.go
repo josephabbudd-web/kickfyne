@@ -15,6 +15,7 @@ const (
 	FolderNameLayout              = "layout"
 	FolderNameLayoutTabItems      = "layoutTabItems"
 	FolderNameLayoutAccorionItems = "layoutAccordionItems"
+	FolderNameLayoutAreas         = "layoutAreas"
 	FolderNameMainMenu            = "mainmenu"
 	folderNameMessage             = "message"
 	FolderNameMisc                = "misc"

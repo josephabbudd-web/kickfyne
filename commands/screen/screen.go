@@ -60,7 +60,7 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 		// Validate item names.
 		var haveInvalidItemName bool
 		for _, itemName := range args[3:] {
-			if !manifest.HasScreenItem(args[2], itemName) {
+			if _, hasItemName := manifest.HasScreenItem(args[2], itemName); !hasItemName {
 				haveInvalidItemName = true
 				switch screenKind {
 				case _manifest_.SimpleScreenInfoKind:
@@ -166,13 +166,13 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 		// Validate item names.
 		var haveInvalidItemName bool
 		for _, itemName := range args[3:] {
-			if manifest.HasScreenItem(args[2], itemName) {
+			if cleanItemName, hasItemName := manifest.HasScreenItem(args[2], itemName); hasItemName {
 				haveInvalidItemName = true
 				switch screenKind {
 				case _manifest_.SimpleScreenInfoKind:
-					fmt.Printf("Failure: The %q screen package already has a panel named %q.\n", args[2], itemName)
+					fmt.Printf("Failure: The %q screen package already has a panel named %q.\n", args[2], cleanItemName)
 				default:
-					fmt.Printf("Failure: The %q screen package already has an item named \"*%s\".\n", args[2], itemName)
+					fmt.Printf("Failure: The %q screen package already has an item named \"*%s\".\n", args[2], cleanItemName)
 				}
 				continue
 			}
@@ -231,12 +231,12 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			manifest.LastLogMesssage(args[2], folderPaths),
 		)
 		return
-	case verbAddBorder:
+	case verbAddSplit:
 		// args[0] is "screen"
-		// args[1] is "add-border"
+		// args[1] is "add-split"
 		// args[2] is the «screen-package-name»
-		// args[3..] is ["Top"|"Bottom"|"Left"|"Right"|"Center=*«screen-name»"] ...
-		if len(args) < 4 {
+		// args[3..] is ["Leading=*«screen-name»", "Trailing=*«screen-name»"] ...
+		if len(args) != 5 {
 			fmt.Println(UsageScreen())
 			return
 		}
@@ -250,8 +250,9 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			return
 		}
 		// Validate item names.
+		areas := make([]string, 0, len(args[3:]))
 		for _, itemName := range args[3:] {
-			isValid, _, screenName, failureMessage := _utils_.ValidBorderAreaItem(itemName)
+			isValid, areaName, screenName, failureMessage := _utils_.ValidSplitAreaItem(itemName)
 			if !isValid {
 				fmt.Println(failureMessage)
 				return
@@ -260,6 +261,68 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 				fmt.Printf("Failure: The screen package %q does not exist.\n", screenName)
 				return
 			}
+			if screenName == args[2] {
+				fmt.Printf("Failure: The %s area can not use it's own screen for content.", areaName)
+				return
+			}
+			areas = append(areas, areaName)
+		}
+		if isValid, failureMessage := _utils_.UniqueSplitAreas(areas); !isValid {
+			fmt.Println(failureMessage)
+			return
+		}
+		// Build the new screen.
+		if err = handleScreenAddSplit(args[2], args[3:], importPrefix, folderPaths); err != nil {
+			return
+		}
+		manifestCopy := manifest.Copy()
+		screenNames := manifestCopy.ScreenNames()
+		screenNames = append(screenNames, args[2])
+		if err = _frontend_.RebuildFrontendGo(screenNames, importPrefix, folderPaths); err != nil {
+			return
+		}
+		// Update the manifest.
+		manifest.AddScreen(args[2], _manifest_.SplitScreenInfoKind, args[3:]...)
+		if err = manifest.Write(folderPaths); err != nil {
+			return
+		}
+		// Display the success message.
+		fmt.Println("Success:")
+		fmt.Println(
+			manifest.LastLogMesssage(args[2], folderPaths),
+		)
+		return
+	case verbAddBorder:
+		// args[0] is "screen"
+		// args[1] is "add-border"
+		// args[2] is the «screen-package-name»
+		// args[3..] is ["Top"|"Bottom"|"Left"|"Right"|"Center=*«screen-name»"] ...
+		if len(args) < 5 {
+			fmt.Println(UsageScreen())
+			return
+		}
+		// Validate the screen package name.
+		if isValid, failureMessage := _utils_.ValidatePascalCase(args[2], "screen"); !isValid || err != nil {
+			fmt.Println(failureMessage)
+			return
+		}
+		if manifest.HasScreen(args[2]) {
+			fmt.Printf("Failure: The screen package %q already exists.\n", args[2])
+			return
+		}
+		// Validate item names.
+		areas := make([]string, 0, len(args[3:]))
+		for _, itemName := range args[3:] {
+			isValid, areaName, screenName, failureMessage := _utils_.ValidBorderAreaItem(itemName)
+			if !isValid {
+				fmt.Println(failureMessage)
+				return
+			}
+			if len(screenName) > 0 && !manifest.HasScreen(screenName) {
+				fmt.Printf("Failure: The screen package %q does not exist.\n", screenName)
+				return
+			}
+			areas = append(areas, areaName)
 		}
 		// Build the new screen.
 		if err = handleScreenAddBorder(args[2], args[3:], importPrefix, folderPaths); err != nil {

@@ -9,8 +9,8 @@ import (
 	"syscall"
 
 	_framework_ "github.com/josephabbudd-web/kickfyne/commands/framework"
-	_frontend_ "github.com/josephabbudd-web/kickfyne/commands/frontend"
 	_help_ "github.com/josephabbudd-web/kickfyne/commands/help"
+	_screen_ "github.com/josephabbudd-web/kickfyne/commands/screen"
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
@@ -60,12 +60,12 @@ func main() {
 			handlerArgs = os.Args[2:]
 		}
 		err = _framework_.Handler(handlerArgs, importPrefix, folderPaths)
-	case _frontend_.CmdScreen:
+	case _screen_.CmdScreen:
 		var handlerArgs []string
 		if lArgs > 2 {
 			handlerArgs = os.Args[1:]
 		}
-		err = _frontend_.Handler(handlerArgs, importPrefix, folderPaths)
+		err = _screen_.Handler(handlerArgs, importPrefix, folderPaths)
 	case _help_.Cmd:
 		var handlerArgs []string
 		if lArgs > 2 {

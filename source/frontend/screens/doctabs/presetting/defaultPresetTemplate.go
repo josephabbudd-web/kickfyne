@@ -34,7 +34,7 @@ func newDefaultPreset() (preset *Preset) {
 		new{{ $panelName }}ScreenPreset(
 			"", // tab icon
 			"{{ $panelName }}", // tab label
-			_{{ call $DOT.Funcs.LowerCase $panelName }}screenpresetting_.Presets["Default"],
+			_{{ call $DOT.Funcs.LowerCase $panelName }}screenpresetting_.Presets["TabItem"],
 		),
 {{- end }}
 	)

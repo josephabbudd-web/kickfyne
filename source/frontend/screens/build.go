@@ -9,6 +9,7 @@ import (
 	_border_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/border"
 	_doctabs_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/doctabs"
 	_simple_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/simple"
+	_split_ "github.com/josephabbudd-web/kickfyne/source/frontend/screens/split"
 	_utils_ "github.com/josephabbudd-web/kickfyne/source/utils"
 )
 
@@ -116,6 +117,21 @@ func BuildSimplePackage(
 	return _simple_.Build(
 		packageName,
 		panelNames,
+		importPrefix,
+		folderPaths,
+	)
+}
+
+// BuildDocTabsPackage builds a type DocTabs screen package.
+func BuildSplitPackage(
+	packageName string,
+	rawPanelNames []string,
+	importPrefix string,
+	folderPaths *_utils_.FolderPaths,
+) (err error) {
+	return _split_.Build(
+		packageName,
+		rawPanelNames,
 		importPrefix,
 		folderPaths,
 	)

@@ -41,7 +41,7 @@ Content producers and consumers. (Not required learning.)
 `
 )
 
-func LogContent(
+func DocContent(
 	screenPackageName string,
 	areas []*_data_.AreaData,
 	folderPaths *_utils_.FolderPaths,

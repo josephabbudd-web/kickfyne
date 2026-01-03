@@ -176,7 +176,7 @@ func RemoveItems(
 
 	// frontend/screens/«screen-package-name»/panels.log
 	fPath = filepath.Join(packagePanelsPath, _panels_.LogFileName)
-	content := _panels_.LogContent(packageName, finalLocalItemNames, folderPaths)
+	content := _panels_.DocContent(packageName, finalLocalItemNames, folderPaths)
 	if err = _utils_.WriteFile(fPath, []byte(content)); err != nil {
 		return
 	}

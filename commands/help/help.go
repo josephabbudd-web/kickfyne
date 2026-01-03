@@ -3,7 +3,7 @@ package help
 import (
 	"fmt"
 
-	_frontend_ "github.com/josephabbudd-web/kickfyne/commands/frontend"
+	_screen_ "github.com/josephabbudd-web/kickfyne/commands/screen"
 )
 
 const (
@@ -25,8 +25,8 @@ func Handler(args []string) (err error) {
 	}()
 
 	switch args[0] {
-	case _frontend_.CmdScreen:
-		fmt.Println(_frontend_.UsageScreen())
+	case _screen_.CmdScreen:
+		fmt.Println(_screen_.UsageScreen())
 	default:
 		Usage()
 	}

@@ -177,7 +177,7 @@ func AddItems(
 
 	// frontend/screens/«screen-package-name»/panels.log
 	fPath = filepath.Join(packagePanelsPath, _panels_.LogFileName)
-	content := _panels_.LogContent(packageName, manifestLocalItemNames, folderPaths)
+	content := _panels_.DocContent(packageName, manifestLocalItemNames, folderPaths)
 	if err = _utils_.WriteFile(fPath, []byte(content)); err != nil {
 		return
 	}

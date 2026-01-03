@@ -148,11 +148,13 @@ Content producers and consumers.
    * The panel's consumer gives the content to the panel's TabItem.
    * The panel's TabItem is part of the package's AppTabs container.
 5. The package has a producer which gives the AppTabs container's entire content to the package's consumer.
-   The package provides 1 of 4 different consumers in api.go.
+   The package provides 1 of 6 different consumers in api.go.
    1. A WindowContentConsumer consumers the container's content for the entire application window.
-   2. An AppTabsTabItemContentConsumer consumes the container's content for a single TabItem in a separate AppTab screen.
-   3. A AppTabsTabItemContentConsumer consumes the container's content for a single TabItem in a separate AppTabs screen.
-   4. An AccordionConsumer consumes the container's content for a single AccordionItem in a separate Accordion screen.
+   2. An AccordionConsumer consumes the container's content for a single AccordionItem in a separate Accordion screen.
+   3. An AppTabsTabItemContentConsumer consumes the container's content for a single TabItem in a separate AppTab screen.
+   4. A BorderCenterAreaContentConsumer consumes the container's content for a Center Border area in a separate Border screen.
+   5. An DocTabsTabItemContentConsumer consumes the container's content for a single TabItem in a separate DocTab screen.
+   6. A SplitAreaContentConsumer consumes the container's content for a Leading or Trailing Split area in a separate Split screen.
 */
 `
 )

@@ -113,7 +113,7 @@ func Construct(screen *_misc_.Miscellaneous, preset *_presetting_.Preset) (err e
  {{- if eq (len $area.Area) 0 }}{{ continue }}{{ end }}
  {{- if eq $area.IsLocal false }}{{ continue }}{{ end }}
 	// {{ $area.Area }} border area.
-	{{ call $DOT.Funcs.LowerCase $area.ItemName }}AreaContentConsumer := _types_.NewBorderAreaContentConsumer(screen.Layout.Border(), screen.Layout.{{ $area.Area }}AreaIndex)
+	{{ call $DOT.Funcs.LowerCase $area.ItemName }}AreaContentConsumer := _types_.NewBorderCenterAreaContentConsumer(screen.Layout.Border(), screen.Layout.{{ $area.Area }}AreaIndex)
 	{{ call $DOT.Funcs.LowerCase $area.ItemName }}Panel.Bind({{ call $DOT.Funcs.LowerCase $area.ItemName }}AreaContentConsumer)
 	{{ call $DOT.Funcs.LowerCase $area.ItemName }}Panel.State().Refresh(true)
 {{- end }}
@@ -121,13 +121,13 @@ func Construct(screen *_misc_.Miscellaneous, preset *_presetting_.Preset) (err e
 {{- if .UsesRemoteContent }}
 
 // Continue by adding the border areas using another screen for content.
-	var borderAreaContentConsumer *_types_.BorderAreaContentConsumer
+	var borderAreaContentConsumer *_types_.BorderCenterAreaContentConsumer
  {{- range $area := .Areas }}
   {{- if eq (len $area.Area) 0 }}{{ continue }}{{ end }}
   {{- if eq $area.IsLocal true }}{{ continue }}{{ end }}
 	// {{ $area.Area }} border area.
-	{{ call $DOT.Funcs.LowerCase $area.Area }}DefaultPreset := _{{ call $DOT.Funcs.LowerCase $area.ItemName }}presetting_.Presets["Default"]
-	if borderAreaContentConsumer, _, err = _{{ call $DOT.Funcs.LowerCase $area.ItemName }}_.NewBorderAreaContentConsumer(
+	{{ call $DOT.Funcs.LowerCase $area.Area }}DefaultPreset := _{{ call $DOT.Funcs.LowerCase $area.ItemName }}presetting_.Presets["BorderCenter"]
+	if borderAreaContentConsumer, _, err = _{{ call $DOT.Funcs.LowerCase $area.ItemName }}_.NewBorderCenterAreaContentConsumer(
 		screen.CTX,
 		screen.CTXCancel,
 		screen.APP,

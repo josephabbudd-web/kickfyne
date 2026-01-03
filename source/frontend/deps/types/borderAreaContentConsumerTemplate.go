@@ -1,18 +1,18 @@
 package types
 
 const (
-	borderAreaContentConsumerFileName = "borderAreaContentConsumer.go"
+	borderAreaContentConsumerFileName = "borderCenterAreaContentConsumer.go"
 	borderAreaContentConsumerTemplate = `package types
 
 import (
 	"fyne.io/fyne/v2"
 )
 
-// BorderAreaContentConsumer consumes content from a producer and gives it to a area.
+// BorderCenterAreaContentConsumer consumes content from a producer and gives it to a area.
 // It is implemented by a tab item.
-// BorderAreaContentConsumer implements ContentConsumer.
-// BorderAreaContentConsumer implements UnSpawner.
-type BorderAreaContentConsumer struct {
+// BorderCenterAreaContentConsumer implements ContentConsumer.
+// BorderCenterAreaContentConsumer implements UnSpawner.
+type BorderCenterAreaContentConsumer struct {
 	border    *fyne.Container
 	areaIndex int //   fyne.CanvasObject
 
@@ -23,8 +23,8 @@ type BorderAreaContentConsumer struct {
 	producer ContentProducer // A panel's content producer or a screen's content producer.
 }
 
-func NewBorderAreaContentConsumer(border *fyne.Container, areaIndex int) (consumer *BorderAreaContentConsumer) {
-	consumer = &BorderAreaContentConsumer{
+func NewBorderCenterAreaContentConsumer(border *fyne.Container, areaIndex int) (consumer *BorderCenterAreaContentConsumer) {
+	consumer = &BorderCenterAreaContentConsumer{
 		border:    border,
 		areaIndex: areaIndex,
 	}
@@ -32,7 +32,7 @@ func NewBorderAreaContentConsumer(border *fyne.Container, areaIndex int) (consum
 }
 
 // SetBorder sets the consumer's border.
-func (consumer *BorderAreaContentConsumer) SetBorder(border *fyne.Container) {
+func (consumer *BorderCenterAreaContentConsumer) SetBorder(border *fyne.Container) {
 	consumer.border = border
 }
 
@@ -40,11 +40,11 @@ func (consumer *BorderAreaContentConsumer) SetBorder(border *fyne.Container) {
 
 // Show shows the Area's content.
 // Show is the implementation of ScreenCanvasWatcher.
-func (consumer *BorderAreaContentConsumer) Show(isMainThread bool) {}
+func (consumer *BorderCenterAreaContentConsumer) Show(isMainThread bool) {}
 
 // IsVisible returns if this content is visible in the window.
 // IsVisible is the implementation of ContentConsumer.
-func (consumer *BorderAreaContentConsumer) IsVisible() (is bool) {
+func (consumer *BorderCenterAreaContentConsumer) IsVisible() (is bool) {
 	is = consumer.border.Visible()
 	return
 }
@@ -54,7 +54,7 @@ func (consumer *BorderAreaContentConsumer) IsVisible() (is bool) {
 // 2. Refreshes the area.
 // 3. Refreshes the tab-bar.
 // Refresh is the implementation of ContentConsumer.
-func (consumer *BorderAreaContentConsumer) Refresh(isMainThread bool) {
+func (consumer *BorderCenterAreaContentConsumer) Refresh(isMainThread bool) {
 	if canvasObject := consumer.producer.CanvasObject(consumer); canvasObject != nil {
 		consumer.border.Objects[consumer.areaIndex] = canvasObject
 	}
@@ -67,7 +67,7 @@ func (consumer *BorderAreaContentConsumer) Refresh(isMainThread bool) {
 
 // Bind binds to the producer and calls the panel or screen's Producer().Bind().
 // Bind is the implementation of ContentConsumer.
-func (consumer *BorderAreaContentConsumer) Bind(producer ContentProducer) {
+func (consumer *BorderCenterAreaContentConsumer) Bind(producer ContentProducer) {
 	if consumer.producer != nil {
 		// Already bound to a producer.
 		return
@@ -79,7 +79,7 @@ func (consumer *BorderAreaContentConsumer) Bind(producer ContentProducer) {
 
 // UnBind calls the producer's UnBind() and then unspawns.
 // UnBind is the implementation of ContentConsumer.
-func (consumer *BorderAreaContentConsumer) UnBind() {
+func (consumer *BorderCenterAreaContentConsumer) UnBind() {
 	if consumer.producer == nil {
 		// Not bound to a producer.
 		return
@@ -92,11 +92,11 @@ func (consumer *BorderAreaContentConsumer) UnBind() {
 
 // IsWindowContentConsumer returns false because this is a area consumer.
 // IsWindowContentConsumer is the implementation of ContentConsumer.
-func (consumer *BorderAreaContentConsumer) IsWindowContentConsumer() (is bool) {
+func (consumer *BorderCenterAreaContentConsumer) IsWindowContentConsumer() (is bool) {
 	return
 }
 
-func (consumer *BorderAreaContentConsumer) CanUnBind() (canUnBind bool) {
+func (consumer *BorderCenterAreaContentConsumer) CanUnBind() (canUnBind bool) {
 	canUnBind = true
 	return
 }

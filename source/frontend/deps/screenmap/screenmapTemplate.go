@@ -21,7 +21,19 @@ import (
 )
 
 type API struct {
-	NewBorderAreaContentConsumer func(
+	NewSplitAreaContentConsumer func(
+		ctx context.Context,
+		ctxCancel context.CancelFunc,
+		app fyne.App,
+		window fyne.Window,
+		preset any,
+	) (
+		splitAreaContentConsumer *_types_.SplitAreaContentConsumer,
+		screenID string, // id for the caller's splitArea that this screen is content for.
+		err error,
+	)
+
+	NewBorderCenterAreaContentConsumer func(
 		ctx context.Context,
 		ctxCancel context.CancelFunc,
 		app fyne.App,
@@ -30,7 +42,7 @@ type API struct {
 		areaIndex int,
 		preset any,
 	) (
-		borderAreaContentConsumer *_types_.BorderAreaContentConsumer,
+		borderAreaContentConsumer *_types_.BorderCenterAreaContentConsumer,
 		screenID string, // id for the caller's borderArea that this screen is content for.
 		err error,
 	)

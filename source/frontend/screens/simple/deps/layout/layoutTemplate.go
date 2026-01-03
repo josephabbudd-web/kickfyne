@@ -52,10 +52,10 @@ func NewLayout(producer *_producer_.ContentProducer) (layout *Layout, err error)
 	}()
 
 	layout = &Layout{
-		contentProducer: producer,
-		panelCanvasObject:    widget.NewLabel("{{ .PackageName }} screen."), // Temporary content replaced by actual panel content.
+		contentProducer:   producer,
+		panelCanvasObject: widget.NewLabel("{{ .PackageName }} screen."), // Temporary content replaced by actual panel content.
 	}
-	err = layout.layoutScreenCanvasObject()
+	layout.layoutScreenCanvasObject()
 
 	return
 }
@@ -65,13 +65,12 @@ func (layout *Layout) Producer() (producer *_producer_.ContentProducer) {
 	return
 }
 
-func (layout *Layout) RefreshIfCurrent(panelID string, panelCanvasObject fyne.CanvasObject) (err error) {
+func (layout *Layout) RefreshIfCurrent(panelID string, panelCanvasObject fyne.CanvasObject, isMainThread bool) (err error) {
 	if layout.panelID == panelID {
 		layout.panelCanvasObject = panelCanvasObject
-		if err = layout.layoutScreenCanvasObject(); err != nil {
-			return
-		}
+		layout.layoutScreenCanvasObject()
 		layout.contentProducer.SetCanvasObject(layout.screenCanvasObject)
+		layout.contentProducer.Refresh(isMainThread)
 	}
 	return
 }
@@ -82,9 +81,7 @@ func (layout *Layout) RefreshIfCurrent(panelID string, panelCanvasObject fyne.Ca
 func (layout *Layout) Set{{ $panelName }}PanelCanvasObject(panelID string, panelCanvasObject fyne.CanvasObject) (err error) {
 	layout.panelCanvasObject = panelCanvasObject
 	layout.panelID = panelID
-	if err = layout.layoutScreenCanvasObject(); err != nil {
-		return
-	}
+	layout.layoutScreenCanvasObject()
 	layout.contentProducer.SetCanvasObject(layout.screenCanvasObject)
 	return
 }
@@ -92,24 +89,11 @@ func (layout *Layout) Set{{ $panelName }}PanelCanvasObject(panelID string, panel
 
 // layoutScreenCanvasObject lays out the screen's panel's.
 // A stack layout of a single panel.
-func (layout *Layout) layoutScreenCanvasObject() (err error) {
-
-	defer func() {
-		if err != nil {
-			err = fmt.Errorf("error {{ .PackageName }}:layoutScreenCanvasObject: %q", err.Error())
-		}
-	}()
-
-	layedOut := container.New(
+func (layout *Layout) layoutScreenCanvasObject() {
+	layout.screenCanvasObject = container.New(
 		fynelayout.NewStackLayout(),
 		layout.panelCanvasObject,
 	)
-
-	if err == nil {
-		// No error so use the new canvas object.
-		layout.screenCanvasObject = layedOut
-	}
-	return
 }
 `
 )

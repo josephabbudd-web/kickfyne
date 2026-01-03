@@ -1,0 +1,40 @@
+./mycrud 
+2025/12/05 11:44:48 iconPath is  /home/aloys/go/JosephABudd/mycrud/images/app-icon.jpeg
+2025/12/05 11:44:48 consumer.producer is &producer.AppTabsContentProducer{canvasObject:(*container.AppTabs)(0xc0001ba2d0), title:"", consumers:map[types.ContentConsumer]*producer.appTabsContentProducerState{(*types.WindowContentConsumer)(0xc00031c630):(*producer.appTabsContentProducerState)(0xc0002fc138)}}
+panic: runtime error: invalid memory address or nil pointer dereference
+[signal SIGSEGV: segmentation violation code=0x1 addr=0x10 pc=0xafe69b]
+
+goroutine 1 [running, locked to thread]:
+example.com/mycrud/frontend/deps/types.(*WindowContentConsumer).show(0xc0000e7c00?)
+        /home/aloys/go/JosephABudd/mycrud/frontend/deps/types/windowContentConsumer.go:51 +0x3b
+example.com/mycrud/frontend/deps/types.(*WindowContentConsumer).Show(0xc000053898?, 0x0?)
+        /home/aloys/go/JosephABudd/mycrud/frontend/deps/types/windowContentConsumer.go:40 +0x17
+example.com/mycrud/frontend/deps/mainmenu.Start.func1()
+        /home/aloys/go/JosephABudd/mycrud/frontend/deps/mainmenu/mainmenu.go:46 +0x1c
+fyne.io/fyne/v2/widget.(*menuItem).trigger(0xc0036b8b40)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/widget/menu_item.go:187 +0x33
+fyne.io/fyne/v2/widget.(*menuItem).Tapped(0xc0036b8b40, 0xd2aa60?)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/widget/menu_item.go:133 +0x54
+fyne.io/fyne/v2/internal/driver/glfw.(*window).mouseClickedHandleTapDoubleTap(0xc0002d4820, {0xe6dd20, 0xc0036b8b40}, 0xc0011e9900)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/internal/driver/glfw/window.go:581 +0x182
+fyne.io/fyne/v2/internal/driver/glfw.(*window).processMouseClicked(0xc0002d4820, 0x1, 0x0, 0x0)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/internal/driver/glfw/window.go:542 +0x718
+fyne.io/fyne/v2/internal/driver/glfw.(*window).mouseClicked(0xc0001bba70?, 0x0?, 0xa78820?, 0x1b2a660?, 0xc0000539c8?)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/internal/driver/glfw/window_desktop.go:409 +0xaf
+github.com/go-gl/glfw/v3.3/glfw.goMouseButtonCB(0xc000002380?, 0x0, 0x0, 0x0)
+        /home/aloys/go/pkg/mod/github.com/go-gl/glfw/v3.3/glfw@v0.0.0-20240506104042-037f3cc74f2a/input.go:333 +0x4e
+github.com/go-gl/glfw/v3.3/glfw._Cfunc_glfwPollEvents()
+        _cgo_gotypes.go:1603 +0x3a
+github.com/go-gl/glfw/v3.3/glfw.PollEvents()
+        /home/aloys/go/pkg/mod/github.com/go-gl/glfw/v3.3/glfw@v0.0.0-20240506104042-037f3cc74f2a/window.go:931 +0x13
+fyne.io/fyne/v2/internal/driver/glfw.(*gLDriver).pollEvents(...)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/internal/driver/glfw/loop_desktop.go:22
+fyne.io/fyne/v2/internal/driver/glfw.(*gLDriver).runGL(0xc00041bd68?)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/internal/driver/glfw/loop.go:154 +0x1aa
+fyne.io/fyne/v2/internal/driver/glfw.(*gLDriver).Run(0xc000310840)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/internal/driver/glfw/driver.go:162 +0x72
+fyne.io/fyne/v2/app.(*fyneApp).Run(0xc0003108f0)
+        /home/aloys/go/pkg/mod/fyne.io/fyne/v2@v2.7.0/app/app.go:77 +0x102
+main.main()
+        /home/aloys/go/JosephABudd/mycrud/main.go:91 +0x53b
+aloys@aloys-OptiPlex-7070:~/go/JosephA

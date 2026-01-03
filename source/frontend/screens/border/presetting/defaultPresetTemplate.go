@@ -32,7 +32,7 @@ func newDefaultPreset() (preset *Preset) {
 		_{{ call $DOT.Funcs.LowerCase $area.ItemName }}panel_.NewDefaultPreset(),
 {{- end }}
 {{- range $remoteItemNames := .UniqueRemoteItemNames }}
-		new{{ $remoteItemNames }}ScreenPreset(_{{ call $DOT.Funcs.LowerCase $remoteItemNames }}screenpresetting_.Presets["Default"]),
+		new{{ $remoteItemNames }}ScreenPreset(_{{ call $DOT.Funcs.LowerCase $remoteItemNames }}screenpresetting_.Presets["BorderCenter"]),
 {{- end }}
 	)
 	return

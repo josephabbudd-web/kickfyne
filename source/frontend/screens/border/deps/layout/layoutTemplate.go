@@ -57,8 +57,8 @@ func (layout *Layout) Refresh() {
 	layout.border.Refresh()
 }
 
-func (layout *Layout) Border() (tabbar *fyne.Container) {
-	tabbar = layout.border
+func (layout *Layout) Border() (border *fyne.Container) {
+	border = layout.border
 	return
 }
 `

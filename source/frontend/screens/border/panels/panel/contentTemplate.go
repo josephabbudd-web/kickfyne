@@ -27,7 +27,7 @@ import (
 // KICKFYNE TODO: Correct this panel's doc comment.
 type Content struct {
 	state    *State
-	producer *_producer_.AreaContentProducer
+	producer *_producer_.BorderCenterAreaContentProducer
 	content  fyne.CanvasObject
 	screen   *_misc_.Miscellaneous
 
@@ -48,7 +48,7 @@ func NewContent(screen *_misc_.Miscellaneous) (panelContent *Content, err error)
 
 	// Create the components of this panel's content.
 	panelContent = &Content{
-		// producer: _producer_.NewAreaContentProducer(tabItemContentConsumer),
+		// producer: _producer_.NewBorderCenterAreaContentProducer(tabItemContentConsumer),
 		screen:   screen,
 
 		// Widgets with variable state. See state.go.
@@ -78,8 +78,8 @@ func NewContent(screen *_misc_.Miscellaneous) (panelContent *Content, err error)
 	)
 	return
 }
-func (panelContent *Content) Bind(borderAreaContentConsumer *_types_.BorderAreaContentConsumer) {
-	panelContent.producer = _producer_.NewAreaContentProducer(borderAreaContentConsumer)
+func (panelContent *Content) Bind(borderAreaContentConsumer *_types_.BorderCenterAreaContentConsumer) {
+	panelContent.producer = _producer_.NewBorderCenterAreaContentProducer(borderAreaContentConsumer)
 }
 
 // CanvasObject returns the panel's content as a fyne.CanvasObject.

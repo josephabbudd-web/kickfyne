@@ -102,12 +102,6 @@ func (producer *AccordionContentProducer) Title(consumer _types_.ContentConsumer
 }
 
 func (producer *AccordionContentProducer) Label(consumer _types_.ContentConsumer) (label *string) {
-	if stats, found := producer.consumers[consumer]; found {
-		if stats.hasNewLabel {
-			stats.hasNewLabel = false
-			label = &producer.label
-		}
-	}
 	return
 }
 
@@ -119,7 +113,11 @@ func (producer *AccordionContentProducer) Bind(consumer _types_.ContentConsumer)
 	if producer.consumers[consumer] != nil {
 		return
 	}
-	producer.consumers[consumer] = &accordionContentProducerState{}
+	producer.consumers[consumer] = &accordionContentProducerState{
+		hasNewCanvasObject: producer.canvasObject != nil,
+		hasNewTitle: len(producer.title) > 0,
+		hasNewLabel: len(producer.label) > 0,
+	}
 	consumer.Bind(producer)
 }
 
@@ -135,7 +133,7 @@ func (producer *AccordionContentProducer) Die() {
 	// Get a list of consumers from the map.
 	consumers := make([]_types_.ContentConsumer, len(producer.consumers))
 	var i int = 0
-	for consumer, _ := range producer.consumers {
+	for consumer := range producer.consumers {
 		consumers[i] = consumer
 		i++
 	}

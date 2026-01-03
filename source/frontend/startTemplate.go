@@ -62,7 +62,8 @@ func buildScreenMap() {
 	// Set the screen map.
 {{ range $screenName := .ScreenNames }}
 	_screenmap_.Map["{{ $screenName }}"] = &_screenmap_.API{
-		NewBorderAreaContentConsumer:     _{{ call $DOT.Funcs.LowerCase $screenName }}_.NewBorderAreaContentConsumer,
+		NewSplitAreaContentConsumer:      _{{ call $DOT.Funcs.LowerCase $screenName }}_.NewSplitAreaContentConsumer,
+		NewBorderCenterAreaContentConsumer:     _{{ call $DOT.Funcs.LowerCase $screenName }}_.NewBorderCenterAreaContentConsumer,
 		NewWindowContentConsumer:         _{{ call $DOT.Funcs.LowerCase $screenName }}_.NewWindowContentConsumer,
 		NewAppTabsTabItemContentConsumer: _{{ call $DOT.Funcs.LowerCase $screenName }}_.NewAppTabsTabItemContentConsumer,
 		NewDocTabsTabItemContentConsumer: _{{ call $DOT.Funcs.LowerCase $screenName }}_.NewDocTabsTabItemContentConsumer,

@@ -141,7 +141,7 @@ func Build(
 	if generalTemplateData.UsesLocalContent {
 		// frontend/screens/«screen-package-name»/panels.log
 		fPath = filepath.Join(packagePanelsPath, _panels_.LogFileName)
-		content := _panels_.LogContent(packageName, generalTemplateData.Areas, folderPaths)
+		content := _panels_.DocContent(packageName, generalTemplateData.Areas, folderPaths)
 		if err = _utils_.WriteFile(fPath, []byte(content)); err != nil {
 			return
 		}
@@ -211,8 +211,8 @@ func Build(
 	}
 
 	// frontend/screens/«screen-package-name»/deps/producer/area.go
-	fPath = filepath.Join(packageProducerPath, _producer_.BorderAreaContentProducerFileName)
-	if err = _utils_.ProcessTemplate(_producer_.BorderAreaContentProducerTemplate, fPath, _producer_.BorderAreaContentProducerTemplate, generalTemplateData); err != nil {
+	fPath = filepath.Join(packageProducerPath, _producer_.BorderCenterAreaContentProducerFileName)
+	if err = _utils_.ProcessTemplate(_producer_.BorderCenterAreaContentProducerTemplate, fPath, _producer_.BorderCenterAreaContentProducerTemplate, generalTemplateData); err != nil {
 		return
 	}
 

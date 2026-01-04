@@ -12,7 +12,7 @@ Image courtesy of https://isorepublic.com/photo/flying-kick/
 
 ### To do
 
-1. Adding the ability to safely undo changes when an error occurs.
+1. Add the ability to safely undo changes when an error occurs.
 1. Review my API for adding and removing tabs and accordion items.
 1. Review my inline and output documentation.
 1. Write tests.
@@ -352,7 +352,7 @@ Below is an example showing the selected config TabItem with its content.
 Each screen has it's own default presets.
 
 * **Window** (Used by the main menu for the App's content.)
-* **AccordionItem** (Used by the AppTabs and DocTabs screens for TabItem content.)
+* **AccordionItem** (Used by the Accordion screens for AccordionItem content.)
 * **BorderCenter** (Used by the Border screens for Center area content.)
 * **SplitLeading** (Used by the Split screens for Leading area content.)
 * **SplitTrailing** (Used by the Split screens for Trailing area content.)

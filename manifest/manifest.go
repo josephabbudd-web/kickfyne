@@ -217,7 +217,6 @@ func (manifest Manifest) HasScreenItem(screenName string, itemName string) (clea
 		return
 	}
 	cleanNames := info.cleanItemNames()
-	log.Printf("HasScreenItem: cleanNames is %#v", cleanNames)
 
 	if hasItemName = slices.Contains(cleanNames, itemName); hasItemName {
 		// Ex: "Edit", "Center", "Center=*Edit"
@@ -225,7 +224,6 @@ func (manifest Manifest) HasScreenItem(screenName string, itemName string) (clea
 		log.Printf("HasScreenItem: 1 screenName %q has item %q.", screenName, itemName)
 		return
 	}
-	log.Printf("HasScreenItem: 1 screenName %q does not have item %q.", screenName, itemName)
 
 	if info.Kind == BorderScreenInfoKind {
 		// Border area syntax.
@@ -238,7 +236,6 @@ func (manifest Manifest) HasScreenItem(screenName string, itemName string) (clea
 			}
 		}
 	}
-	log.Printf("HasScreenItem: 2 screenName %q does not have item %q.", screenName, itemName)
 
 	return
 }
@@ -453,6 +450,24 @@ func (manifest Manifest) LastFrameworkLogMesssage() (successMessage string) {
 		return
 	}
 	successMessage = "Created the framework.\n"
+	return
+}
+
+// Param screenName does not begin with "*".
+func (manifest Manifest) IsRecursive(screenName string, itemNames ...string) (isRecursive bool) {
+	for _, itemName := range itemNames {
+		if itemName[:1] == "*" {
+			cleanItemName := itemName[1:]
+			if isRecursive = cleanItemName == screenName; isRecursive {
+				return
+			}
+			if itemInfo := manifest[cleanItemName]; itemInfo != nil {
+				if isRecursive = manifest.IsRecursive(screenName, itemInfo.Copy().Items...); isRecursive {
+					return
+				}
+			}
+		}
+	}
 	return
 }
 

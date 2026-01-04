@@ -3,11 +3,19 @@
 ![kickfyne fyne with a kick.](/images/kick.jpeg)
 Image courtesy of https://isorepublic.com/photo/flying-kick/
 
-## Jan 3, 2026
+## Jan 3, 2026 version 0.9.0
 
 1. Added the Split screen.
 1. Created all new presets.
 1. Created the demo shell script which creates an application showing all possible screen combinations.
+1. Removed possiblity of a screen displaying itself in any way.
+
+### To do
+
+1. Adding the ability to safely undo changes when an error occurs.
+1. Review my API for adding and removing tabs and accordion items.
+1. Review my inline and output documentation.
+1. Write tests.
 
 ## Fun with Fyne
 
@@ -341,7 +349,7 @@ Below is an example showing the selected config TabItem with its content.
 
 ## Screen presets
 
-Each screen has it's own presets.
+Each screen has it's own default presets.
 
 * **Window** (Used by the main menu for the App's content.)
 * **AccordionItem** (Used by the AppTabs and DocTabs screens for TabItem content.)
@@ -349,12 +357,3 @@ Each screen has it's own presets.
 * **SplitLeading** (Used by the Split screens for Leading area content.)
 * **SplitTrailing** (Used by the Split screens for Trailing area content.)
 * **TabItem** (Used by the AppTabs and DocTabs screens for TabItem content.)
-
-
-## To do
-
-1. Make sure a screen never loads itself even while loading other screens.
-1. Adding the ability to safely undo changes when an error occurs.
-1. Review my API for adding and removing tabs and accordion items.
-1. Review my inline and output documentation.
-1. Write tests.

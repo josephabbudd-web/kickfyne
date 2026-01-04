@@ -197,6 +197,11 @@ func handleScreen(args []string, importPrefix string, folderPaths *_utils_.Folde
 			fmt.Println(failureMessage)
 			return
 		}
+		// Recursion test.
+		if manifest.IsRecursive(args[2], args[3:]...) {
+			fmt.Printf("Failure: The \"%s\" screen will end up displaying itself.\n", args[2])
+			return
+		}
 		// Add items to the screen.
 		switch screenKind {
 		case _manifest_.SimpleScreenInfoKind:

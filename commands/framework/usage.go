@@ -18,9 +18,9 @@ The framework is contained in 3 folders.
 1. ./ which contains
   * main.go
   * FyneApp.toml
-  * .manifest.yaml
+  * kickfyne_manifest.yaml
     * This is kickfyne's manifest.
-	* kickfyne will not work without the .manifest.yaml file.
+	* kickfyne will not work without the kickfyne_manifest.yaml file.
 2. ./frontend/ which contains:
   * settings.go which you will need to modify.
     * Define your opening screen with the const string openingScreenName.

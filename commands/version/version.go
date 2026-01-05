@@ -7,9 +7,9 @@ import (
 
 const (
 	versionAPINewBreaking  = 0
-	versionAPIAddedFeature = 9
+	versionAPIAddedFeature = 10
 	versionAPIBugFix       = 0
-	versionDate            = "Jan 3, 2026"
+	versionDate            = "Jan 5, 2026"
 )
 
 // V returns the version.

@@ -3,12 +3,9 @@
 ![kickfyne fyne with a kick.](/images/kick.jpeg)
 Image courtesy of https://isorepublic.com/photo/flying-kick/
 
-## Jan 3, 2026 version 0.9.0
+## Jan 5, 2026 version 0.10.0
 
-1. Added the Split screen.
-1. Created all new presets.
-1. Created the demo shell script which creates an application showing all possible screen combinations.
-1. Removed possiblity of a screen displaying itself in any way.
+1. Renamed the manifest file.
 
 ### To do
 

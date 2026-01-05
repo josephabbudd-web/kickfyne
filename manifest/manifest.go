@@ -35,7 +35,7 @@ func (manifest Manifest) Copy() (manifestCopy Manifest) {
 	return
 }
 
-// New constructs a new manifest from the screen packages manifest.yaml file.
+// New constructs a new manifest from the screen packages kickfyne_manifest.yaml file.
 func New(folderPaths *_utils_.FolderPaths) (manifest Manifest, err error) {
 
 	if _manifest != nil {
@@ -357,7 +357,7 @@ func (manifest Manifest) RemoveItemsLogAction(screenName string, itemNames ...st
 	info.AddLogItem(logItem)
 }
 
-// Write writes the manifest to the screen package's manifest.yaml file.
+// Write writes the manifest to the screen package's kickfyne_manifest.yaml file.
 func (manifest Manifest) Write(folderPaths *_utils_.FolderPaths) (err error) {
 
 	defer func() {

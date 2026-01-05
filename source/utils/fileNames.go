@@ -24,7 +24,7 @@ const (
 	PresetFileName        = "preset.go"
 	RemotePresetFileName  = "remotePreset.go"
 	DefaultPresetFileName = "defaultPreset.go"
-	ManifestFileName      = "manifest.yaml"
+	ManifestFileName      = "kickfyne_manifest.yaml"
 	MainMenuFileName      = "mainmenu.go"
 
 	ralativeFilePathSuffix = ":1:1"

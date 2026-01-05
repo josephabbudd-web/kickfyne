@@ -9,7 +9,7 @@ Image courtesy of https://isorepublic.com/photo/flying-kick/
 
 ### To do
 
-1. Add the ability to safely undo changes when an error occurs.
+1. Add the ability to safely undo changes when a file system error occurs.
 1. Review my API for adding and removing tabs and accordion items.
 1. Review my inline and output documentation.
 1. Write tests.
